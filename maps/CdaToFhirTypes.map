@@ -122,7 +122,9 @@ uses "http://hl7.org/fhir/cda/StructureDefinition/ST" as source
 uses "http://hl7.org/fhir/StructureDefinition/string" as target
 uses "http://hl7.org/fhir/cda/StructureDefinition/EN" as source
 uses "http://hl7.org/fhir/cda/StructureDefinition/PN" as source
+uses "http://hl7.org/fhir/cda/StructureDefinition/ON" as source
 uses "http://hl7.org/fhir/StructureDefinition/HumanName" as target
+uses "http://hl7.org/fhir/StructureDefinition/Organization" as target
 uses "http://hl7.org/fhir/cda/StructureDefinition/AD" as source
 uses "http://hl7.org/fhir/StructureDefinition/Address" as target
 uses "http://hl7.org/fhir/cda/StructureDefinition/TEL" as source
@@ -201,7 +203,11 @@ group STstring(source src : ST, target tgt : string) extends Any <<types>> {
 group EDstring(source src : ED, target tgt : string) extends STstring <<types>> {
 }
 
-group ONstring(source src : ON, target tgt : string) extends STstring <<types>> {
+group ENstring(source src : EN, target tgt : string) extends Any <<types>> {
+  src as v -> tgt.value = (v.other) "value";
+}
+
+group ONstring(source src : ON, target tgt : string) extends ENstring <<types>> {
 }
 
 group CSCode(source src : CS, target tgt : code) extends Any <<types>> {
@@ -303,6 +309,18 @@ group CdaPersonNameCompilationToFhirHumanName(source cda_name : PN, target fhir_
         extension.url = 'http://hl7.org/fhir/StructureDefinition/iso21090-EN-qualifier' "extensionUrl";
         cda_name_suffix.qualifier as qualifier -> extension.value = translate(qualifier, '#ELGAEntityNamePartQualifierFHIRNamePartQualifier', 'code') "qualifierValue";
     } "CdaNameSuffixToFhirNameSuffix";
+}
+
+// Source: https://art-decor.org/art-decor/decor-templates--at-lab-?section=templates&id=1.2.40.0.34.6.0.11.9.5&effectiveDate=2021-06-28T13:57:53&language=de-DE
+// Target: http://hl7.org/fhir/organization.html
+group CdaOrganizationCompilationToFhirOrganization(source cda_organization, target fhir_organization : Organization) {
+  cda_organization.id -> fhir_organization.identifier;
+  cda_organization.name -> fhir_organization.name;
+  cda_organization.telecom -> fhir_organization.telecom;
+  cda_organization.addr as cda_organization_addr ->
+    fhir_organization.address = create('Address') as fhir_organization_address then
+    CdaAdressCompilationToFhirAustrianAddress(cda_organization_addr, fhir_organization_address)
+    "CdaOrganizationAddressToFhirOrganizationAustrianAddress";
 }
 
 group ADAddress(source src : AD, target tgt : Address) extends Any <<types>> {
