@@ -170,9 +170,18 @@ group CdaToFhirComposition(source cda : ClinicalDocument, target fhir_compositio
           fhir_practitioner_qualification.code = cda_author_assignedAuthor_code;
         // ClinicalDocument.author.assignedAuthor.telecom
         cda_author_assignedAuthor.telecom -> fhir_practitioner.telecom;
-  //       assCDA as author -> bundle.entry as entry2, entry2.resource = create('Practitioner') as practitioner,
-  //       practitioner.id = uuid() as uuid1, entry2.fullUrl = append('urn:uuid:',uuid1), practitionerRole.practitioner = create('Reference') as reference1,
-  //       reference1.reference = reference(practitioner), reference1.type = 'Practitioner' then AssignedAuthorPractitioner(author,practitioner,practitionerRole,bundle) "assignedAuthorPractitioner";
+        // ClinicalDocument.author.assignedAuthor.assignedPerson
+        cda_author_assignedAuthor.name -> fhir_practitioner.name;
+        // ClinicalDocument.author.assignedAuthor.representedOrganization
+        cda_author_assignedAuthor.representedOrganization as cda_representedOrganization ->
+          fhir_bundle.entry as fhir_bundle_entry,
+          fhir_bundle_entry.resource = create('Organization') as fhir_organization,
+          fhir_organization.id = uuid() as fhir_organization_id,
+          fhir_bundle_entry.fullUrl = append('urn:uuid:', fhir_organization_id),
+          fhir_practitionerRole.organization = create('Reference') as fhir_practitionerRole_organization,
+          fhir_practitionerRole_organization.reference = reference(fhir_organization),
+          fhir_practitionerRole_organization.type = 'Organization' then
+          CdaOrganizationCompilationToFhirOrganization(cda_representedOrganization, fhir_organization);
       } "assignedAuthor";
     } "CdaAuthorToFhirPractitionerRole";
 
