@@ -150,6 +150,18 @@ group CdaToFhirComposition(source cda : ClinicalDocument, target fhir_compositio
     CdaAuthorToFhirPractitionerRole(cda_author, fhir_practitionerRole, fhir_bundle)
     "CdaAuthorToFhirPractitionerRole";
 
+  // ClinicalDocument.author (as device)
+  cda.author as cda_author where $this.assignedAuthor.assignedAuhoringDevice.exists() ->
+    // create the Device
+    fhir_bundle.entry as fhir_bundle_entry,
+    fhir_bundle_entry.resource = create('Device') as fhir_device,
+    fhir_device.id = uuid() as fhir_device_id,
+    fhir_bundle_entry.fullUrl = append('urn:uuid:', fhir_device_id),
+    fhir_composition.author = create('Reference') as fhir_composition_author_reference,
+    fhir_composition_author_reference.reference = reference(fhir_device),
+    fhir_composition_author_reference.type = 'Device' then
+    CdaAuthorToFhirDevice(cda_author, fhir_device, fhir_bundle);
+
   // src.author as srcAuthor ->  bundle.entry as e,
   //   e.resource = create('Practitioner') as practitioner,
   //   practitioner.id = uuid() as uuid2,
@@ -426,6 +438,43 @@ group CdaAuthorToFhirPractitionerRole(source cda_author : Author, target fhir_pr
           CdaOrganizationCompilationToFhirOrganization(cda_representedOrganization, fhir_organization);
       } "assignedAuthor";
     } "CdaAuthorToFhirPractitionerRole";
+}
+
+group CdaAuthorToFhirDevice(source cda_author : Author, target fhir_device : Device, target fhir_bundle : Bundle){
+    // author.functionCode
+    // TODO correct?
+    cda_author.functionCode -> fhir_device.type;
+    // author.time
+    // TODO extension?
+    // author.time
+    // TODO nullFlavor?
+    // author.assignedAuthor
+    cda_author.assignedAuthor as cda_author_assignedAuthor then {
+      // author.assignedAuthor.id
+      cda_author_assignedAuthor.id -> fhir_device.identifier;
+      // author.assignedAuthor.code
+      cda_author_assignedAuthor.code as cda_author_assignedAuthor_code ->
+        fhir_practitioner.qualification as fhir_practitioner_qualification,
+        fhir_practitioner_qualification.code as fhir_practitioner_qualification_code then
+        CECodeableConcept(cda_author_assignedAuthor_code,fhir_practitioner_qualification_code)
+        "CdaAssignedAuthorCodeToFhirQualificationCode";
+      // ClinicalDocument.author.assignedAuthor.telecom
+      cda_author_assignedAuthor.telecom -> fhir_practitioner.telecom;
+      // ClinicalDocument.author.assignedAuthor.assignedPerson
+      cda_author_assignedAuthor.assignedPerson as cda_assignedPerson then {
+        cda_assignedPerson.name -> fhir_practitioner.name;
+      };
+      // ClinicalDocument.author.assignedAuthor.representedOrganization
+      cda_author_assignedAuthor.representedOrganization as cda_representedOrganization ->
+        fhir_bundle.entry as fhir_bundle_entry,
+        fhir_bundle_entry.resource = create('Organization') as fhir_organization,
+        fhir_organization.id = uuid() as fhir_organization_id,
+        fhir_bundle_entry.fullUrl = append('urn:uuid:', fhir_organization_id),
+        fhir_practitionerRole.organization = create('Reference') as fhir_practitionerRole_organization,
+        fhir_practitionerRole_organization.reference = reference(fhir_organization),
+        fhir_practitionerRole_organization.type = 'Organization' then
+        CdaOrganizationCompilationToFhirOrganization(cda_representedOrganization, fhir_organization);
+    } "assignedAuthor";
 }
 
 // group ClinicalDocumentEntityPractitioner(source src : AssignedEntity, target tgt : Practitioner) {
