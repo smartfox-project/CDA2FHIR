@@ -147,8 +147,7 @@ group CdaToFhirComposition(source cda : ClinicalDocument, target fhir_compositio
     fhir_composition.author = create('Reference') as fhir_composition_author_reference,
     fhir_composition_author_reference.reference = reference(fhir_practitionerRole),
     fhir_composition_author_reference.type = 'PractitionerRole' then
-    CdaAuthorToFhirPractitionerRole(cda_author, fhir_practitionerRole, fhir_bundle)
-    "CdaAuthorToFhirPractitionerRole";
+    CdaAuthorToFhirPractitionerRole(cda_author, fhir_practitionerRole, fhir_bundle);
 
   // ClinicalDocument.author (as device)
   cda.author as cda_author where $this.assignedAuthor.assignedAuthoringDevice.exists() ->
@@ -418,8 +417,7 @@ group CdaAuthorToFhirPractitionerRole(source cda_author : Author, target fhir_pr
         cda_author_assignedAuthor.code as cda_author_assignedAuthor_code ->
           fhir_practitioner.qualification as fhir_practitioner_qualification,
           fhir_practitioner_qualification.code as fhir_practitioner_qualification_code then
-          CECodeableConcept(cda_author_assignedAuthor_code,fhir_practitioner_qualification_code)
-          "CdaAssignedAuthorCodeToFhirQualificationCode";
+          CECodeableConcept(cda_author_assignedAuthor_code,fhir_practitioner_qualification_code);
         // ClinicalDocument.author.assignedAuthor.telecom
         cda_author_assignedAuthor.telecom -> fhir_practitioner.telecom;
         // ClinicalDocument.author.assignedAuthor.assignedPerson
@@ -436,7 +434,7 @@ group CdaAuthorToFhirPractitionerRole(source cda_author : Author, target fhir_pr
           fhir_practitionerRole_organization.reference = reference(fhir_organization),
           fhir_practitionerRole_organization.type = 'Organization' then
           CdaOrganizationCompilationToFhirOrganization(cda_representedOrganization, fhir_organization);
-      } "assignedAuthor";
+      };
     } "CdaAuthorToFhirPractitionerRole";
 }
 
