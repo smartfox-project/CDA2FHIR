@@ -151,7 +151,7 @@ group CdaToFhirComposition(source cda : ClinicalDocument, target fhir_compositio
     "CdaAuthorToFhirPractitionerRole";
 
   // ClinicalDocument.author (as device)
-  cda.author as cda_author where $this.assignedAuthor.assignedAuhoringDevice.exists() ->
+  cda.author as cda_author where $this.assignedAuthor.assignedAuthoringDevice.exists() ->
     // create the Device
     fhir_bundle.entry as fhir_bundle_entry,
     fhir_bundle_entry.resource = create('Device') as fhir_device,
@@ -453,28 +453,34 @@ group CdaAuthorToFhirDevice(source cda_author : Author, target fhir_device : Dev
       // author.assignedAuthor.id
       cda_author_assignedAuthor.id -> fhir_device.identifier;
       // author.assignedAuthor.code
-      cda_author_assignedAuthor.code as cda_author_assignedAuthor_code ->
-        fhir_practitioner.qualification as fhir_practitioner_qualification,
-        fhir_practitioner_qualification.code as fhir_practitioner_qualification_code then
-        CECodeableConcept(cda_author_assignedAuthor_code,fhir_practitioner_qualification_code)
-        "CdaAssignedAuthorCodeToFhirQualificationCode";
-      // ClinicalDocument.author.assignedAuthor.telecom
-      cda_author_assignedAuthor.telecom -> fhir_practitioner.telecom;
-      // ClinicalDocument.author.assignedAuthor.assignedPerson
-      cda_author_assignedAuthor.assignedPerson as cda_assignedPerson then {
-        cda_assignedPerson.name -> fhir_practitioner.name;
+      // skipped because no value in ValueSet ELGA_AuthorSpeciality suits a device
+      // author.assignedAuthor.telecom
+      cda_author_assignedAuthor.telecom -> fhir_device.contact;
+      // author.assignedAuthor.assignedAuthoringDevice
+      cda_author_assignedAuthor.assignedAuthoringDevice as cda_assignedAuthoringDevice then {
+        // author.assignedAuthor.assignedAuthoringDevice.manufacturerModelName
+        cda_assignedAuthoringDevice.manufacturerModelName as cda_manufacturerModelName ->
+          fhir_device.deviceName as fhir_device_deviceName,
+          fhir_device_deviceName.name = (cda_manufacturerModelName.dataString),
+          fhir_device_deviceName.type = 'model-name';
+        // author.assignedAuthor.assignedAuthoringDevice.softwareName
+        // TODO not clear if this is the right place to store that information
+        cda_assignedAuthoringDevice.softwareName as cda_softwareName ->
+          fhir_device.deviceName as fhir_device_deviceName,
+          fhir_device_deviceName.name = (cda_softwareName.dataString),
+          fhir_device_deviceName.type = 'other';
       };
-      // ClinicalDocument.author.assignedAuthor.representedOrganization
+      // author.assignedAuthor.representedOrganization
       cda_author_assignedAuthor.representedOrganization as cda_representedOrganization ->
         fhir_bundle.entry as fhir_bundle_entry,
         fhir_bundle_entry.resource = create('Organization') as fhir_organization,
         fhir_organization.id = uuid() as fhir_organization_id,
         fhir_bundle_entry.fullUrl = append('urn:uuid:', fhir_organization_id),
-        fhir_practitionerRole.organization = create('Reference') as fhir_practitionerRole_organization,
-        fhir_practitionerRole_organization.reference = reference(fhir_organization),
-        fhir_practitionerRole_organization.type = 'Organization' then
+        fhir_device.owner = create('Reference') as fhir_device_owner,
+        fhir_device_owner.reference = reference(fhir_organization),
+        fhir_device_owner.type = 'Organization' then
         CdaOrganizationCompilationToFhirOrganization(cda_representedOrganization, fhir_organization);
-    } "assignedAuthor";
+    };
 }
 
 // group ClinicalDocumentEntityPractitioner(source src : AssignedEntity, target tgt : Practitioner) {
