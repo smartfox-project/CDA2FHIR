@@ -161,28 +161,6 @@ group CdaToFhirComposition(source cda : ClinicalDocument, target fhir_compositio
     fhir_composition_author_reference.type = 'Device' then
     CdaAuthorToFhirDevice(cda_author, fhir_device, fhir_bundle);
 
-  // src.author as srcAuthor ->  bundle.entry as e,
-  //   e.resource = create('Practitioner') as practitioner,
-  //   practitioner.id = uuid() as uuid2,
-  //   e.fullUrl = append('urn:uuid:',uuid2),
-  //   tgt.author = create('Reference') as reference, reference.reference = ('urn:uuid:'+%practitioner.id) then {
-  //   srcAuthor.time as time -> reference.extension as exttime then ChExtEprTime(time, exttime) "time";
-  //   srcAuthor.assignedAuthor as assignedAuthor then {
-  //     assignedAuthor.id -> practitioner.identifier;
-  //     assignedAuthor.addr -> practitioner.address;
-  //     assignedAuthor.telecom -> practitioner.telecom;
-  //     assignedAuthor.assignedPerson as person then {
-  //       person.name -> practitioner.name;
-  //     } "name";
-  //     assignedAuthor.representedOrganization as srcOrg ->
-  //       bundle.entry as e2,
-  //       e2.resource = create('Organization') as organization,
-  //       organization.id = uuid() as uuid3,
-  //       e2.fullUrl = append('urn:uuid:',uuid3),
-  //       tgt.author = create('Reference') as reference2, reference2.reference = ('urn:uuid:'+%organization.id) then ClinicalDocumentOrganization(srcOrg, organization);
-  //   } "author";
-  // } "srcAuthor";
-
   // src.componentOf as comp ->  bundle.entry as e,
   //   e.resource = create('Encounter') as encounter,
   //   encounter.id = uuid() as uuid,
@@ -231,6 +209,8 @@ group CdaToFhirComposition(source cda : ClinicalDocument, target fhir_compositio
   // } "relatedDoc";
 }
 
+// Source: https://art-decor.org/art-decor/decor-templates--at-lab-?section=templates&id=1.2.40.0.34.6.0.11.1.3&effectiveDate=2020-11-24T10:03:02&language=de-DE
+// Target: http://hl7.at/fhir/HL7ATCoreProfiles/4.0.1/StructureDefinition/at-core-patient
 group CdaPatientRoleToFhirPatient(source cda_patientRole : PatientRole, target fhir_patient : Patient, target fhir_bundle : Bundle) {
   cda_patientRole ->
     fhir_patient.meta as fhir_patient_meta,
@@ -392,7 +372,9 @@ group CdaPatientRoleToFhirPatient(source cda_patientRole : PatientRole, target f
   } "CdaPatientToFhirPatient";
 }
 
-
+// Source: https://art-decor.org/art-decor/decor-templates--at-lab-?section=templates&id=1.2.40.0.34.6.0.11.1.2&effectiveDate=2021-08-24T08:35:56&language=de-DE
+// Target: http://hl7.org/fhir/practitionerrole.html
+//         http://hl7.org/fhir/practitioner.html
 group CdaAuthorToFhirPractitionerRole(source cda_author : Author, target fhir_practitionerRole : PractitionerRole, target fhir_bundle : Bundle){
   cda_author ->
     // create the Practitioner
@@ -438,6 +420,8 @@ group CdaAuthorToFhirPractitionerRole(source cda_author : Author, target fhir_pr
     } "CdaAuthorToFhirPractitionerRole";
 }
 
+// Source: https://art-decor.org/art-decor/decor-templates--at-lab-?section=templates&id=1.2.40.0.34.6.0.11.1.2&effectiveDate=2021-08-24T08:35:56&language=de-DE
+// Target: http://hl7.org/fhir/device.html
 group CdaAuthorToFhirDevice(source cda_author : Author, target fhir_device : Device, target fhir_bundle : Bundle){
     // author.functionCode
     // TODO correct?
