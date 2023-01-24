@@ -161,6 +161,8 @@ group CdaToFhirComposition(source cda : ClinicalDocument, target fhir_compositio
     fhir_composition_author_reference.type = 'Device' then
     CdaAuthorToFhirDevice(cda_author, fhir_device, fhir_bundle);
 
+  // ClinicalDocument.dataEnterer
+  // TODO currently not supported
   // src.componentOf as comp ->  bundle.entry as e,
   //   e.resource = create('Encounter') as encounter,
   //   encounter.id = uuid() as uuid,
