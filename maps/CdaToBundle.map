@@ -163,6 +163,33 @@ group CdaToFhirComposition(source cda : ClinicalDocument, target fhir_compositio
 
   // ClinicalDocument.dataEnterer
   // TODO currently not supported
+
+  // ClinicalDocument.custodian
+  cda.custodian as cda_custodian then {
+    // ClinicalDocument.custodian.assignedCustodian
+    cda_custodian.assignedCustodian as cda_assignedCustodian then {
+      // ClinicalDocument.custodian.assignedCustodian.representedCustodianOrganization
+      cda_assignedCustodian.representedCustodianOrganization as cda_representedCustodianOrganization ->
+        // create the Organization
+        fhir_bundle.entry as fhir_bundle_entry,
+        fhir_bundle_entry.resource = create('Organization') as fhir_custodian_organization,
+        fhir_custodian_organization.id = uuid() as fhir_custodian_organization_id,
+        fhir_bundle_entry.fullUrl = append('urn:uuid:', fhir_custodian_organization_id),
+        fhir_composition.custodian = create('Reference') as fhir_composition_custodian_reference,
+        fhir_composition_custodian_reference.reference = reference(fhir_custodian_organization),
+        fhir_composition_custodian_reference.type = 'Organization' then {
+          // ClinicalDocument.custodian.assignedCustodian.representedCustodianOrganization.id
+          cda_representedCustodianOrganization.id -> fhir_custodian_organization.identifier;
+          // ClinicalDocument.custodian.assignedCustodian.representedCustodianOrganization.name
+          cda_representedCustodianOrganization.name -> fhir_custodian_organization.name;
+          // ClinicalDocument.custodian.assignedCustodian.representedCustodianOrganization.telecom
+          cda_representedCustodianOrganization.telecom -> fhir_custodian_organization.telecom;
+          // ClinicalDocument.custodian.assignedCustodian.representedCustodianOrganization.addr
+          cda_representedCustodianOrganization.addr -> fhir_custodian_organization.address;
+        };
+    };
+  };
+
   // src.componentOf as comp ->  bundle.entry as e,
   //   e.resource = create('Encounter') as encounter,
   //   encounter.id = uuid() as uuid,
