@@ -185,7 +185,10 @@ group CdaToFhirComposition(source cda : ClinicalDocument, target fhir_compositio
           // ClinicalDocument.custodian.assignedCustodian.representedCustodianOrganization.telecom
           cda_representedCustodianOrganization.telecom -> fhir_custodian_organization.telecom;
           // ClinicalDocument.custodian.assignedCustodian.representedCustodianOrganization.addr
-          cda_representedCustodianOrganization.addr -> fhir_custodian_organization.address;
+          cda_representedCustodianOrganization.addr as cda_custodian_addr ->
+            fhir_custodian_organization.address = create('Address') as fhir_custodian_address then
+            CdaAdressCompilationToFhirAustrianAddress(cda_custodian_addr, fhir_custodian_address)
+            "CdaCustodianAddressToFhirCustodianAustrianAddress";
         };
     };
   };
