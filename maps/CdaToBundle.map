@@ -194,6 +194,8 @@ group CdaToFhirComposition(source cda : ClinicalDocument, target fhir_compositio
     };
   };
 
+  // ClinicalDocument.informationRecipient
+  // TODO FHIR Resource to be defined
   // src.componentOf as comp ->  bundle.entry as e,
   //   e.resource = create('Encounter') as encounter,
   //   encounter.id = uuid() as uuid,
