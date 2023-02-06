@@ -185,10 +185,11 @@ group CdaToFhirComposition(source cda : ClinicalDocument, target fhir_compositio
           // ClinicalDocument.custodian.assignedCustodian.representedCustodianOrganization.telecom
           cda_representedCustodianOrganization.telecom -> fhir_custodian_organization.telecom;
           // ClinicalDocument.custodian.assignedCustodian.representedCustodianOrganization.addr
-          cda_representedCustodianOrganization.addr as cda_custodian_addr ->
-            fhir_custodian_organization.address = create('Address') as fhir_custodian_address then
-            CdaAdressCompilationToFhirAustrianAddress(cda_custodian_addr, fhir_custodian_address)
-            "CdaCustodianAddressToFhirCustodianAustrianAddress";
+          // cda_representedCustodianOrganization.addr as cda_custodian_addr ->
+          //   fhir_custodian_organization.address = create('Address') as fhir_custodian_address then
+          //   CdaAdressCompilationToFhirAustrianAddress(cda_custodian_addr, fhir_custodian_address)
+          //   "CdaCustodianAddressToFhirCustodianAustrianAddress";
+          cda_representedCustodianOrganization.addr -> fhir_custodian_organization.address;
         };
     };
   };
@@ -297,10 +298,11 @@ group CdaPatientRoleToFhirPatient(source cda_patientRole : PatientRole, target f
   } "CdaPatientIdToFhirPatientIdentifier";
 
   // patientRole.addr using ADAustrianAddress
-  cda_patientRole.addr as cda_patientRole_addr ->
-    fhir_patient.address = create('Address') as fhir_patient_address then
-    CdaAdressCompilationToFhirAustrianAddress(cda_patientRole_addr, fhir_patient_address)
-    "CdaPatientAddressToFhirPatientAustrianAddress";
+  // cda_patientRole.addr as cda_patientRole_addr ->
+  //   fhir_patient.address = create('Address') as fhir_patient_address then
+  //   CdaAdressCompilationToFhirAustrianAddress(cda_patientRole_addr, fhir_patient_address)
+  //   "CdaPatientAddressToFhirPatientAustrianAddress";
+  cda_patientRole.addr -> fhir_patient.address;
 
   // patientRole.telecom
   cda_patientRole.telecom -> fhir_patient.telecom;
@@ -342,7 +344,8 @@ group CdaPatientRoleToFhirPatient(source cda_patientRole : PatientRole, target f
     cda_patient.guardian as cda_patient_guardian -> fhir_patient.contact as fhir_patient_contact then {
       // TODO code for fhir_patient_contact.relationship
       // patient.guardian.addr
-      cda_patient_guardian.addr as cda_patient_guardian_addr -> fhir_patient_contact.address = create('Address') as fhir_contact_address then CdaAdressCompilationToFhirAustrianAddress(cda_patient_guardian_addr, fhir_contact_address) "CdaGuardianAddressToFhirContactAddress";
+      // cda_patient_guardian.addr as cda_patient_guardian_addr -> fhir_patient_contact.address = create('Address') as fhir_contact_address then CdaAdressCompilationToFhirAustrianAddress(cda_patient_guardian_addr, fhir_contact_address) "CdaGuardianAddressToFhirContactAddress";
+      cda_patient_guardian.addr -> fhir_patient_contact.address;
       // patient.guardian.telecom
       cda_patient_guardian.telecom -> fhir_patient_contact.telecom;
       // patient.guardian.guardianPerson

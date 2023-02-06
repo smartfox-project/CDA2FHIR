@@ -317,30 +317,18 @@ group CdaOrganizationCompilationToFhirOrganization(source cda_organization, targ
   cda_organization.id -> fhir_organization.identifier;
   cda_organization.name -> fhir_organization.name;
   cda_organization.telecom -> fhir_organization.telecom;
-  cda_organization.addr as cda_organization_addr ->
-    fhir_organization.address = create('Address') as fhir_organization_address then
-    CdaAdressCompilationToFhirAustrianAddress(cda_organization_addr, fhir_organization_address)
-    "CdaOrganizationAddressToFhirOrganizationAustrianAddress";
-}
-
-group ADAddress(source src : AD, target tgt : Address) extends Any <<types>> {
-  src.country as v -> tgt.country = (v.dataString);
-  src.state as v -> tgt.state = (v.dataString);
-  src.county as v -> tgt.district = (v.dataString);
-  src.city as v -> tgt.city = (v.dataString);
-  src.postalCode as v -> tgt.postalCode = (v.dataString);
-  src.streetAddressLine as v -> tgt.line = (v.dataString) "streetAddress";
-  src.streetName as v -> tgt.line = (v.dataString);
-  src.houseNumber as v -> tgt.line = (v.dataString);
-  src.use as c -> tgt.use = translate(c, '#addressUse', 'code') "addressUse";
-  src.useablePeriod -> tgt.period;
+  // cda_organization.addr as cda_organization_addr ->
+  //   fhir_organization.address = create('Address') as fhir_organization_address then
+  //   CdaAdressCompilationToFhirAustrianAddress(cda_organization_addr, fhir_organization_address)
+  //   "CdaOrganizationAddressToFhirOrganizationAustrianAddress";
+  cda_organization.addr -> fhir_organization.address;
 }
 
 // Source: https://art-decor.org/ad/#/at-lab-/rules/templates/1.2.40.0.34.6.0.11.9.25/2021-02-19T13:05:47
 //         https://art-decor.org/ad/#/at-lab-/rules/templates/1.2.40.0.34.6.0.11.9.10/2021-06-28T13:44:14
 // Target: https://fhir.hl7.at/r4-core-main/StructureDefinition-at-core-address.html
 // based on BlackTusk
-group CdaAdressCompilationToFhirAustrianAddress(source cda_address : AD, target fhir_address : Address) {
+group CdaAdressCompilationToFhirAustrianAddress(source cda_address : AD, target fhir_address : Address) extends Any <<types>> {
   // Note: Profile not allowed here
   // src ->
   //   tgt.meta as meta,
