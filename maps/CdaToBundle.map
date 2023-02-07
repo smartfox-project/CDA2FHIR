@@ -244,6 +244,9 @@ group CdaToFhirComposition(source cda : ClinicalDocument, target fhir_compositio
             fhir_practitionerRole_organization.type = 'Organization' then
             CdaOrganizationCompilationToFhirOrganization(cda_legalAuthenticator_representedOrganization, fhir_organization);
         };
+
+    // ClinicalDocument.authenticator
+    // TODO currently not supported
   };
 
   // src.componentOf as comp ->  bundle.entry as e,
