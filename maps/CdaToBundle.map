@@ -324,7 +324,21 @@ group CdaToFhirComposition(source cda : ClinicalDocument, target fhir_compositio
           fhir_composition_relatesTo.target = create('Identifier') as fhir_target_identifier
           then II(cda_parentDocument_id, fhir_target_identifier);
       };
-    };
+  };
+
+  // ClinicalDocument.componentOf
+  cda.componentOf as cda_componentOf then {
+    // ClinicalDocument.componentOf.encompassingEncounter
+    cda_componentOf.encompassingEncounter as cda_encompassingEncounter ->
+      fhir_bundle.entry as fhir_bundle_entry,
+      fhir_bundle_entry.resource = create('Encounter') as fhir_encounter,
+      fhir_encounter.id = uuid() as fhir_encounter_id,
+      fhir_bundle_entry.fullUrl = append('urn:uuid:', fhir_encounter_id),
+      fhir_composition.encounter = create('Reference') as fhir_composition_encounter_reference,
+      fhir_composition_encounter_reference.reference = reference(fhir_encounter),
+      fhir_composition_encounter_reference.type = 'Encounter'
+      then CdaEncompassingEncounterToFhirEncounter(cda_encompassingEncounter, fhir_encounter, fhir_bundle);
+  };
 
   // src.componentOf as comp ->  bundle.entry as e,
   //   e.resource = create('Encounter') as encounter,
@@ -632,6 +646,94 @@ group CdaAuthorToFhirDevice(source cda_author : Author, target fhir_device : Dev
     };
 }
 
+group CdaEncompassingEncounterToFhirEncounter(source cda_encompassingEncounter : EncompassingEncounter, target fhir_encounter : Encounter, target fhir_bundle : Bundle) {
+  // encompassingEncounter.id
+  cda_encompassingEncounter.id -> fhir_encounter.identifier;
+  // encompassingEncounter.code
+  cda_encompassingEncounter.code -> fhir_encounter.type;
+  // encompassingEncounter.effectiveTime
+  cda_encompassingEncounter.effectiveTime -> fhir_encounter.period;
+  // encompassingEncounter.responsibleParty
+  cda_encompassingEncounter.responsibleParty as cda_responsibleParty then {
+    // encompassingEncounter.responsibleParty.assignedEntity
+    cda_responsibleParty.assignedEntity as cda_assignedEntity ->
+      fhir_encounter.participant as fhir_encounter_participant,
+      // create the PractitionerRole
+      fhir_bundle.entry as fhir_bundle_entry,
+      fhir_bundle_entry.resource = create('PractitionerRole') as fhir_practitionerRole,
+      fhir_practitionerRole.id = uuid() as fhir_practitionerRole_id,
+      fhir_bundle_entry.fullUrl = append('urn:uuid:', fhir_practitionerRole_id),
+      fhir_encounter_participant.individual = create('Reference') as fhir_practitionerRole_reference,
+      fhir_practitionerRole_reference.reference = reference(fhir_practitionerRole),
+      fhir_practitionerRole_reference.type = 'PractitionerRole' then
+      CdaAssignedEntityToFhirPractitionerRole(cda_assignedEntity, fhir_practitionerRole, fhir_bundle);
+  };
+  // encompassingEncounter.location
+  cda_encompassingEncounter.location as cda_location then {
+    // encompassingEncounter.location.healthCareFacility
+    cda_location.healthCareFacility as cda_healthCareFacility ->
+      fhir_encounter.location as fhir_encounter_location,
+      // create the Location
+      fhir_bundle.entry as fhir_bundle_entry,
+      fhir_bundle_entry.resource = create('Location') as fhir_location,
+      fhir_location.id = uuid() as fhir_location_id,
+      fhir_bundle_entry.fullUrl = append('urn:uuid:', fhir_location_id),
+      fhir_encounter_location.location = create('Reference') as fhir_location_reference,
+      fhir_location_reference.reference = reference(fhir_location),
+      fhir_location_reference.type = 'Location' then {
+        // encompassingEncounter.location.healthCareFacility.code
+        cda_healthCareFacility.code -> fhir_location.type;
+        // encompassingEncounter.location.healthCareFacility.serviceProviderOrganization
+        cda_healthCareFacility.serviceProviderOrganization as cda_serviceProviderOrganization ->
+          fhir_bundle.entry as fhir_bundle_entry,
+          fhir_bundle_entry.resource = create('Organization') as fhir_organization,
+          fhir_organization.id = uuid() as fhir_organization_id,
+          fhir_bundle_entry.fullUrl = append('urn:uuid:', fhir_organization_id),
+          fhir_location.managingOrganization	 = create('Reference') as fhir_location_managingOrganization,
+          fhir_location_managingOrganization.reference = reference(fhir_organization),
+          fhir_location_managingOrganization.type = 'Organization' then
+          CdaOrganizationCompilationToFhirOrganization(cda_serviceProviderOrganization, fhir_organization);
+      };
+  };
+}
+
+// Source: https://art-decor.org/ad/#/at-lab-/rules/templates/1.2.40.0.34.6.0.11.9.22/2021-05-26T13:50:41
+// Target: http://hl7.org/fhir/practitionerrole.html
+//         http://hl7.org/fhir/practitioner.html
+group CdaAssignedEntityToFhirPractitionerRole(source cda_assignedEntity : AssignedEntity, target fhir_practitionerRole : PractitionerRole, target fhir_bundle : Bundle){
+  cda_assignedEntity ->
+    // create the Practitioner
+    fhir_bundle.entry as fhir_bundle_entry,
+    fhir_bundle_entry.resource = create('Practitioner') as fhir_practitioner,
+    fhir_practitioner.id = uuid() as fhir_practitioner_id,
+    fhir_bundle_entry.fullUrl = append('urn:uuid:', fhir_practitioner_id),
+    fhir_practitionerRole.practitioner = create('Reference') as fhir_practitionerRole_practitioner_reference,
+    fhir_practitionerRole_practitioner_reference.reference = reference(fhir_practitioner),
+    fhir_practitionerRole_practitioner_reference.type = 'Practitioner' then {
+      // assignedEntity.id
+      cda_assignedEntity.id -> fhir_practitionerRole.identifier;
+      // assignedEntity.addr
+      cda_assignedEntity.addr -> fhir_practitioner.address;
+      // assignedEntity.telecom
+      cda_assignedEntity.telecom -> fhir_practitioner.telecom;
+      // assignedEntity.assignedPerson
+      cda_assignedEntity.assignedPerson as cda_assignedPerson then {
+        // assignedEntity.assignedPerson.name
+        cda_assignedPerson.name -> fhir_practitioner.name;
+      };
+      // assignedEntity.representedOrganization
+      cda_assignedEntity.representedOrganization as cda_representedOrganization ->
+        fhir_bundle.entry as fhir_bundle_entry,
+        fhir_bundle_entry.resource = create('Organization') as fhir_organization,
+        fhir_organization.id = uuid() as fhir_organization_id,
+        fhir_bundle_entry.fullUrl = append('urn:uuid:', fhir_organization_id),
+        fhir_practitionerRole.organization = create('Reference') as fhir_practitionerRole_organization,
+        fhir_practitionerRole_organization.reference = reference(fhir_organization),
+        fhir_practitionerRole_organization.type = 'Organization' then
+        CdaOrganizationCompilationToFhirOrganization(cda_representedOrganization, fhir_organization);
+  } "CdaAssignedEntityToFhirPractitionerRole";
+}
+
 // group ClinicalDocumentEntityPractitioner(source src : AssignedEntity, target tgt : Practitioner) {
 //   src.id -> tgt.identifier;
 //   src.addr -> tgt.address;
@@ -648,31 +750,7 @@ group CdaAuthorToFhirDevice(source cda_author : Author, target fhir_device : Dev
 //   src.addr -> tgt.address;
 // }
 
-// group ClinicalDocumentEncounter(source src : EncompassingEncounter, target bundle : Bundle, target tgt : Encounter) {
-//   src.id -> tgt.identifier;
-//   src.code -> tgt.type;
-//   src.effectiveTime -> tgt.period;
-//   src where admissionReferralSourceCode.exists() or dischargeDispositionCode.exists() -> tgt.hospitalization as hosp then {
-//     src.admissionReferralSourceCode -> hosp.admitSource "adminReferral";
-//     src.dischargeDispositionCode -> hosp.dischargeDisposition "discDisposition";
-//   } "hospitalization";
-//   src.encounterParticipant as srcPart -> tgt.participant as tgtPart then {
-//     srcPart.typeCode as code -> tgtPart.type = cc('http://terminology.hl7.org/CodeSystem/v3-ParticipationType', code);
-//     srcPart.time -> tgtPart.period;
-//     srcPart.assignedEntity as entity ->  bundle.entry as e,  e.resource = create('Practitioner') as practitioner,
-//       practitioner.id = uuid() as uuid2,
-//       e.fullUrl = append('urn:uuid:',uuid2) then {
-//       entity -> tgtPart.individual = create('Reference') as reference, reference.reference = ('urn:uuid:'+%practitioner.id) then ClinicalDocumentEntityPractitioner(entity, practitioner) "entry";
-//     } "entity";
-//   } "participant";
-//   src.location as srcLocation then {
-//     srcLocation.healthCareFacility as facility ->  bundle.entry as e,  e.resource = create('Location') as location,
-//        location.id = uuid() as uuid2,
-//        e.fullUrl = append('urn:uuid:',uuid2) then {
-//       facility ->  tgt.location as tgtLocation,  tgtLocation.location = create('Reference') as reference, reference.reference = ('urn:uuid:'+%location.id) then ClinicalDocumentLocation(facility, bundle, location) "facLocation";
-//     } "facility";
-//   } "location";
-// }
+
 
 // group ClinicalDocumentLocation(source src : HealthCareFacility, target bundle : Bundle, target tgt : Location) {
 //   src.id -> tgt.identifier;
