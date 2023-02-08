@@ -282,6 +282,10 @@ group CdaToFhirComposition(source cda : ClinicalDocument, target fhir_compositio
   // TODO based on analysis of sample reports currently not required
 
 
+  // ClinicalDocument.inFulfillmentOf
+  // TODO
+  // e.g. instead of Patient as fhir_composition.subject use DiagnosticReport
+  // -> allows capturing Patient, Ordering Provider, Order Number, Performer (if there is only one)
 
   // src.componentOf as comp ->  bundle.entry as e,
   //   e.resource = create('Encounter') as encounter,
