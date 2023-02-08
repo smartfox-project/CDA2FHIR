@@ -162,7 +162,7 @@ group CdaToFhirComposition(source cda : ClinicalDocument, target fhir_compositio
     CdaAuthorToFhirDevice(cda_author, fhir_device, fhir_bundle);
 
   // ClinicalDocument.dataEnterer
-  // TODO currently not supported
+  // TODO based on analysis of sample reports currently not required
 
   // ClinicalDocument.custodian
   cda.custodian as cda_custodian then {
@@ -195,7 +195,7 @@ group CdaToFhirComposition(source cda : ClinicalDocument, target fhir_compositio
   };
 
   // ClinicalDocument.informationRecipient
-  // TODO FHIR Resource to be defined
+  // TODO based on analysis of sample reports currently not required
 
   // ClinicalDocument.legalAuthenticator
   cda.legalAuthenticator as cda_legalAuthenticator ->
@@ -246,7 +246,39 @@ group CdaToFhirComposition(source cda : ClinicalDocument, target fhir_compositio
         };
 
     // ClinicalDocument.authenticator
-    // TODO currently not supported
+    // TODO based on analysis of sample reports currently not required
+
+    // Participant Auftraggeber / Ordering Provider
+    // ClinicalDocument.participant[@typeCode='REF']
+    // TODO extension required
+
+    // Participant Fachlicher Ansprechpartner
+    // ClinicalDocument.participant[hl7:templateId [@root='1.2.40.0.34.6.0.11.1.20']]
+    // TODO extension required
+
+    // Participant Hausarzt
+    // ClinicalDocument.participant[hl7:templateId [@root='1.2.40.0.34.6.0.11.1.23']]
+    // TODO based on analysis of sample reports currently not required
+
+    // Participant Auskunftsberechtigte Person (Notfallkontakt)
+    // ClinicalDocument.participant[hl7:templateId [@root='1.2.40.0.34.6.0.11.1.27']]
+    // TODO based on analysis of sample reports currently not required
+
+    // Participant Angehoerige
+    // ClinicalDocument.participant[hl7:templateId [@root='1.2.40.0.34.6.0.11.1.25']]
+    // TODO extension required
+
+    // Participant Versicherung
+    // ClinicalDocument.participant[hl7:templateId [@root='1.2.40.0.34.6.0.11.1.26']]
+    // TODO extension required
+
+    // Participant Betreuungsorganisation
+    // ClinicalDocument.participant[hl7:templateId [@root='1.2.40.0.34.6.0.11.1.29']]
+    // TODO based on analysis of sample reports currently not required
+
+    // Participant Weitere Behandler
+    // ClinicalDocument.participant[hl7:templateId [@root='1.2.40.0.34.6.0.11.1.28']]
+    // TODO based on analysis of sample reports currently not required
   };
 
   // src.componentOf as comp ->  bundle.entry as e,
