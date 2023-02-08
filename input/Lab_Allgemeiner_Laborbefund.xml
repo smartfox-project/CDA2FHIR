@@ -815,6 +815,11 @@
     <!-- Bezug zu vorgehenden Dokumenten (siehe Allgemeiner Implementierungsleitfaden) -->
     <!-- relatedDocument -->
     <!-- Nicht angewandt in diesem Demo-Dokument -->
+    <relatedDocument typeCode="RPLC">
+        <parentDocument classCode="DOCCLIN" moodCode="EVN">
+            <id assigningAuthorityName="Amadeus Spital" extension="ABCDEFG1234567" root="1.2.40.0.34.99.4613.3.1"/>
+        </parentDocument>
+    </relatedDocument>
 
     <!-- Dokumentation des Patientenkontakts (siehe Allgemeiner Implementierungsleitfaden) -->
     <componentOf>
