@@ -244,42 +244,44 @@ group CdaToFhirComposition(source cda : ClinicalDocument, target fhir_compositio
             fhir_practitionerRole_organization.type = 'Organization' then
             CdaOrganizationCompilationToFhirOrganization(cda_legalAuthenticator_representedOrganization, fhir_organization);
         };
-
-    // ClinicalDocument.authenticator
-    // TODO based on analysis of sample reports currently not required
-
-    // Participant Auftraggeber / Ordering Provider
-    // ClinicalDocument.participant[@typeCode='REF']
-    // TODO extension required
-
-    // Participant Fachlicher Ansprechpartner
-    // ClinicalDocument.participant[hl7:templateId [@root='1.2.40.0.34.6.0.11.1.20']]
-    // TODO extension required
-
-    // Participant Hausarzt
-    // ClinicalDocument.participant[hl7:templateId [@root='1.2.40.0.34.6.0.11.1.23']]
-    // TODO based on analysis of sample reports currently not required
-
-    // Participant Auskunftsberechtigte Person (Notfallkontakt)
-    // ClinicalDocument.participant[hl7:templateId [@root='1.2.40.0.34.6.0.11.1.27']]
-    // TODO based on analysis of sample reports currently not required
-
-    // Participant Angehoerige
-    // ClinicalDocument.participant[hl7:templateId [@root='1.2.40.0.34.6.0.11.1.25']]
-    // TODO extension required
-
-    // Participant Versicherung
-    // ClinicalDocument.participant[hl7:templateId [@root='1.2.40.0.34.6.0.11.1.26']]
-    // TODO extension required
-
-    // Participant Betreuungsorganisation
-    // ClinicalDocument.participant[hl7:templateId [@root='1.2.40.0.34.6.0.11.1.29']]
-    // TODO based on analysis of sample reports currently not required
-
-    // Participant Weitere Behandler
-    // ClinicalDocument.participant[hl7:templateId [@root='1.2.40.0.34.6.0.11.1.28']]
-    // TODO based on analysis of sample reports currently not required
   };
+
+  // ClinicalDocument.authenticator
+  // TODO based on analysis of sample reports currently not required
+
+  // Participant Auftraggeber / Ordering Provider
+  // ClinicalDocument.participant[@typeCode='REF']
+  // TODO extension required
+
+  // Participant Fachlicher Ansprechpartner
+  // ClinicalDocument.participant[hl7:templateId [@root='1.2.40.0.34.6.0.11.1.20']]
+  // TODO extension required
+
+  // Participant Hausarzt
+  // ClinicalDocument.participant[hl7:templateId [@root='1.2.40.0.34.6.0.11.1.23']]
+  // TODO based on analysis of sample reports currently not required
+
+  // Participant Auskunftsberechtigte Person (Notfallkontakt)
+  // ClinicalDocument.participant[hl7:templateId [@root='1.2.40.0.34.6.0.11.1.27']]
+  // TODO based on analysis of sample reports currently not required
+
+  // Participant Angehoerige
+  // ClinicalDocument.participant[hl7:templateId [@root='1.2.40.0.34.6.0.11.1.25']]
+  // TODO extension required
+
+  // Participant Versicherung
+  // ClinicalDocument.participant[hl7:templateId [@root='1.2.40.0.34.6.0.11.1.26']]
+  // TODO extension required
+
+  // Participant Betreuungsorganisation
+  // ClinicalDocument.participant[hl7:templateId [@root='1.2.40.0.34.6.0.11.1.29']]
+  // TODO based on analysis of sample reports currently not required
+
+  // Participant Weitere Behandler
+  // ClinicalDocument.participant[hl7:templateId [@root='1.2.40.0.34.6.0.11.1.28']]
+  // TODO based on analysis of sample reports currently not required
+
+
 
   // src.componentOf as comp ->  bundle.entry as e,
   //   e.resource = create('Encounter') as encounter,
