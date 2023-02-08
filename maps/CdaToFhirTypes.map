@@ -132,6 +132,7 @@ uses "http://hl7.org/fhir/StructureDefinition/ContactPoint" as target
 uses "http://hl7.org/fhir/cda/StructureDefinition/BL" as source
 uses "http://hl7.org/fhir/StructureDefinition/boolean" as target
 uses "http://hl7.org/fhir/cda/StructureDefinition/IVL_TS" as source
+uses "http://hl7.org/fhir/cda/StructureDefinition/IVXB-TS" alias IVXB_TS as source
 uses "http://hl7.org/fhir/StructureDefinition/Period" as target
 
 group Any(source src, target tgt) {
@@ -180,6 +181,9 @@ group TSInstant(source src : TS, target tgt : instant) extends Any <<types>> {
 }
 
 group TSDateTime(source src : TS, target tgt : dateTime) extends TSInstant <<types>> {
+}
+
+group IVXB_TSDateTime(source src : IVXB_TS, target tgt : dateTime) extends TSDateTime <<types>> {
 }
 
 group TSDate(source src : TS, target tgt : date) extends TSInstant <<types>> {
