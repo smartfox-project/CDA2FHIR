@@ -45,6 +45,7 @@ uses "http://hl7.org/fhir/StructureDefinition/Person" alias Patient as produced
 uses "http://hl7.org/fhir/StructureDefinition/Practitioner" alias Practitioner as produced
 uses "http://hl7.org/fhir/StructureDefinition/PractitionerRole" alias PractitionerRole as produced
 uses "http://hl7.org/fhir/StructureDefinition/Organization" alias Organization as produced
+uses "http://hl7.org/fhir/StructureDefinition/DiagnosticReport" alias DiagnosticReport as produced
 
 imports "http://hl7.at/fhir/HL7ATCoreProfiles/4.0.1/StructureMap/at-cda-to-fhir-types"
 
@@ -77,18 +78,34 @@ group CdaToFhirBundle(source cda : ClinicalDocument, target fhir_bundle : Bundle
     fhir_specimen.id = uuid() as fhir_specimen_uuid,
     fhir_bundle_entry_3.fullUrl = append('urn:uuid:', fhir_specimen_uuid),
 
-    // create relation from composition to patient
+    // create the DiagnosticReport to have it as reference for later transformations
+    fhir_bundle.entry as fhir_bundle_entry_4,
+    fhir_bundle_entry_4.resource = create('DiagnosticReport') as fhir_diagnosticReport,
+    fhir_diagnosticReport.id = uuid() as fhir_diagnosticReport_id,
+    fhir_bundle_entry_4.fullUrl = append('urn:uuid:', fhir_diagnosticReport_id),
+
+    // create relation from composition to DiagnosticReport
     fhir_composition.subject = create('Reference') as fhir_composition_subject_reference,
-    fhir_composition_subject_reference.reference = reference(fhir_patient),
-    fhir_composition_subject_reference.type = 'Patient',
+    fhir_composition_subject_reference.reference = reference(fhir_diagnosticReport),
+    fhir_composition_subject_reference.type = 'DiagnosticReport',
+
+    // create relation from composition to patient
+    fhir_diagnosticReport.subject = create('Reference') as fhir_diagnosticReport_subject_reference,
+    fhir_diagnosticReport_subject_reference.reference = reference(fhir_patient),
+    fhir_diagnosticReport_subject_reference.type = 'Patient',
 
     // create relation from specimen to patient
     fhir_specimen.subject = create('Reference') as fhir_specimen_patient_reference,
     fhir_specimen_patient_reference.reference = reference(fhir_patient),
-    fhir_specimen_patient_reference.type = 'Patient'
+    fhir_specimen_patient_reference.type = 'Patient',
+
+    // create relation from DiagnosticReport to specimen
+    fhir_diagnosticReport.specimen = create('Reference') as fhir_diagnosticReport_specimen_reference,
+    fhir_diagnosticReport_specimen_reference.reference = reference(fhir_specimen),
+    fhir_diagnosticReport_specimen_reference.type = 'Specimen'
 
     then {
-      cda then CdaToFhirComposition(cda, fhir_composition, fhir_patient, fhir_bundle) "CdaToFhirComposition";
+      cda then CdaToFhirComposition(cda, fhir_composition, fhir_patient, fhir_diagnosticReport, fhir_bundle) "CdaToFhirComposition";
       // cda.component as component then {
       //   component.structuredBody as structuredBody then {
       //     structuredBody.component as component log 'component' then {
@@ -103,7 +120,7 @@ group CdaToFhirBundle(source cda : ClinicalDocument, target fhir_bundle : Bundle
 
 // _________________________ Header Level Templates _________________________
 
-group CdaToFhirComposition(source cda : ClinicalDocument, target fhir_composition : Composition, target fhir_patient: Patient, target fhir_bundle : Bundle) {
+group CdaToFhirComposition(source cda : ClinicalDocument, target fhir_composition : Composition, target fhir_patient: Patient, target fhir_diagnosticReport: DiagnosticReport, target fhir_bundle : Bundle) {
   // ClinicalDocument.code & ClinicalDocument.code.translation
   cda.code -> fhir_composition.type;
   // ClinicalDocument.title
