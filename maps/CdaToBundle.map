@@ -214,36 +214,8 @@ group CdaToFhirComposition(source cda : ClinicalDocument, target fhir_compositio
         fhir_bundle_entry01.fullUrl = append('urn:uuid:', fhir_practitionerRole_id),
         fhir_composition_attester.party = create('Reference') as fhir_composition_attester_reference,
         fhir_composition_attester_reference.reference = reference(fhir_practitionerRole),
-        fhir_composition_attester_reference.type = 'PractitionerRole',
-        // Create a Practitioner
-        fhir_bundle.entry as fhir_bundle_entry02,
-        fhir_bundle_entry02.resource = create('Practitioner') as fhir_practitioner,
-        fhir_practitioner.id = uuid() as fhir_practitioner_id,
-        fhir_bundle_entry02.fullUrl = append('urn:uuid:', fhir_practitioner_id),
-        fhir_practitionerRole.practitioner = create('Reference') as fhir_practitionerRole_practitioner_reference,
-        fhir_practitionerRole_practitioner_reference.reference = reference(fhir_practitioner),
-        fhir_practitionerRole_practitioner_reference.type = 'Practitioner' then {
-          // ClinicalDocument.legalAuthenticator.assignedEntity.id
-          cda_legalAuthenticator_assignedEntity.id -> fhir_practitioner.identifier;
-          // ClinicalDocument.legalAuthenticator.assignedEntity.addr
-          cda_legalAuthenticator_assignedEntity.addr -> fhir_practitioner.address;
-          // ClinicalDocument.legalAuthenticator.assignedEntity.telecom
-          cda_legalAuthenticator_assignedEntity.telecom -> fhir_practitioner.telecom;
-          // ClinicalDocument.legalAuthenticator.assignedEntity.assignedPerson
-          cda_legalAuthenticator_assignedEntity.assignedPerson as cda_legalAuthenticator_assignedPerson then {
-            cda_legalAuthenticator_assignedPerson.name -> fhir_practitioner.name;
-          };
-          // ClinicalDocument.legalAuthenticator.assignedEntity.representedOrganization
-          cda_legalAuthenticator_assignedEntity.representedOrganization as cda_legalAuthenticator_representedOrganization ->
-            fhir_bundle.entry as fhir_bundle_entry,
-            fhir_bundle_entry.resource = create('Organization') as fhir_organization,
-            fhir_organization.id = uuid() as fhir_organization_id,
-            fhir_bundle_entry.fullUrl = append('urn:uuid:', fhir_organization_id),
-            fhir_practitionerRole.organization = create('Reference') as fhir_practitionerRole_organization,
-            fhir_practitionerRole_organization.reference = reference(fhir_organization),
-            fhir_practitionerRole_organization.type = 'Organization' then
-            CdaOrganizationCompilationToFhirOrganization(cda_legalAuthenticator_representedOrganization, fhir_organization);
-        };
+        fhir_composition_attester_reference.type = 'PractitionerRole'
+        then CdaAssignedEntityToFhirPractitionerRole(cda_legalAuthenticator_assignedEntity, fhir_practitionerRole, fhir_bundle);
   };
 
   // ClinicalDocument.authenticator
