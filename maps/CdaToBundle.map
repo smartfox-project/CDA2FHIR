@@ -299,9 +299,13 @@ group CdaToFhirComposition(source cda : ClinicalDocument, target fhir_compositio
   // TODO based on analysis of sample reports currently not required
 
   // ClinicalDocument.inFulfillmentOf
-  // TODO
-  // e.g. instead of Patient as fhir_composition.subject use DiagnosticReport
-  // -> allows capturing Patient, Ordering Provider, Order Number, Performer (if there is only one)
+  cda.inFulfillmentOf as cda_inFulFillmentOf then {
+    // ClinicalDocument.inFulfillmentOf.order
+    cda_inFulFillmentOf.order as cda_inFulFillmentOf_order then {
+      // ClinicalDocument.inFulfillmentOf.order.id
+      cda_inFulFillmentOf_order.id -> fhir_serviceRequest.identifier;
+    };
+  };
 
   // ClinicalDocument.documentationOf
   cda.documentationOf as cda_documentationOf then {
