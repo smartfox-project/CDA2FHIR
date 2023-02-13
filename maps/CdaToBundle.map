@@ -360,53 +360,6 @@ group CdaToFhirComposition(source cda : ClinicalDocument, target fhir_compositio
       fhir_composition_encounter_reference.type = 'Encounter'
       then CdaEncompassingEncounterToFhirEncounter(cda_encompassingEncounter, fhir_encounter, fhir_bundle);
   };
-
-  // src.componentOf as comp ->  bundle.entry as e,
-  //   e.resource = create('Encounter') as encounter,
-  //   encounter.id = uuid() as uuid,
-  //   e.fullUrl = append('urn:uuid:',uuid) then {
-  //     comp.encompassingEncounter as srcEnc -> tgt.encounter = create('Reference') as reference, reference.reference = ('urn:uuid:'+%encounter.id) then ClinicalDocumentEncounter(srcEnc, bundle, encounter) "srcEncounter";
-  //   } "encompassingEncounter";
-
-  // src.legalAuthenticator as legalAuth ->  bundle.entry as e,
-  //   e.resource = create('Practitioner') as practitioner,
-  //   practitioner.id = uuid() as uuid2,
-  //   e.fullUrl = append('urn:uuid:',uuid2) then {
-  //   legalAuth -> tgt.attester as attester then {
-  //     legalAuth -> attester.mode = 'legal' "mode";
-  //     legalAuth.time -> attester.time;
-  //     legalAuth.assignedEntity as entity -> attester.party = create('Reference') as reference, reference.reference = ('urn:uuid:'+%practitioner.id) then ClinicalDocumentEntityPractitioner(entity, practitioner) "entity";
-  //   } "attester";
-  // } "legalAuth";
-  // src.authenticator as auth ->  bundle.entry as e,  e.resource = create('Practitioner') as practitioner,
-  //   practitioner.id = uuid() as uuid2,
-  //   e.fullUrl = append('urn:uuid:',uuid2) then {
-  //   auth -> tgt.attester as attester then {
-  //     auth -> attester.mode = 'official' "mode";
-  //     auth.time -> attester.time;
-  //     auth.assignedEntity as entity -> attester.party = create('Reference') as reference, reference.reference = ('urn:uuid:'+%practitioner.id) then ClinicalDocumentEntityPractitioner(entity, practitioner) "entity";
-  //   } "attester";
-  // } "auth";
-  // src.custodian as custodian -> bundle.entry as e then {
-  //   custodian.assignedCustodian as assignedCustodian ->
-  //     e.resource = create('Organization') as organization,
-  //     organization.id = uuid() as uuid3,
-  //     e.fullUrl = append('urn:uuid:',uuid3) then {
-  //     assignedCustodian.representedCustodianOrganization as srcOrg -> tgt.custodian = create('Reference') as reference, reference.reference = ('urn:uuid:'+%organization.id) then ClinicalDocumentOrganization(srcOrg, organization) "assignedCustodian";
-  //   } "custodian";
-  // } "cust";
-  // src.documentationOf as docOf then {
-  //   docOf.serviceEvent as serviceEvent -> tgt.event as event then {
-  //     serviceEvent.code -> event.code "eventCode";
-  //     serviceEvent.effectiveTime -> event.period "eventTime"; // performerType: for src.performer.typeCode ...
-  //   } "docOf";
-  // } "documentationOf";
-  // src.relatedDocument as relatedDoc -> tgt.relatesTo as relates then {
-  //   relatedDoc.typeCode -> relates.code;
-  //   relatedDoc.parentDocument as parentDoc then {
-  //     parentDoc.setId -> relates.targetIdentifier;
-  //   } "parentDoc";
-  // } "relatedDoc";
 }
 
 // Source: https://art-decor.org/art-decor/decor-templates--at-lab-?section=templates&id=1.2.40.0.34.6.0.11.1.3&effectiveDate=2020-11-24T10:03:02&language=de-DE
@@ -791,39 +744,6 @@ group CdaAssociatedEntityToFhirPractitionerRole(source cda_associatedEntity : As
         CdaOrganizationCompilationToFhirOrganization(cda_scopingOrganization, fhir_organization);
   } "CdaAssociatedEntityToFhirPractitionerRole";
 }
-
-// group ClinicalDocumentEntityPractitioner(source src : AssignedEntity, target tgt : Practitioner) {
-//   src.id -> tgt.identifier;
-//   src.addr -> tgt.address;
-//   src.telecom -> tgt.telecom;
-//   src.assignedPerson as person then {
-//     person.name -> tgt.name;
-//   } "name";
-// }
-
-// group ClinicalDocumentOrganization(source src : CustodianOrganization, target tgt : Organization) {
-//   src.id -> tgt.identifier;
-//   src.name as v -> tgt.name = (v.other);
-//   src.telecom -> tgt.telecom;
-//   src.addr -> tgt.address;
-// }
-
-
-
-// group ClinicalDocumentLocation(source src : HealthCareFacility, target bundle : Bundle, target tgt : Location) {
-//   src.id -> tgt.identifier;
-//   src.code -> tgt.type;
-//   src.location as location then {
-//  // place names are usually stored with no parts    location.name as srcName -> tgt.name = cast(srcName, 'string');
-//     location.addr -> tgt.address;
-//     location.serviceProviderOrganization as srcOrg ->  bundle.entry as e,  e.resource = create('Organization') as organization,
-//       organization.id = uuid() as uuid3,
-//       e.fullUrl = append('urn:uuid:',uuid3) then {
-//       srcOrg -> tgt.managingOrganization = create('Reference') as reference, reference.reference = ('urn:uuid:'+%organization.id) then ClinicalDocumentOrganization(srcOrg, organization) "organization";
-//     } "org";
-//   } "location"; // place names are usually stored with no parts
-// }
-
 
 // // source dataEnterer: https://art-decor.org/art-decor/decor-templates--hl7chcda-?id=2.16.756.5.30.1.1.10.2.7
 // // source author: https://art-decor.org/art-decor/decor-templates--hl7chcda-?id=2.16.840.1.113883.10.12.102
