@@ -39,6 +39,7 @@ uses "http://hl7.org/fhir/cda/StructureDefinition/AssociatedEntity" alias Associ
 uses "http://hl7.org/fhir/cda/StructureDefinition/CustodianOrganization" alias CustodianOrganization as queried
 uses "http://hl7.org/fhir/cda/StructureDefinition/Section" alias Section as queried
 uses "http://hl7.org/fhir/cda/StructureDefinition/PatientRole" alias PatientRole as queried
+uses "http://hl7.org/fhir/cda/StructureDefinition/StructuredBody" alias StructuredBody as queried
 uses "http://hl7.org/fhir/StructureDefinition/Bundle" alias Bundle as target
 uses "http://hl7.org/fhir/StructureDefinition/Composition" alias Composition as produced
 uses "http://hl7.org/fhir/StructureDefinition/Patient" alias Patient as produced
@@ -119,6 +120,12 @@ group CdaToFhirBundle(source cda : ClinicalDocument, target fhir_bundle : Bundle
 
     then {
       cda then CdaHeaderToFhirComposition(cda, fhir_composition, fhir_patient, fhir_diagnosticReport, fhir_serviceRequest, fhir_bundle) "CdaHeaderToFhirComposition";
+      // ClinicalDocument.component
+      cda.component as cda_component then {
+        // ClinicalDocument.component.structuredBody
+        cda_component.structuredBody as cda_structuredBody
+          then CdaBodyToFhirComposition(cda_structuredBody, fhir_composition, fhir_patient, fhir_specimen, fhir_bundle);
+      };
       // cda.component as component then {
       //   component.structuredBody as structuredBody then {
       //     structuredBody.component as component log 'component' then {
@@ -688,6 +695,13 @@ group CdaEncompassingEncounterToFhirEncounter(source cda_encompassingEncounter :
 // }
 
 // _________________________ Section Level Templates _________________________
+
+group CdaBodyToFhirComposition(source cda_structuredBody: StructuredBody, target fhir_composition: Composition, target fhir_patient: Patient, target fhir_specimen: Specimen, target fhir_bundle: Bundle) {
+  cda_structuredBody.component as cda_component then {
+    cda_component.section as cda_section ->
+
+  };
+}
 
 // group ClinicalDocumentSection(source cda : ClinicalDocument, source src : Section, source patient : Patient, target tgt, target bundle: Bundle) {
 //   src.id as id where ($this.root=%cda.id.root)=false -> tgt.extension as ext then ChExtEprSectionId(id, ext) "sectionId";
