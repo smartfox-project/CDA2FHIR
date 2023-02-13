@@ -118,7 +118,7 @@ group CdaToFhirBundle(source cda : ClinicalDocument, target fhir_bundle : Bundle
     fhir_diagnosticReport_basedOn_reference.type = 'ServiceRequest'
 
     then {
-      cda then CdaToFhirComposition(cda, fhir_composition, fhir_patient, fhir_diagnosticReport, fhir_serviceRequest, fhir_bundle) "CdaToFhirComposition";
+      cda then CdaHeaderToFhirComposition(cda, fhir_composition, fhir_patient, fhir_diagnosticReport, fhir_serviceRequest, fhir_bundle) "CdaHeaderToFhirComposition";
       // cda.component as component then {
       //   component.structuredBody as structuredBody then {
       //     structuredBody.component as component log 'component' then {
@@ -133,7 +133,7 @@ group CdaToFhirBundle(source cda : ClinicalDocument, target fhir_bundle : Bundle
 
 // _________________________ Header Level Templates _________________________
 
-group CdaToFhirComposition(source cda : ClinicalDocument, target fhir_composition : Composition, target fhir_patient: Patient, target fhir_diagnosticReport: DiagnosticReport, target fhir_serviceRequest: ServiceRequest, target fhir_bundle : Bundle) {
+group CdaHeaderToFhirComposition(source cda : ClinicalDocument, target fhir_composition : Composition, target fhir_patient: Patient, target fhir_diagnosticReport: DiagnosticReport, target fhir_serviceRequest: ServiceRequest, target fhir_bundle : Bundle) {
   // ClinicalDocument.code & ClinicalDocument.code.translation
   cda.code -> fhir_composition.type;
   // ClinicalDocument.title
