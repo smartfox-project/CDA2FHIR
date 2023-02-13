@@ -671,6 +671,39 @@ group CdaEncompassingEncounterToFhirEncounter(source cda_encompassingEncounter :
   };
 }
 
+// // source dataEnterer: https://art-decor.org/art-decor/decor-templates--hl7chcda-?id=2.16.756.5.30.1.1.10.2.7
+// // source author: https://art-decor.org/art-decor/decor-templates--hl7chcda-?id=2.16.840.1.113883.10.12.102
+// // target: https://build.fhir.org/ig/hl7ch/ch-core//StructureDefinition-ch-ext-epr-time.html
+// group ChExtEprTime(source src: TSDateTime, target ext: Extension) {
+//   src -> ext.url = 'http://fhir.ch/ig/ch-core/StructureDefinition/ch-ext-epr-time' "url";
+//   src -> ext.value = create('dateTime') as value then TSDateTime(src, value) "value";
+// }
+
+
+// // https://art-decor.org/art-decor/decor-templates--hl7chcda-?id=2.16.756.5.30.1.1.10.3.45
+// // target: http://build.fhir.org/ig/hl7ch/ch-core/branches/master/StructureDefinition-ch-ext-epr-sectionid.html
+// group ChExtEprSectionId(source src: II, target ext: Extension) {
+//   src -> ext.url = 'http://fhir.ch/ig/ch-core/StructureDefinition/ch-ext-epr-sectionid' "url";
+//   src -> ext.value = create('Identifier') as value then II(src, value) "value";
+// }
+
+// _________________________ Section Level Templates _________________________
+
+// group ClinicalDocumentSection(source cda : ClinicalDocument, source src : Section, source patient : Patient, target tgt, target bundle: Bundle) {
+//   src.id as id where ($this.root=%cda.id.root)=false -> tgt.extension as ext then ChExtEprSectionId(id, ext) "sectionId";
+//   src.title as t -> tgt.title = (t.dataString);
+//   src.code -> tgt.code;
+//   src.text as cdaText -> tgt.text as fhirText then {
+//     cdaText -> fhirText.status = 'generated' "narrativeStatus";
+//     cdaText as t -> fhirText.div = t "narrativeText";
+//   } "cdaText";
+//   src.section as srcSection -> tgt.section as tgtSection then ClinicalDocumentSection(cda, srcSection, patient, tgtSection, bundle);
+// }
+
+// _________________________ Entry Level Templates   ________________________
+
+// _________________________ Template Type not specified  ___________________
+
 // Source: https://art-decor.org/ad/#/at-lab-/rules/templates/1.2.40.0.34.6.0.11.9.22/2021-05-26T13:50:41
 // Target: http://hl7.org/fhir/practitionerrole.html
 //         http://hl7.org/fhir/practitioner.html
@@ -744,39 +777,6 @@ group CdaAssociatedEntityToFhirPractitionerRole(source cda_associatedEntity : As
         CdaOrganizationCompilationToFhirOrganization(cda_scopingOrganization, fhir_organization);
   } "CdaAssociatedEntityToFhirPractitionerRole";
 }
-
-// // source dataEnterer: https://art-decor.org/art-decor/decor-templates--hl7chcda-?id=2.16.756.5.30.1.1.10.2.7
-// // source author: https://art-decor.org/art-decor/decor-templates--hl7chcda-?id=2.16.840.1.113883.10.12.102
-// // target: https://build.fhir.org/ig/hl7ch/ch-core//StructureDefinition-ch-ext-epr-time.html
-// group ChExtEprTime(source src: TSDateTime, target ext: Extension) {
-//   src -> ext.url = 'http://fhir.ch/ig/ch-core/StructureDefinition/ch-ext-epr-time' "url";
-//   src -> ext.value = create('dateTime') as value then TSDateTime(src, value) "value";
-// }
-
-
-// // https://art-decor.org/art-decor/decor-templates--hl7chcda-?id=2.16.756.5.30.1.1.10.3.45
-// // target: http://build.fhir.org/ig/hl7ch/ch-core/branches/master/StructureDefinition-ch-ext-epr-sectionid.html
-// group ChExtEprSectionId(source src: II, target ext: Extension) {
-//   src -> ext.url = 'http://fhir.ch/ig/ch-core/StructureDefinition/ch-ext-epr-sectionid' "url";
-//   src -> ext.value = create('Identifier') as value then II(src, value) "value";
-// }
-
-// // _________________________ Section Level Templates _________________________
-
-// group ClinicalDocumentSection(source cda : ClinicalDocument, source src : Section, source patient : Patient, target tgt, target bundle: Bundle) {
-//   src.id as id where ($this.root=%cda.id.root)=false -> tgt.extension as ext then ChExtEprSectionId(id, ext) "sectionId";
-//   src.title as t -> tgt.title = (t.dataString);
-//   src.code -> tgt.code;
-//   src.text as cdaText -> tgt.text as fhirText then {
-//     cdaText -> fhirText.status = 'generated' "narrativeStatus";
-//     cdaText as t -> fhirText.div = t "narrativeText";
-//   } "cdaText";
-//   src.section as srcSection -> tgt.section as tgtSection then ClinicalDocumentSection(cda, srcSection, patient, tgtSection, bundle);
-// }
-
-// // _________________________ Entry Level Templates   ________________________
-
-// // _________________________ Template Type not specified  ___________________
 
 // group NarrativeLink(source url, target ext: Extension) {
 //   url -> ext.url = 'http://hl7.org/fhir/StructureDefinition/narrativeLink' "url";
