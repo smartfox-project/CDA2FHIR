@@ -2390,6 +2390,53 @@
                                 uer1e56vV7nq9Xuer1e56vV7nq9X/9k= </value>
                         </observationMedia>
                     </entry>
+                    <component>
+                        <section>
+                            <templateId root="1.2.40.0.34.6.0.11.2.8"/>
+                            <id root="1.2.3.999" extension="myExt"/>
+                            <title>Allergie ed Intolleranze</title>
+                            <text>Nessuna Allergia Nota</text>
+                            <languageCode code="it"/>
+                            <author>
+                                <!-- Zeitpunkt der Erstellung -->
+                                <time value="20191224082015+0100"/>
+                                <assignedAuthor classCode="ASSIGNED">
+                                <!-- Identifikation des Verfassers des Dokuments -->
+                                <id root="1.2.40.0.34.99.111.1.3" extension="1111" assigningAuthorityName="Amadeus Spital"/>
+                                <!-- Fachrichtung des Verfassers des Dokuments -->
+                                <code code="107" displayName="Fachärztin/Facharzt für Chirurgie" codeSystem="1.2.40.0.34.5.160" codeSystemName="ELGA_Fachaerzte"/>
+                                <!-- Kontaktdaten des Verfassers des Dokuments -->
+                                <telecom value="tel:+43.1.40400"/>
+                                <telecom value="mailto:herbert.mustermann@organization.at"/>
+                                <assignedPerson classCode="PSN" determinerCode="INSTANCE">
+                                    <!-- Name des Verfassers des Dokuments -->
+                                    <name>
+                                    <prefix qualifier="AC">Univ.-Prof. Dr.</prefix>
+                                    <given>Isabella</given>
+                                    <family>Stern</family>
+                                    </name>
+                                </assignedPerson>
+                                <!-- Organisation, in deren Auftrag der Verfasser des Dokuments die Dokumentation verfasst hat -->
+                                <representedOrganization>
+                                    <id root="1.2.40.0.34.99.3"/>
+                                    <!-- Name der Organisation -->
+                                    <name>Amadeus Spital, 1. Chirurgische Abteilung</name>
+                                    <!-- Kontaktdaten der Organisation -->
+                                    <telecom value="tel:+43.6138.3453446.0"/>
+                                    <telecom value="mailto:chirurgie@amadeusspital.at"/>
+                                    <addr>
+                                    <streetName>Mozartgasse</streetName>
+                                    <houseNumber>1-7</houseNumber>
+                                    <postalCode>5350</postalCode>
+                                    <city>St.Wolfgang</city>
+                                    <state>Salzburg</state>
+                                    <country>AUT</country>
+                                    </addr>
+                                </representedOrganization>
+                                </assignedAuthor>
+                            </author>
+                        </section>
+                    </component>
                 </section>
             </component>
 
