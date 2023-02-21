@@ -75,12 +75,6 @@ group CdaToFhirBundle(source cda : ClinicalDocument, target fhir_bundle : Bundle
     fhir_patient.id = uuid() as fhir_patient_uuid,
     fhir_bundle_entry_2.fullUrl = append('urn:uuid:', fhir_patient_uuid),
 
-    // create the specimen to have it as reference for later transformations
-    fhir_bundle.entry as fhir_bundle_entry_3,
-    fhir_bundle_entry_3.resource = create('Specimen') as fhir_specimen,
-    fhir_specimen.id = uuid() as fhir_specimen_uuid,
-    fhir_bundle_entry_3.fullUrl = append('urn:uuid:', fhir_specimen_uuid),
-
     // create the DiagnosticReport to have it as reference for later transformations
     fhir_bundle.entry as fhir_bundle_entry_4,
     fhir_bundle_entry_4.resource = create('DiagnosticReport') as fhir_diagnosticReport,
@@ -103,16 +97,6 @@ group CdaToFhirBundle(source cda : ClinicalDocument, target fhir_bundle : Bundle
     fhir_diagnosticReport_subject_reference.reference = reference(fhir_patient),
     fhir_diagnosticReport_subject_reference.type = 'Patient',
 
-    // create relation from specimen to patient
-    fhir_specimen.subject = create('Reference') as fhir_specimen_patient_reference,
-    fhir_specimen_patient_reference.reference = reference(fhir_patient),
-    fhir_specimen_patient_reference.type = 'Patient',
-
-    // create relation from DiagnosticReport to specimen
-    fhir_diagnosticReport.specimen = create('Reference') as fhir_diagnosticReport_specimen_reference,
-    fhir_diagnosticReport_specimen_reference.reference = reference(fhir_specimen),
-    fhir_diagnosticReport_specimen_reference.type = 'Specimen',
-
     // create relation from DiagnosticReport to ServiceRequest
     fhir_diagnosticReport.basedOn = create('Reference') as fhir_diagnosticReport_basedOn_reference,
     fhir_diagnosticReport_basedOn_reference.reference = reference(fhir_serviceRequest),
@@ -124,7 +108,7 @@ group CdaToFhirBundle(source cda : ClinicalDocument, target fhir_bundle : Bundle
       cda.component as cda_component then {
         // ClinicalDocument.component.structuredBody
         cda_component.structuredBody as cda_structuredBody
-          then CdaBodyToFhirComposition(cda_structuredBody, fhir_composition, fhir_patient, fhir_specimen, fhir_bundle);
+          then CdaBodyToFhirComposition(cda_structuredBody, fhir_composition, fhir_patient, fhir_diagnosticReport, fhir_bundle);
       };
       // cda.component as component then {
       //   component.structuredBody as structuredBody then {
@@ -552,7 +536,7 @@ group CdaAuthorToFhirPractitionerRole(source cda_author : Author, target fhir_pr
       // ClinicalDocument.author.time
       // TODO extension?
       // ClinicalDocument.author.time
-      // TODO nullFlavor?
+      // TODO nullFlavor? http://hl7.org/fhir/R4/extension-data-absent-reason.html
       // ClinicalDocument.author.assignedAuthor
       cda_author.assignedAuthor as cda_author_assignedAuthor then {
         // ClinicalDocument.author.assignedAuthor.id
@@ -696,8 +680,9 @@ group CdaEncompassingEncounterToFhirEncounter(source cda_encompassingEncounter :
 
 // _________________________ Section Level Templates _________________________
 
-group CdaBodyToFhirComposition(source cda_structuredBody: StructuredBody, target fhir_composition: Composition, target fhir_patient: Patient, target fhir_specimen: Specimen, target fhir_bundle: Bundle) {
+group CdaBodyToFhirComposition(source cda_structuredBody: StructuredBody, target fhir_composition: Composition, target fhir_patient: Patient, target fhir_diagnosticReport: DiagnosticReport, target fhir_bundle: Bundle) {
   cda_structuredBody.component as cda_component then {
+    // simple sections
     cda_component.section as cda_section where (code.where(code='BRIEFT') and templateId.where(root='1.2.40.0.34.6.0.11.2.69')) // Brieftext
                                                or (code.where(code='46239-0') and templateId.where(root='1.2.40.0.34.6.0.11.2.114')) // Überweisungsgrund - uncodiert
                                                or (code.where(code='10164-2') and templateId.where(root='1.2.40.0.34.6.0.11.2.111')) // Anamnese - Labor und Mikrobiologie - uncodiert
@@ -706,7 +691,10 @@ group CdaBodyToFhirComposition(source cda_structuredBody: StructuredBody, target
                                                or (code.where(code='ABBEM') and templateId.where(root='1.2.40.0.34.6.0.11.2.70')) // Abschließende Bemerkung
                                                 ->
       fhir_composition.section as fhir_section then CdaSectionToFhirSection(cda_section, fhir_section, fhir_bundle);
-  } "asfasdf";
+    // complex sections
+    cda_component.section as cda_section where (code.where(code='10') and templateId.where(root='1.2.40.0.34.6.0.11.2.93')) // Probeninformation (Specimen Section)
+      -> fhir_composition.section as fhir_section then CdaSpecimenSectionToFhirSection(cda_section, fhir_section, fhir_patient, fhir_diagnosticReport, fhir_bundle);
+  };
 }
 
 group CdaSectionToFhirSection(source cda_section: Section, target fhir_section, target fhir_bundle: Bundle) {
@@ -730,9 +718,9 @@ group CdaSectionToFhirSection(source cda_section: Section, target fhir_section, 
         cda_section.languageCode as cda_languageCode then {
           cda_languageCode.code as cda_languageCode_code ->
             fhir_section_text.div = append('<div xml:lang="', cda_languageCode_code, '">', cda_section_text, '</div>') "asdf";
-        } "adsf";
-      } "asdf";
-    } "narrativeText";
+        };
+      } "CdaSectionTextToFhirSectionTextWithLanguage";
+    };
   // section.author
   cda_section.author as cda_section_author ->
     // create the PractitionerRole in order to capture the author
@@ -782,7 +770,51 @@ group CdaSectionToFhirSection(source cda_section: Section, target fhir_section, 
   };
 }
 
+group CdaSpecimenSectionToFhirSection(source cda_section: Section, target fhir_section, target fhir_patient: Patient, target fhir_diagnosticReport: DiagnosticReport, target fhir_bundle: Bundle) extends CdaSectionToFhirSection {
+  // section.entry (Probeninformation (Specimen Entry))
+  cda_section.entry as cda_section_entry then {
+    // section.entry.act
+    cda_section_entry.act as cda_act where $this.templateId.where(root='1.2.40.0.34.6.0.11.3.160') then {
+      // section.entry.act.entryRelationship
+      cda_act.entryRelationship as cda_entryRelationship then {
+        // section.entry.act.entryRelationship.procedure
+        cda_entryRelationship.procedure as cda_procedure ->
+          // create the specimen to have it as reference for later transformations
+          fhir_bundle.entry as fhir_bundle_entry,
+          fhir_bundle_entry.resource = create('Specimen') as fhir_specimen,
+          fhir_specimen.id = uuid() as fhir_specimen_id,
+          fhir_bundle_entry.fullUrl = append('urn:uuid:', fhir_specimen_id),
 
+          // create relation from specimen to patient
+          fhir_specimen.subject = create('Reference') as fhir_specimen_patient_reference,
+          fhir_specimen_patient_reference.reference = reference(fhir_patient),
+          fhir_specimen_patient_reference.type = 'Patient',
+
+          // create relation from DiagnosticReport to specimen
+          fhir_diagnosticReport.specimen = create('Reference') as fhir_diagnosticReport_specimen_reference,
+          fhir_diagnosticReport_specimen_reference.reference = reference(fhir_specimen),
+          fhir_diagnosticReport_specimen_reference.type = 'Specimen',
+
+          // create relation from Section to specimen
+          // TODO or use section.focus?
+          fhir_section.entry = create('Reference') as fhir_section_specimen_reference,
+          fhir_section_specimen_reference.reference = reference(fhir_specimen),
+          fhir_section_specimen_reference.type = 'Specimen',
+
+          fhir_specimen.collection as fhir_specimen_collection then {
+            // procedure.effectiveTime with value
+            cda_procedure.effectiveTime as cda_effectiveTime where $this.value.exists() then {
+              cda_effectiveTime.value as v ->
+                fhir_specimen_collection.collected = v;
+            };
+            // TODO procedure.effectiveTime high / low -> Period
+            // procedure.targetSiteCode
+            cda_procedure.targetSiteCode -> fhir_specimen_collection.bodySite;
+        };
+      };
+    };
+  };
+}
 
 // group ClinicalDocumentSection(source cda : ClinicalDocument, source src : Section, source patient : Patient, target tgt, target bundle: Bundle) {
 //   src.id as id where ($this.root=%cda.id.root)=false -> tgt.extension as ext then ChExtEprSectionId(id, ext) "sectionId";
