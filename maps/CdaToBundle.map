@@ -735,6 +735,8 @@ group CdaSectionToFhirSection(source cda_section: Section, target fhir_section, 
     CdaAuthorToFhirPractitionerRole(cda_section_author, fhir_practitionerRole, fhir_bundle);
   // section.informant
   // TODO ?
+
+  // Observation Media
   // section.entry with observationMedia
   cda_section.entry as cda_section_entry where $this.observationMedia.exists() then {
     // section.entry.observationMedia
@@ -763,6 +765,7 @@ group CdaSectionToFhirSection(source cda_section: Section, target fhir_section, 
         // TODO ?
       };
   };
+
   // Comment Entry
   // section.entry
   cda_section.entry as cda_entry where $this.act.templateId.where(root='1.2.40.0.34.6.0.11.3.11') then {
@@ -775,6 +778,8 @@ group CdaSectionToFhirSection(source cda_section: Section, target fhir_section, 
         fhir_section_section_text.div = cda_act_text;
     };
   };
+
+  // Übersetzung
   // section.component
   cda_section.component as cda_section_component then {
     cda_section_component.section as cda_section_component_section where templateId.where(root='1.2.40.0.34.6.0.11.2.8') // Übersetzung
