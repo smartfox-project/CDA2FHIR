@@ -38,6 +38,8 @@ In order to execute a transformation execute the following REST calls from withi
 - 1.b. POST CdaToBundle.map
 - 2.a. POST Lab_Allgemeiner_Laborbefund.xml (CdaToBundle)
 
+![FHIR Structure](fhir_structure.drawio.svg)
+
 ## Built With
 
 * [Matchbox 2.3.0](https://github.com/ahdis/matchbox/releases/tag/v2.3.0) - The mapping engine used
