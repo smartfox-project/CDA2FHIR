@@ -687,6 +687,7 @@ group CdaBodyToFhirComposition(source cda_structuredBody: StructuredBody, target
                                                or (code.where(code='46239-0') and templateId.where(root='1.2.40.0.34.6.0.11.2.114')) // Überweisungsgrund - uncodiert
                                                or (code.where(code='10164-2') and templateId.where(root='1.2.40.0.34.6.0.11.2.111')) // Anamnese - Labor und Mikrobiologie - uncodiert
                                                or (code.where(code='400999005') and templateId.where(root='1.2.40.0.34.6.0.11.2.112')) // Angeforderte Untersuchungen - uncodiert
+                                               or (code.where(code='20') and templateId.where(root='1.2.40.0.34.6.0.11.2.103')) // Befundbewertung
                                                or (code.where(code='BEIL') and templateId.where(root='1.2.40.0.34.6.0.11.2.71')) // Beilagen
                                                or (code.where(code='ABBEM') and templateId.where(root='1.2.40.0.34.6.0.11.2.70')) // Abschließende Bemerkung
                                                 ->
