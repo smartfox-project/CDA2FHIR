@@ -802,14 +802,64 @@ group CdaSpecimenSectionToFhirSection(source cda_section: Section, target fhir_s
           fhir_section_specimen_reference.type = 'Specimen',
 
           fhir_specimen.collection as fhir_specimen_collection then {
+            // Abnahmedatum/-zeit bzw. -zeitintervall des Untersuchungsmaterials
             // procedure.effectiveTime with value
             cda_procedure.effectiveTime as cda_effectiveTime where $this.value.exists() then {
               cda_effectiveTime.value as v ->
                 fhir_specimen_collection.collected = v;
             };
             // TODO procedure.effectiveTime high / low -> Period
+
+            // Entnahmeort
             // procedure.targetSiteCode
             cda_procedure.targetSiteCode -> fhir_specimen_collection.bodySite;
+
+            // Für die Abnahme verantwortlichen Person/Organisation
+            // procedure.performer
+            // TODO has to be modelled with ServiceRequest/Performer
+
+            // Untersuchungsmaterial
+            // procedure.participant
+            cda_procedure.participant as cda_participant then {
+              // procedure.participant.participantRole
+              cda_participant.participantRole as cda_participantRole then {
+                // procedure.participant.participantRole.playingEntity
+                cda_participantRole.playingEntity as cda_playingEntity then {
+                  // procedure.participant.participantRole.id
+                  cda_participantRole.id -> fhir_specimen.accessionIdentifier;
+                  // procedure.participant.participantRole.playingEntity.code
+                  cda_playingEntity.code -> fhir_specimen.type;
+                };
+              };
+            };
+
+            // Annahmeinformation
+            // procedure.entryRelationship
+            cda_procedure.entryRelationship as cda_entryRelationship then {
+              // procedure.entryRelationship
+              cda_entryRelationship.act as cda_act then {
+                // Zeitpunkt des Einlangen des Untersuchungsmaterials
+                // act.effectiveTime with value
+                cda_act.effectiveTime as cda_effectiveTime where $this.value.exists() then {
+                  cda_effectiveTime.value as v ->
+                    fhir_specimen.receivedTime = v;
+                };
+                // TODO act.effectiveTime high / low -> Period
+
+                // Anmerkung zur Qualität des Untersuchungsmaterials
+                // act.entryRelationship
+                cda_act.entryRelationship as cda_comment_entryRelationship then {
+                  // act.entryRelationship.act
+                  cda_comment_entryRelationship.act as cda_comment_act then {
+                    // act.entryRelationship.act.text
+                    // TODO CDA level 4 Referenzen müssen noch aufgelöst werden
+                    cda_comment_act.text as cda_comment_act_text ->
+                      fhir_specimen.note as fhir_specimen_note,
+                      fhir_specimen_note.text = cda_comment_act_text;
+                  };
+                };
+              };
+            };
         };
       };
     };
