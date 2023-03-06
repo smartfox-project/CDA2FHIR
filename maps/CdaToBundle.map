@@ -693,8 +693,14 @@ group CdaBodyToFhirComposition(source cda_structuredBody: StructuredBody, target
                                                 ->
       fhir_composition.section as fhir_section then CdaSectionToFhirSection(cda_section, fhir_section, fhir_bundle);
     // complex sections
-    cda_component.section as cda_section where code.where(code='10' and codeSystem='1.2.40.0.34.5.11') // Probeninformation (Specimen Section)
+
+    // Probeninformation (Specimen Section)
+    cda_component.section as cda_section where code.where(code='10' and codeSystem='1.2.40.0.34.5.11')
       -> fhir_composition.section as fhir_section then CdaSpecimenSectionToFhirSection(cda_section, fhir_section, fhir_patient, fhir_diagnosticReport, fhir_bundle);
+
+    // Laboratory Specialty Section
+    cda_component.section as cda_section where templateId.where(root='1.2.40.0.34.6.0.11.2.102' or root='1.3.6.1.4.1.19376.1.3.3.2.1')
+      -> fhir_composition.section as fhir_section then CdaLaboratorySpecialtySectionToFhirSection(cda_section, fhir_section, fhir_patient, fhir_diagnosticReport, fhir_bundle);
   };
 }
 
@@ -882,6 +888,10 @@ group CdaSpecimenSectionToFhirSection(source cda_section: Section, target fhir_s
       };
     };
   };
+}
+
+group CdaLaboratorySpecialtySectionToFhirSection (source cda_section: Section, target fhir_section, target fhir_patient: Patient, target fhir_diagnosticReport: DiagnosticReport, target fhir_bundle: Bundle) extends CdaSectionToFhirSection {
+  // TODO
 }
 
 // group ClinicalDocumentSection(source cda : ClinicalDocument, source src : Section, source patient : Patient, target tgt, target bundle: Bundle) {
