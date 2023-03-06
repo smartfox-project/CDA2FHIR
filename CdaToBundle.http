@@ -17,6 +17,11 @@ GET {{host}}/StructureMap/
 Accept: application/fhir+xml;fhirVersion=4.0.1
 Content-Type: application/fhir+xml;fhirVersion=4.0.1
 
+### StructureDefinition
+GET {{host}}/StructureDefinition
+Accept: application/fhir+xml
+Content-Type: application/fhir+xml
+
 ### StructureMap-Ressorces ---------------------------------------------------------------------
 
 ### 1.a. POST CdaToFhirTypes.map
