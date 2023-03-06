@@ -48,3 +48,10 @@ Accept: application/fhir+xml;fhirVersion=4.0.1
 Content-Type: application/fhir+xml;fhirVersion=4.0.1
 
 < ./input/Mibi_Mikrobiologie.xml
+
+### 2.a. POST ELGA-043-Laborbefund_EIS-FullSupport (CdaToBundle)
+POST {{host}}/StructureMap/$transform?source=http://hl7.at/fhir/HL7ATCoreProfiles/4.0.1/StructureMap/at-cda-to-bundle
+Accept: application/fhir+xml;fhirVersion=4.0.1
+Content-Type: application/fhir+xml;fhirVersion=4.0.1
+
+< ./input/ELGA-043-Laborbefund_EIS-FullSupport.xml
