@@ -38,6 +38,13 @@ Content-Type: text/fhir-mapping
 
 < ./maps/CdaToBundle.map
 
+### 1.c. POST AtBundleToEuBundle.map
+POST {{host}}/StructureMap HTTP/1.1
+Accept: application/fhir+xml;fhirVersion=4.0.1
+Content-Type: text/fhir-mapping
+
+< ./maps/AtBundleToEuBundle.map
+
 ### Execution of Transformation ----------------------------------------------------------------------
 
 ### 2.a. POST Lab_Allgemeiner_Laborbefund.xml (CdaToBundle)
@@ -60,3 +67,11 @@ Accept: application/fhir+xml;fhirVersion=4.0.1
 Content-Type: application/fhir+xml;fhirVersion=4.0.1
 
 < ./input/ELGA-043-Laborbefund_EIS-FullSupport.xml
+
+### AT to EU ----------------------------------------------------------------------
+
+POST {{host}}/StructureMap/$transform?source=http://hl7.at/fhir/HL7ATCoreProfiles/4.0.1/StructureMap/at-bundle-to-eu-bundle
+Accept: application/fhir+xml;fhirVersion=4.0.1
+Content-Type: application/fhir+xml;fhirVersion=4.0.1
+
+< ./input/FHIR_AT_Lab.xml

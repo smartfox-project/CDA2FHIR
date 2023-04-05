@@ -5,8 +5,8 @@ map "http://hl7.at/fhir/HL7ATCoreProfiles/4.0.1/StructureMap/at-cda-to-bundle" =
 //
 
 conceptmap "cda-sdtc-statuscode-2-fhir-composition-status" {
-  prefix s = "http://terminology.hl7.org/ValueSet/v3-AdministrativeGender"
-  prefix t = "http://hl7.org/fhir/ValueSet/administrative-gender"
+  prefix s = "http://hl7.org/fhir/ValueSet/composition-status"
+  prefix t = "http://hl7.org/fhir/ValueSet/composition-status"
 
   s:"active" == t:"preliminary"
   s:"nullified" == t:"entered-in-error"
@@ -56,10 +56,14 @@ imports "http://hl7.at/fhir/HL7ATCoreProfiles/4.0.1/StructureMap/at-cda-to-fhir-
 // _________________________ Document Level Template  _________________________
 
 group CdaToFhirBundle(source cda : ClinicalDocument, target fhir_bundle : Bundle) {
-  cda -> fhir_bundle.id = uuid() "id";
+  cda ->
+    fhir_bundle.id = uuid(),
+    fhir_bundle.type = 'document',
+    fhir_bundle.meta as fhir_bundle_meta,
+    fhir_bundle_meta.profile = 'http://hl7.eu/fhir/laboratory/StructureDefinition/Bundle-lab-xpandh'
+    "FhirBundleMetadata";
   // ClinicalDocument.id
   cda.id -> fhir_bundle.identifier "identifier";
-  cda -> fhir_bundle.type = 'document' "FhirBundlType";
   // ClinicalDocument.effectiveTime
   cda.effectiveTime -> fhir_bundle.timestamp;
 
@@ -68,39 +72,66 @@ group CdaToFhirBundle(source cda : ClinicalDocument, target fhir_bundle : Bundle
     fhir_bundle_entry_1.resource = create('Composition') as fhir_composition,
     fhir_composition.id = uuid() as fhir_composition_uuid,
     fhir_bundle_entry_1.fullUrl = append('urn:uuid:', fhir_composition_uuid),
+    fhir_composition.meta as fhir_composition_meta,
+    fhir_composition_meta.profile = 'http://hl7.eu/fhir/laboratory/StructureDefinition/Composition-lab-xpandh',
 
     // create the patient to have it as reference for later transformations
     fhir_bundle.entry as fhir_bundle_entry_2,
     fhir_bundle_entry_2.resource = create('Patient') as fhir_patient,
     fhir_patient.id = uuid() as fhir_patient_uuid,
     fhir_bundle_entry_2.fullUrl = append('urn:uuid:', fhir_patient_uuid),
+    fhir_patient.meta as fhir_patient_meta,
+    fhir_patient_meta.profile = 'http://hl7.eu/fhir/laboratory/StructureDefinition/Patient-eu-xpandh',
 
     // create the DiagnosticReport to have it as reference for later transformations
     fhir_bundle.entry as fhir_bundle_entry_4,
     fhir_bundle_entry_4.resource = create('DiagnosticReport') as fhir_diagnosticReport,
     fhir_diagnosticReport.id = uuid() as fhir_diagnosticReport_id,
     fhir_bundle_entry_4.fullUrl = append('urn:uuid:', fhir_diagnosticReport_id),
+    fhir_diagnosticReport.meta as fhir_diagnosticReport_meta,
+    fhir_diagnosticReport_meta.profile = 'http://hl7.eu/fhir/laboratory/StructureDefinition/DiagnosticReport-lab-xpandh',
 
     // create the ServiceRequest to have it as reference for later transformations
     fhir_bundle.entry as fhir_bundle_entry_5,
     fhir_bundle_entry_5.resource = create('ServiceRequest') as fhir_serviceRequest,
     fhir_serviceRequest.id = uuid() as fhir_serviceRequest_id,
     fhir_bundle_entry_5.fullUrl = append('urn:uuid:', fhir_serviceRequest_id),
+    fhir_serviceRequest.meta as fhir_serviceRequest_meta,
+    fhir_serviceRequest_meta.profile = 'http://hl7.eu/fhir/laboratory/StructureDefinition/ServiceRequest-lab-xpandh',
 
-    // create relation from composition to DiagnosticReport
+    // create relation from Composition to ServiceRequest
+    fhir_composition.extension as fhir_composition_extenstion,
+    fhir_composition_extenstion.url = 'http://hl7.eu/fhir/laboratory/StructureDefinition/composition-basedOn-order-or-requisition',
+    fhir_composition_extenstion.value = create('Reference') as fhir_diagnosticReport_composition_reference,
+    fhir_diagnosticReport_composition_reference.reference = reference(fhir_serviceRequest),
+    fhir_diagnosticReport_composition_reference.type = 'ServiceRequest',
+
+    // create relation from Composition to Patient
     fhir_composition.subject = create('Reference') as fhir_composition_subject_reference,
-    fhir_composition_subject_reference.reference = reference(fhir_diagnosticReport),
-    fhir_composition_subject_reference.type = 'DiagnosticReport',
+    fhir_composition_subject_reference.reference = reference(fhir_patient),
+    fhir_composition_subject_reference.type = 'Patient',
 
-    // create relation from composition to patient
-    fhir_diagnosticReport.subject = create('Reference') as fhir_diagnosticReport_subject_reference,
-    fhir_diagnosticReport_subject_reference.reference = reference(fhir_patient),
-    fhir_diagnosticReport_subject_reference.type = 'Patient',
+    // create relation from DiagnosticReport to Composition
+    fhir_diagnosticReport.extension as fhir_diagnosticReport_extension,
+    fhir_diagnosticReport_extension.url = 'http://hl7.org/fhir/5.0/StructureDefinition/extension-DiagnosticReport.composition',
+    fhir_diagnosticReport_extension.value = create('Reference') as fhir_diagnosticReport_composition_reference,
+    fhir_diagnosticReport_composition_reference.reference = reference(fhir_composition),
+    fhir_diagnosticReport_composition_reference.type = 'Composition',
 
     // create relation from DiagnosticReport to ServiceRequest
     fhir_diagnosticReport.basedOn = create('Reference') as fhir_diagnosticReport_basedOn_reference,
     fhir_diagnosticReport_basedOn_reference.reference = reference(fhir_serviceRequest),
-    fhir_diagnosticReport_basedOn_reference.type = 'ServiceRequest'
+    fhir_diagnosticReport_basedOn_reference.type = 'ServiceRequest',
+
+    // create relation from DiagnosticReport to Patient
+    fhir_diagnosticReport.subject = create('Reference') as fhir_diagnosticReport_subject_reference,
+    fhir_diagnosticReport_subject_reference.reference = reference(fhir_patient),
+    fhir_diagnosticReport_subject_reference.type = 'Patient',
+
+    // create relation from ServiceRequest to Patient
+    fhir_serviceRequest.subject = create('Reference') as fhir_serviceRequest_subject_reference,
+    fhir_serviceRequest_subject_reference.reference = reference(fhir_patient),
+    fhir_serviceRequest_subject_reference.type = 'Patient'
 
     then {
       cda then CdaHeaderToFhirComposition(cda, fhir_composition, fhir_patient, fhir_diagnosticReport, fhir_serviceRequest, fhir_bundle) "CdaHeaderToFhirComposition";
@@ -149,8 +180,14 @@ group CdaHeaderToFhirComposition(source cda : ClinicalDocument, target fhir_comp
   cda.languageCode -> fhir_composition.language;
   // ClinicalDocument.setId
   cda.setId -> fhir_composition.identifier;
-  // TODO ClinicalDocument.versionNumber
-  // cda.versionNumber ->
+  // ClinicalDocument.versionNumber
+  cda.versionNumber as cda_versionNumber then {
+    cda_versionNumber.value as cda_versionNumber_value ->
+      fhir_composition.extension as fhir_composition_extenstion,
+      fhir_composition_extenstion.url = 'http://hl7.org/fhir/StructureDefinition/composition-clinicaldocument-versionNumber',
+      fhir_composition_extenstion.value = cast(cda_versionNumber_value, 'string')
+      "CdaVersionNumberToFhirVersionNumber";
+  };
 
   // ClinicalDocument.recordTarget
   cda.recordTarget as cda_recordTarget then {
