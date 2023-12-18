@@ -72,8 +72,6 @@ group CdaToFhirBundle(source cda : ClinicalDocument, target fhir_bundle : Bundle
     fhir_bundle_entry_1.resource = create('Composition') as fhir_composition,
     fhir_composition.id = uuid() as fhir_composition_uuid,
     fhir_bundle_entry_1.fullUrl = append('urn:uuid:', fhir_composition_uuid),
-    fhir_composition.meta as fhir_composition_meta,
-    fhir_composition_meta.profile = 'http://hl7.eu/fhir/laboratory/StructureDefinition/Composition-lab-xpandh',
 
     // create the patient to have it as reference for later transformations
     fhir_bundle.entry as fhir_bundle_entry_2,
@@ -156,8 +154,25 @@ group CdaToFhirBundle(source cda : ClinicalDocument, target fhir_bundle : Bundle
 // _________________________ Header Level Templates _________________________
 
 group CdaHeaderToFhirComposition(source cda : ClinicalDocument, target fhir_composition : Composition, target fhir_patient: Patient, target fhir_diagnosticReport: DiagnosticReport, target fhir_serviceRequest: ServiceRequest, target fhir_bundle : Bundle) {
-  // ClinicalDocument.code & ClinicalDocument.code.translation
-  cda.code -> fhir_composition.type;
+  cda -> fhir_composition.meta as fhir_composition_meta,
+    fhir_composition_meta.profile = 'http://hl7.eu/fhir/laboratory/StructureDefinition/Composition-eu-lab'
+    "FhirCompositionProfile";
+
+  // ClinicalDocument.code
+  cda.code as cda_code -> fhir_composition.category as fhir_composition_category then {
+    cda_code.originalText -> fhir_composition_category.text;
+    cda_code -> fhir_composition_category.coding as coding then CECoding(cda_code, coding) "code";
+  } "code";
+  // ClinicalDocument.code.translation
+  cda.code as cda_code then {
+    cda_code.translation -> fhir_composition.type;
+    cda_code where cda_code.translation.exists().not() ->
+      fhir_composition.type = create('CodeableConcept') as type_coding,
+      type_coding.coding = create('Coding') as coding_coding,
+      coding_coding.system = 'http://loinc.org',
+      coding_coding.code = '11502-2'
+      "CdaMissingCodeTranslationToFhirCompositionType";
+  };
   // ClinicalDocument.title
   cda.title as cda_title -> fhir_composition.title = (cda_title.dataString);
   // ClinicalDocument.sdtc:statusCode
