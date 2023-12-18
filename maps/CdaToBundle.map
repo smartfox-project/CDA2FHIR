@@ -86,8 +86,6 @@ group CdaToFhirBundle(source cda : ClinicalDocument, target fhir_bundle : Bundle
     fhir_bundle_entry_4.resource = create('DiagnosticReport') as fhir_diagnosticReport,
     fhir_diagnosticReport.id = uuid() as fhir_diagnosticReport_id,
     fhir_bundle_entry_4.fullUrl = append('urn:uuid:', fhir_diagnosticReport_id),
-    fhir_diagnosticReport.meta as fhir_diagnosticReport_meta,
-    fhir_diagnosticReport_meta.profile = 'http://hl7.eu/fhir/laboratory/StructureDefinition/DiagnosticReport-lab-xpandh',
 
     // create the ServiceRequest to have it as reference for later transformations
     fhir_bundle.entry as fhir_bundle_entry_5,
@@ -133,6 +131,7 @@ group CdaToFhirBundle(source cda : ClinicalDocument, target fhir_bundle : Bundle
 
     then {
       cda then CdaHeaderToFhirComposition(cda, fhir_composition, fhir_patient, fhir_diagnosticReport, fhir_serviceRequest, fhir_bundle) "CdaHeaderToFhirComposition";
+      cda then CdaHeaderToFhirDiagnosticReport(cda, fhir_diagnosticReport) "CdaHeaderToFhirDiagnosticReport";
       // ClinicalDocument.component
       cda.component as cda_component then {
         // ClinicalDocument.component.structuredBody
@@ -403,6 +402,58 @@ group CdaHeaderToFhirComposition(source cda : ClinicalDocument, target fhir_comp
       fhir_composition_encounter_reference.type = 'Encounter'
       then CdaEncompassingEncounterToFhirEncounter(cda_encompassingEncounter, fhir_encounter, fhir_bundle);
   };
+}
+
+group CdaHeaderToFhirDiagnosticReport(source cda : ClinicalDocument, target fhir_diagnosticReport: DiagnosticReport) {
+  cda -> fhir_diagnosticReport.meta as fhir_diagnosticReport_meta,
+    fhir_diagnosticReport_meta.profile = 'http://hl7.eu/fhir/laboratory/StructureDefinition/DiagnosticReport-eu-lab'
+    "FhirDiagnosticReportProfile";
+
+  // ClinicalDocument.code
+  cda.code as cda_code -> fhir_diagnosticReport.category as fhir_diagnosticReport_category then {
+    cda_code.originalText -> fhir_diagnosticReport_category.text;
+    cda_code -> fhir_diagnosticReport_category.coding as coding then CECoding(cda_code, coding) "code";
+  } "code";
+  // ClinicalDocument.code.translation
+  cda.code as cda_code then {
+    cda_code.translation -> fhir_diagnosticReport.code;
+    cda_code where cda_code.translation.exists().not() ->
+      fhir_diagnosticReport.code = create('CodeableConcept') as code_coding,
+      code_coding.coding = create('Coding') as coding_coding,
+      coding_coding.system = 'http://loinc.org',
+      coding_coding.code = '11502-2'
+      "CdaMissingCodeTranslationToFhirCompositionType";
+  };
+
+  // ClinicalDocument.title
+  // see Composition
+
+  // ClinicalDocument.sdtc:statusCode
+  // TODO clarify mapping
+  cda.statusCode as cda_statusCode where cda.statusCode.exists() then {
+    cda_statusCode.code as cda_code -> fhir_diagnosticReport.status = translate(cda_code, '#cda-sdtc-statuscode-2-fhir-composition-status' , 'code');
+  } "CdaStatusCodeToFhirCompositionStatusMapped";
+  cda where cda.statusCode.exists().not() -> fhir_diagnosticReport.status = 'final' "CdaStatusCodeToFhirCompositionStatusFixed";
+  // TODO ClinicalDocument.hl7at:terminologyDate
+  // cda.terminologyDate ->
+  // TODO ClinicalDocument.hl7at:formatCode
+  // cda.formatCode ->
+  // TODO ClinicalDocument.hl7at:practiceSettingCode
+  // cda.practiceSettingCode ->
+  // ClinicalDocument.effectiveTime
+  cda.effectiveTime as cda_effectiveTime -> fhir_diagnosticReport.effective = create('dateTime') as fhir_diagnosticReport_effective then TSDateTime(cda_effectiveTime, fhir_diagnosticReport_effective) "CdaEffectiveTimeToFhirDiagnosticReportEffective";
+
+  // ClinicalDocument.confidentialityCode
+  // see Composition
+
+  // ClinicalDocument.languageCode
+  // see Composition
+
+  // ClinicalDocument.setId
+  cda.setId -> fhir_diagnosticReport.identifier;
+
+  // ClinicalDocument.versionNumber
+  // see Composition
 }
 
 // Source: https://art-decor.org/art-decor/decor-templates--at-lab-?section=templates&id=1.2.40.0.34.6.0.11.1.3&effectiveDate=2020-11-24T10:03:02&language=de-DE
