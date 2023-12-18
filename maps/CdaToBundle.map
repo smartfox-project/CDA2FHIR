@@ -60,7 +60,7 @@ group CdaToFhirBundle(source cda : ClinicalDocument, target fhir_bundle : Bundle
     fhir_bundle.id = uuid(),
     fhir_bundle.type = 'document',
     fhir_bundle.meta as fhir_bundle_meta,
-    fhir_bundle_meta.profile = 'http://hl7.eu/fhir/laboratory/StructureDefinition/Bundle-lab-xpandh'
+    fhir_bundle_meta.profile = 'http://hl7.eu/fhir/laboratory/StructureDefinition/Bundle-eu-lab'
     "FhirBundleMetadata";
   // ClinicalDocument.id
   cda.id -> fhir_bundle.identifier "identifier";
