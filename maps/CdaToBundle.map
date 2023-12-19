@@ -67,11 +67,18 @@ group CdaToFhirBundle(source cda : ClinicalDocument, target fhir_bundle : Bundle
   // ClinicalDocument.effectiveTime
   cda.effectiveTime -> fhir_bundle.timestamp;
 
-  cda -> fhir_bundle.entry as fhir_bundle_entry_1,
+  cda ->
     // create the composition to have it as reference for later transformations
+    fhir_bundle.entry as fhir_bundle_entry_1,
     fhir_bundle_entry_1.resource = create('Composition') as fhir_composition,
     fhir_composition.id = uuid() as fhir_composition_uuid,
     fhir_bundle_entry_1.fullUrl = append('urn:uuid:', fhir_composition_uuid),
+
+    // create the DiagnosticReport to have it as reference for later transformations
+    fhir_bundle.entry as fhir_bundle_entry_4,
+    fhir_bundle_entry_4.resource = create('DiagnosticReport') as fhir_diagnosticReport,
+    fhir_diagnosticReport.id = uuid() as fhir_diagnosticReport_id,
+    fhir_bundle_entry_4.fullUrl = append('urn:uuid:', fhir_diagnosticReport_id),
 
     // create the patient to have it as reference for later transformations
     fhir_bundle.entry as fhir_bundle_entry_2,
@@ -80,12 +87,6 @@ group CdaToFhirBundle(source cda : ClinicalDocument, target fhir_bundle : Bundle
     fhir_bundle_entry_2.fullUrl = append('urn:uuid:', fhir_patient_uuid),
     fhir_patient.meta as fhir_patient_meta,
     fhir_patient_meta.profile = 'http://hl7.eu/fhir/laboratory/StructureDefinition/Patient-eu-xpandh',
-
-    // create the DiagnosticReport to have it as reference for later transformations
-    fhir_bundle.entry as fhir_bundle_entry_4,
-    fhir_bundle_entry_4.resource = create('DiagnosticReport') as fhir_diagnosticReport,
-    fhir_diagnosticReport.id = uuid() as fhir_diagnosticReport_id,
-    fhir_bundle_entry_4.fullUrl = append('urn:uuid:', fhir_diagnosticReport_id),
 
     // create the ServiceRequest to have it as reference for later transformations
     fhir_bundle.entry as fhir_bundle_entry_5,
@@ -795,7 +796,8 @@ group CdaBodyToFhirComposition(source cda_structuredBody: StructuredBody, target
                                                or (code.where(code='ABBEM' and codeSystem='1.2.40.0.34.5.40') and templateId.where(root='1.2.40.0.34.6.0.11.2.70')) // Abschließende Bemerkung
                                                 ->
       fhir_composition.section as fhir_section then CdaSectionToFhirSection(cda_section, fhir_section, fhir_bundle);
-    // complex sections
+
+      // complex sections
 
     // Probeninformation (Specimen Section)
     cda_component.section as cda_section where code.where(code='10' and codeSystem='1.2.40.0.34.5.11')
@@ -994,7 +996,16 @@ group CdaSpecimenSectionToFhirSection(source cda_section: Section, target fhir_s
 }
 
 group CdaLaboratorySpecialtySectionToFhirSection (source cda_section: Section, target fhir_section, target fhir_patient: Patient, target fhir_diagnosticReport: DiagnosticReport, target fhir_bundle: Bundle) extends CdaSectionToFhirSection {
-  // TODO
+  // section.entry (Laboratory Report Data Processing Entry)
+  cda_section.entry as cda_section_entry then {
+    // section.entry.act
+    cda_section_entry.act as cda_act then {
+      // section.entry.act.entryRelationship (Laboratory Observation)
+      cda_act.entryRelationship as cda_entryRelationship where $this.observation.templateId.where(root='1.3.6.1.4.1.19376.1.3.1.6') then {
+        cda_entryRelationship.observation as cda_laboratory_observation -> fhir_section.section as fhir_section_section then CdaLaboratoryObservationToFhirObservation(cda_laboratory_observation, fhir_section_section);
+      };
+    };
+  };
 }
 
 // group ClinicalDocumentSection(source cda : ClinicalDocument, source src : Section, source patient : Patient, target tgt, target bundle: Bundle) {
@@ -1009,6 +1020,8 @@ group CdaLaboratorySpecialtySectionToFhirSection (source cda_section: Section, t
 // }
 
 // _________________________ Entry Level Templates   ________________________
+
+
 
 // _________________________ Template Type not specified  ___________________
 
