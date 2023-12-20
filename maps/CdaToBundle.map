@@ -31,6 +31,14 @@ conceptmap "ELGAAdministrativeGenderFHIRGender" {
   s:"UN" == t: "other"
 }
 
+conceptmap "cda-laboratorybatteryorganizer-status-2-fhir-observation-status" {
+  prefix s = "http://terminology.hl7.org/ValueSet/v3-ActStatus"
+  prefix t = "http://hl7.org/fhir/ValueSet/observation-status"
+
+  s:"completed" == t:"final"
+  s:"aborted" == t:"cancelled"
+}
+
 uses "http://hl7.org/fhir/cda/StructureDefinition/ClinicalDocument" alias ClinicalDocument as source
 uses "http://hl7.org/fhir/cda/StructureDefinition/Author" alias Author as queried
 uses "http://hl7.org/fhir/cda/StructureDefinition/AssignedAuthor" alias AssignedAuthor as queried
@@ -1000,9 +1008,43 @@ group CdaLaboratorySpecialtySectionToFhirSection (source cda_section: Section, t
   cda_section.entry as cda_section_entry then {
     // section.entry.act
     cda_section_entry.act as cda_act then {
-      // section.entry.act.entryRelationship (Laboratory Observation)
-      cda_act.entryRelationship as cda_entryRelationship where $this.observation.templateId.where(root='1.3.6.1.4.1.19376.1.3.1.6') then {
-        cda_entryRelationship.observation as cda_laboratory_observation -> fhir_section.section as fhir_section_section then CdaLaboratoryObservationToFhirObservation(cda_laboratory_observation, fhir_section_section);
+
+      // // section.entry.act.entryRelationship (Laboratory Observation)
+      // cda_act.entryRelationship as cda_entryRelationship where $this.observation.templateId.where(root='1.3.6.1.4.1.19376.1.3.1.6') then {
+      //   cda_entryRelationship.observation as cda_laboratory_observation ->
+      //     // create Observation
+      //     fhir_bundle.entry as fhir_bundle_entry,
+      //     fhir_bundle_entry.resource = create('Observation') as fhir_observation,
+      //     fhir_observation.id = uuid() as fhir_observation_id,
+      //     fhir_bundle_entry.fullUrl = append('urn:uuid:', fhir_observation_id),
+      //     fhir_section.entry = create('Reference') as fhir_section_entry_reference,
+      //     fhir_section_entry_reference.reference = reference(fhir_observation),
+      //     fhir_section_entry_reference.type = 'Observation';// then CdaLaboratoryObservationToFhirObservation(cda_laboratory_observation, fhir_section_section);
+      // };
+
+      // section.entry.act.entryRelationship (Laboratory Battery Organizer)
+      cda_act.entryRelationship as cda_entryRelationship where $this.organizer.templateId.where(root='1.3.6.1.4.1.19376.1.3.1.4') then {
+        cda_entryRelationship.organizer as cda_laboratory_battery_organizer ->
+          // create Observation
+          fhir_bundle.entry as fhir_bundle_entry,
+          fhir_bundle_entry.resource = create('Observation') as fhir_observation,
+          fhir_observation.id = uuid() as fhir_observation_id,
+          fhir_bundle_entry.fullUrl = append('urn:uuid:', fhir_observation_id),
+          fhir_section.entry = create('Reference') as fhir_section_entry_reference,
+          fhir_section_entry_reference.reference = reference(fhir_observation),
+          fhir_section_entry_reference.type = 'Observation' then {
+
+            // organizer.code
+            cda_laboratory_battery_organizer.code -> fhir_observation.category;
+            // organizer.statusCode
+            cda_laboratory_battery_organizer.statusCode as organizer_statusCode then {
+              organizer_statusCode.code as cda_code -> fhir_observation.status = translate(cda_code, '#cda-laboratorybatteryorganizer-status-2-fhir-observation-status' , 'code');
+            } "CdaStatusCodeToFhirObservationStatusMapped";
+            // organizer.effectiveTime
+            cda_laboratory_battery_organizer.effectiveTime as cda_effectiveTime -> fhir_observation.effective = create('dateTime') as fhir_observation_effective then TSDateTime(cda_effectiveTime, fhir_observation_effective) "CdaEffectiveTimeToFhirObservationEffective";
+            // organizer.performer
+            // TODO
+          };
       };
     };
   };
