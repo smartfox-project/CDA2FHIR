@@ -122,6 +122,8 @@ uses "http://hl7.org/fhir/cda/StructureDefinition/ST" as source
 uses "http://hl7.org/fhir/StructureDefinition/string" as target
 uses "http://hl7.org/fhir/cda/StructureDefinition/EN" as source
 uses "http://hl7.org/fhir/cda/StructureDefinition/PN" as source
+uses "http://hl7.org/fhir/cda/StructureDefinition/PQ" alias PQ as source
+uses "http://hl7.org/fhir/cda/StructureDefinition/IVXB_PQ" alias IVXB_PQ as source
 uses "http://hl7.org/fhir/cda/StructureDefinition/ON" as source
 uses "http://hl7.org/fhir/StructureDefinition/HumanName" as target
 uses "http://hl7.org/fhir/StructureDefinition/Organization" as target
@@ -133,6 +135,8 @@ uses "http://hl7.org/fhir/cda/StructureDefinition/BL" as source
 uses "http://hl7.org/fhir/StructureDefinition/boolean" as target
 uses "http://hl7.org/fhir/cda/StructureDefinition/IVL_TS" as source
 uses "http://hl7.org/fhir/cda/StructureDefinition/IVXB-TS" alias IVXB_TS as source
+
+uses "http://hl7.org/fhir/StructureDefinition/Quantity" alias Quantity as target
 uses "http://hl7.org/fhir/StructureDefinition/Period" as target
 
 group Any(source src, target tgt) {
@@ -449,9 +453,19 @@ group TELContactPoint(source src : TEL, target tgt : ContactPoint) extends Any <
 }
 
 group PQQuantity(source src : PQ, target tgt : Quantity) extends Any <<types>> {
-  //src.unit as unit -> tgt.code = unit;
-  src.unit as unit -> tgt.unit = unit;
+  src -> tgt.system = 'http://unitsofmeasure.org' "FhirQuantityIPSSystem";
+  src.unit as unit -> tgt.code = unit;
   src.value as value -> tgt.value = value;
+}
+
+group LowQuantity(source src : IVXB_PQ, target tgt : Quantity) extends PQQuantity {
+  // inclusive missing
+  // TODO to be discussed
+  src where $this.inclusive.exists().not() -> tgt.comparator = '>' "CdaInclusiveToFhirComparatorMissing";
+  // inclusive = false
+  src where $this.inclusive=false -> tgt.comparator = '>' "CdaInclusiveToFhirComparatorNotInclusive";
+  // inclusive = true
+  src where $this.inclusive=true -> tgt.comparator = '>=' "CdaInclusiveToFhirComparatorInclusive";
 }
 
 group RTOPQPQRatio(source src : RTO_PQ_PQ, target tgt : Ratio) extends Any <<types>> {

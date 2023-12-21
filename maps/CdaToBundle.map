@@ -31,11 +31,12 @@ conceptmap "ELGAAdministrativeGenderFHIRGender" {
   s:"UN" == t: "other"
 }
 
-conceptmap "cda-laboratorybatteryorganizer-status-2-fhir-observation-status" {
+conceptmap "act-status-2-observation-status" {
   prefix s = "http://terminology.hl7.org/ValueSet/v3-ActStatus"
   prefix t = "http://hl7.org/fhir/ValueSet/observation-status"
 
   s:"completed" == t:"final"
+  s:"active" == t:"preliminary"
   s:"aborted" == t:"cancelled"
 }
 
@@ -48,6 +49,7 @@ uses "http://hl7.org/fhir/cda/StructureDefinition/CustodianOrganization" alias C
 uses "http://hl7.org/fhir/cda/StructureDefinition/Section" alias Section as queried
 uses "http://hl7.org/fhir/cda/StructureDefinition/PatientRole" alias PatientRole as queried
 uses "http://hl7.org/fhir/cda/StructureDefinition/StructuredBody" alias StructuredBody as queried
+uses "http://hl7.org/fhir/cda/StructureDefinition/Observation" alias CDAObservation as queried
 uses "http://hl7.org/fhir/StructureDefinition/Bundle" alias Bundle as target
 uses "http://hl7.org/fhir/StructureDefinition/Composition" alias Composition as produced
 uses "http://hl7.org/fhir/StructureDefinition/Patient" alias Patient as produced
@@ -57,6 +59,7 @@ uses "http://hl7.org/fhir/StructureDefinition/PractitionerRole" alias Practition
 uses "http://hl7.org/fhir/StructureDefinition/Organization" alias Organization as produced
 uses "http://hl7.org/fhir/StructureDefinition/DiagnosticReport" alias DiagnosticReport as produced
 uses "http://hl7.org/fhir/StructureDefinition/ServiceRequest" alias ServiceRequest as produced
+uses "http://hl7.org/fhir/StructureDefinition/Observation" alias ServiceRequest as produced
 
 imports "http://hl7.at/fhir/HL7ATCoreProfiles/4.0.1/StructureMap/at-cda-to-fhir-types"
 
@@ -1038,12 +1041,25 @@ group CdaLaboratorySpecialtySectionToFhirSection (source cda_section: Section, t
             cda_laboratory_battery_organizer.code -> fhir_observation.category;
             // organizer.statusCode
             cda_laboratory_battery_organizer.statusCode as organizer_statusCode then {
-              organizer_statusCode.code as cda_code -> fhir_observation.status = translate(cda_code, '#cda-laboratorybatteryorganizer-status-2-fhir-observation-status' , 'code');
+              organizer_statusCode.code as cda_code -> fhir_observation.status = translate(cda_code, '#act-status-2-observation-status' , 'code');
             } "CdaStatusCodeToFhirObservationStatusMapped";
             // organizer.effectiveTime
             cda_laboratory_battery_organizer.effectiveTime as cda_effectiveTime -> fhir_observation.effective = create('dateTime') as fhir_observation_effective then TSDateTime(cda_effectiveTime, fhir_observation_effective) "CdaEffectiveTimeToFhirObservationEffective";
             // organizer.performer
             // TODO
+            // organizer.component (Laboratory Observation)
+            cda_laboratory_battery_organizer.component as cda_component where $this.observation.templateId.where(root='1.3.6.1.4.1.19376.1.3.1.6') then {
+              cda_component.observation as cda_laboratory_observation ->
+                // create Observation
+                fhir_bundle.entry as fhir_bundle_entry,
+                fhir_bundle_entry.resource = create('Observation') as fhir_laboratory_observation,
+                fhir_laboratory_observation.id = uuid() as fhir_laboratory_observation_id,
+                fhir_bundle_entry.fullUrl = append('urn:uuid:', fhir_laboratory_observation_id),
+                fhir_observation.hasMember = create('Reference') as fhir_observation_hasMember_reference,
+                fhir_observation_hasMember_reference.reference = reference(fhir_laboratory_observation),
+                fhir_observation_hasMember_reference.type = 'Observation'
+                then CdaLaboratoryObservationToFhirObservation(cda_laboratory_observation, fhir_laboratory_observation);
+            };
           };
       };
     };
@@ -1063,7 +1079,109 @@ group CdaLaboratorySpecialtySectionToFhirSection (source cda_section: Section, t
 
 // _________________________ Entry Level Templates   ________________________
 
+group CdaObservationToFhirObservation(source cda_observation : CDAObservation, target fhir_observation : Observation) {
+  // observation.id
+  cda_laboratory_observation.id -> fhir_observation.identifier;
+  // observation.code
+  // to be defined in derived versions of this group
+  // observation.text
+  // TODO
+  // observation.statusCode
 
+}
+
+group CdaLaboratoryObservationToFhirObservation(source cda_laboratory_observation : CDAObservation, target fhir_observation : Observation) {
+  cda_laboratory_observation ->
+    fhir_observation.meta as fhir_observation_meta,
+    fhir_observation_meta.profile = 'http://hl7.eu/fhir/laboratory/StructureDefinition/Observation-resultslab-eu-lab'
+    "FhirObservationProfile";
+
+  // observation.id
+  cda_laboratory_observation.id -> fhir_observation.identifier;
+
+  // TODO fhir_observation.category
+  // TODO fhir_observation.subject
+  // TODO fhir_observation.performer
+
+  // observation.code
+  cda_laboratory_observation.code -> fhir_observation.code;
+  // observation.text
+  // TODO
+  // observation.statusCode
+  cda_laboratory_observation.statusCode as observation_statusCode then {
+    observation_statusCode.code as cda_code -> fhir_observation.status = translate(cda_code, '#act-status-2-observation-status' , 'code');
+  } "CdaStatusCodeToFhirObservationStatusMapped";
+  // observation.effectiveTime
+  cda_laboratory_observation.effectiveTime as cda_effectiveTime -> fhir_observation.effective = create('dateTime') as fhir_observation_effective then TSDateTime(cda_effectiveTime, fhir_observation_effective) "CdaEffectiveTimeToFhirObservationEffective";
+
+  // observation.value(xsi:type="PQ")
+  cda_laboratory_observation.value: PQ as cda_observation_value -> fhir_observation.value = create('Quantity') as fhir_observation_value then PQQuantity(cda_observation_value, fhir_observation_value) "CdaObservationValueToFhirObservationValuePQ";
+
+  // TODO other datatypes
+  // // Concept Descriptor
+	// cdaObs.value: CD as obsValueCDA -> observation.value = create('CodeableConcept') as value then CDCodeableConcept(obsValueCDA,value) "observationValueCD";
+	// // in the case of microbial culture finding with sample report, observation.value element contains result interpretation -> error or correct? is it allowed to use an interpretationCode Element without a value-Element itself?
+	// // Interval of Physical Quantities
+	// cdaObs.value: IVL_PQ as obsValueCDA -> observation.value = create('Range') as value then IVLPQRange(obsValueCDA, value) "observationValueIVLPQ";
+	// // Physical Quantity - not standard conformant, but required for example report
+	// cdaObs.value: PQ as obsValueCDA -> observation.value = create('Quantity') as value then PQQuantity(obsValueCDA,value) "observationValuePQ";
+	// // Integer
+	// cdaObs.value: INT as obsValueCDA -> observation.value = create('integer') as value then INT(obsValueCDA,value) "observationValueINT";
+	// // Interval of Integers
+	// cdaObs.value: IVL_INT as obsValueCDA -> observation.value = create('Range') as value then IVLINTRange(obsValueCDA,value) "observationValueIVLINT";
+	// // Boolean
+	// cdaObs.value: BL as obsValueCDA -> observation.value = create('boolean') as value then Boolean(obsValueCDA,value) "observationValueBool";
+	// // String
+	// cdaObs.value: ST as obsValueCDA -> observation.value = create('string') as value then STstring(obsValueCDA,value) "observationValueString";
+	// // Coded Value
+	// cdaObs.value: CV as obsValueCDA -> observation.value = create('CodeableConcept') as value then CVCodeableConcept(obsValueCDA,value) "observationValueCV";
+	// // Time Stamp
+	// cdaObs.value: TS as obsValueCDA -> observation.value = create('dateTime') as value then TSDateTime(obsValueCDA,value) "observationValueTS";
+	// // Ratio
+	// cdaObs.value: RTO as obsValueCDA -> observation.value = create('Ratio') as value then RTORatio(obsValueCDA,value) "observationValueRTO";
+	// // Ratio of quantities
+	// cdaObs.value: RTO_QTY_QTY as obsValueCDA -> observation.value = create('Ratio') as value then RTOQTYQTYRatio(obsValueCDA,value) "observationValueRTOQTYQTY";
+	// // Ratio of physical quantities
+	// cdaObs.value: RTO_PQ_PQ as obsValueCDA -> observation.value = create('Ratio') as value then RTOPQPQRatio(obsValueCDA,value) "observationValueRTOPQPQ";
+
+  // observation.interpretationCode
+  cda_laboratory_observation.interpretationCode -> fhir_observation.interpretation;
+
+  // observation.performer
+  // TODO
+
+  // observation.participant
+  // TODO
+
+  // observation.entryRelationship (Comment Entry)
+  // TODO
+
+  // observation.entryRelationship (Frühere Ergebnisse)
+  // TODO
+
+  // observation.referenceRange
+  cda_laboratory_observation.referenceRange as cda_observation_referenceRange then {
+    // observation.referenceRange.observationRange
+    cda_observation_referenceRange.observationRange as cda_referenceRange_observationRange ->
+      fhir_observation.referenceRange as fhir_observation_referenceRange then {
+        // observation.referenceRange.observationRange.text
+        // TODO how to deal with <reference>-tags
+        cda_referenceRange_observationRange.text -> fhir_observation_referenceRange.text;
+        // observation.referenceRange.observationRange.value
+        cda_referenceRange_observationRange.value as cda_observationRange_value then {
+          // observation.referenceRange.observationRange.value.low
+          cda_observationRange_value.low as cda_observationRange_low -> fhir_observation_referenceRange.low as fhir_referenceRange_low then LowQuantity(cda_observationRange_low, fhir_referenceRange_low) "CdaObservationRangeLowToFhirReferenceRangeLow";
+        };
+        // observation.referenceRange.observationRange.interpretationCode (always 'N')
+        cda_referenceRange_observationRange.interpretationCode ->
+          fhir_observation_referenceRange.type as fhir_referenceRange_type,
+          fhir_referenceRange_type.coding as fhir_type_coding,
+          fhir_type_coding.system = 'http://terminology.hl7.org/CodeSystem/referencerange-meaning',
+          fhir_type_coding.code = 'normal'
+          "CdaInterpretationCodeToFhirInterpretationCode";
+      };
+  };
+}
 
 // _________________________ Template Type not specified  ___________________
 
