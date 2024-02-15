@@ -213,6 +213,9 @@ group TSInstant(source src : TS, target tgt : instant) extends Any <<types>> {
   src.value as v -> tgt.value = cast(v, 'string');
 }
 
+group IVL_TSDateTime(source src : IVL_TS, target tgt : instant) extends TSInstant <<types>> {
+}
+
 group TSDateTime(source src : TS, target tgt : dateTime) extends TSInstant <<types>> {
 }
 
