@@ -130,6 +130,7 @@ conceptmap "OIDtoURI" {
   // s:"2.16.840.1.113883.6.12" == t:"http://www.ama-assn.org/go/cpt"
 
   // additional mappings relevant for AT
+  s:"2.16.840.1.113883.2.16.1.4.9" == t:"urn:oid:2.16.840.1.113883.2.16.1.4.9"
   s:"2.16.840.1.113883.5.83" == t:"http://terminology.hl7.org/CodeSystem/v3-ObservationInterpretation"
 }
 
