@@ -162,6 +162,7 @@ uses "http://hl7.org/fhir/cda/StructureDefinition/IVL_TS" as source
 uses "http://hl7.org/fhir/cda/StructureDefinition/IVXB-TS" alias IVXB_TS as source
 
 uses "http://hl7.org/fhir/StructureDefinition/Quantity" alias Quantity as target
+uses "http://hl7.org/fhir/StructureDefinition/SimpleQuantity" alias SimpleQuantity as target
 uses "http://hl7.org/fhir/StructureDefinition/Period" as target
 
 group Any(source src, target tgt) {
