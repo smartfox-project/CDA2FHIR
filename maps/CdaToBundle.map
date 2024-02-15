@@ -1170,7 +1170,9 @@ group CdaLaboratoryObservationToFhirObservation(source cda_laboratory_observatio
         // observation.referenceRange.observationRange.value
         cda_referenceRange_observationRange.value as cda_observationRange_value then {
           // observation.referenceRange.observationRange.value.low
-          cda_observationRange_value.low as cda_observationRange_low -> fhir_observation_referenceRange.low as fhir_referenceRange_low then LowQuantity(cda_observationRange_low, fhir_referenceRange_low) "CdaObservationRangeLowToFhirReferenceRangeLow";
+          cda_observationRange_value.low -> fhir_observation_referenceRange.low;
+          // observation.referenceRange.observationRange.value.high
+          cda_observationRange_value.high -> fhir_observation_referenceRange.high;
         };
         // observation.referenceRange.observationRange.interpretationCode (always 'N')
         cda_referenceRange_observationRange.interpretationCode ->

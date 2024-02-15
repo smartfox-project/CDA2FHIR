@@ -458,15 +458,18 @@ group PQQuantity(source src : PQ, target tgt : Quantity) extends Any <<types>> {
   src.value as value -> tgt.value = value;
 }
 
-group LowQuantity(source src : IVXB_PQ, target tgt : Quantity) extends PQQuantity {
-  // inclusive missing
-  // TODO to be discussed
-  src where $this.inclusive.exists().not() -> tgt.comparator = '>' "CdaInclusiveToFhirComparatorMissing";
-  // inclusive = false
-  src where $this.inclusive=false -> tgt.comparator = '>' "CdaInclusiveToFhirComparatorNotInclusive";
-  // inclusive = true
-  src where $this.inclusive=true -> tgt.comparator = '>=' "CdaInclusiveToFhirComparatorInclusive";
+group IVXB_PQQuantity(source src : IVXB_PQ, target tgt : SimpleQuantity) extends PQQuantity <<types>> {
 }
+
+// group LowQuantity(source src : IVXB_PQ, target tgt : Quantity) extends PQQuantity <<types>> {
+//   // inclusive missing
+//   // TODO to be discussed
+//   src where $this.inclusive.exists().not() -> tgt.comparator = '>' "CdaInclusiveToFhirComparatorMissing";
+//   // inclusive = false
+//   src where $this.inclusive=false -> tgt.comparator = '>' "CdaInclusiveToFhirComparatorNotInclusive";
+//   // inclusive = true
+//   src where $this.inclusive=true -> tgt.comparator = '>=' "CdaInclusiveToFhirComparatorInclusive";
+// }
 
 group RTOPQPQRatio(source src : RTO_PQ_PQ, target tgt : Ratio) extends Any <<types>> {
   src.numerator as numerator -> tgt.numerator as targetNumerator then PQQuantity(numerator, targetNumerator) "numerator";
