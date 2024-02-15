@@ -108,6 +108,31 @@ conceptmap "ELGAEntityNamePartQualifierFHIRNamePartQualifier" {
   s:"VV" == t:"VV"
 }
 
+conceptmap "OIDtoURI" {
+  prefix s = "http://cda.oid"
+  prefix t = "http://fhir.system"
+
+  // entries based on https://github.com/hapifhir/org.hl7.fhir.core/blob/b590cb3fedbb0791702c637e76fefdae2cba2f78/org.hl7.fhir.utilities/src/main/java/org/hl7/fhir/utilities/OIDUtils.java#L43
+  // lines have been commented out where they're not supposed to be relevant for AT
+  s:"2.16.840.1.113883.6.96" == t:"http://snomed.info/sct"
+  s:"2.16.840.1.113883.6.1" == t:"http://loinc.org"
+  s:"2.16.840.1.113883.6.8" == t:"http://unitsofmeasure.org"
+  s:"2.16.840.1.113883.6.3" == t:"http://hl7.org/fhir/sid/icd-10"
+  // s:"2.16.840.1.113883.6.42" == t:"http://hl7.org/fhir/sid/icd-9"
+  // s:"2.16.840.1.113883.6.104" == t:"http://hl7.org/fhir/sid/icd-9"
+  // s:"2.16.840.1.113883.6.103" == t:"http://hl7.org/fhir/sid/icd-9" // TODO confirm this
+  s:"2.16.840.1.113883.6.73" == t:"http://www.whocc.no/atc"
+  // s:"2.16.840.1.113883.3.26.1.1" == t:"http://ncimeta.nci.nih.gov"
+  // s:"2.16.840.1.113883.3.26.1.1.1" == t:"http://ncimeta.nci.nih.gov"
+  // s:"2.16.840.1.113883.6.88" == t:"http://www.nlm.nih.gov/research/umls/rxnorm" // TODO confirm this
+  // s:"2.16.840.1.113883.6.59" == t:"http://hl7.org/fhir/sid/cvx"
+  // s:"2.16.840.1.113883.12.292" == t:"http://hl7.org/fhir/sid/cvx"
+  // s:"2.16.840.1.113883.6.12" == t:"http://www.ama-assn.org/go/cpt"
+
+  // additional mappings relevant for AT
+  s:"2.16.840.1.113883.5.83" == t:"http://terminology.hl7.org/CodeSystem/v3-ObservationInterpretation"
+}
+
 uses "http://hl7.org/fhir/cda/StructureDefinition/ED" alias ED as source
 uses "http://hl7.org/fhir/cda/StructureDefinition/II" as source
 uses "http://hl7.org/fhir/StructureDefinition/Identifier" as target
@@ -143,8 +168,11 @@ group Any(source src, target tgt) {
 }
 
 group II(source src : II, target tgt : Identifier) extends Any <<types>> {
+  // src.root as r where src.extension.exists()
+  //    -> tgt.system = translate(r, 'http://hl7.org/fhir/ConceptMap/special-oid2uri', 'uri') "root1";
   src.root as r where src.extension.exists()
-     -> tgt.system = translate(r, 'http://hl7.org/fhir/ConceptMap/special-oid2uri', 'uri') "root1";
+     -> tgt.system = translate(r, '#OIDtoURI', 'code') "root1";
+
   src.root as r where src.extension.empty()
         and src.root.matches('[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}')
      -> tgt.system = 'urn:ietf:rfc:3986', tgt.value = ('urn:uuid:' + r.lower()) "rootuuid";
@@ -230,10 +258,13 @@ group CDCode(source src : CD, target tgt : code) extends CSCode <<types>> {
 
 group CECoding(source src : CE, target tgt : Coding) extends Any <<types>> {
   src.code as code -> tgt.code = cast(code, 'string');
+
   // https://github.com/hapifhir/org.hl7.fhir.core/blob/master/org.hl7.fhir.dstu2016may/src/main/java/org/hl7/fhir/dstu2016may/utils/StructureMapUtilities.java#L1027
   // https://github.com/hapifhir/org.hl7.fhir.core/blob/b590cb3fedbb0791702c637e76fefdae2cba2f78/org.hl7.fhir.r5/src/main/java/org/hl7/fhir/r5/context/ContextUtilities.java#L65
   // https://github.com/hapifhir/org.hl7.fhir.core/blob/b590cb3fedbb0791702c637e76fefdae2cba2f78/org.hl7.fhir.utilities/src/main/java/org/hl7/fhir/utilities/OIDUtils.java#L43
-  src.codeSystem as system -> tgt.system = translate(system, 'http://hl7.org/fhir/ConceptMap/special-oid2uri', 'uri');
+  // src.codeSystem as system -> tgt.system = translate(system, 'http://hl7.org/fhir/ConceptMap/special-oid2uri', 'uri');
+  src.codeSystem as system -> tgt.system = translate(system, '#OIDtoURI', 'code');
+
   src.displayName as display -> tgt.display = cast(display, 'string');
 }
 
@@ -242,7 +273,10 @@ group CECodeableConcept(source src : CE, target tgt : CodeableConcept) extends A
   src -> tgt.coding as coding then CECoding(src, coding) "code";
   src.translation as translation -> tgt.coding as coding then {
     translation.code as code -> coding.code = cast(code, 'string');
-    translation.codeSystem as system -> coding.system = translate(system, 'http://hl7.org/fhir/ConceptMap/special-oid2uri', 'uri');
+
+    // translation.codeSystem as system -> coding.system = translate(system, 'http://hl7.org/fhir/ConceptMap/special-oid2uri', 'uri');
+    src.codeSystem as system -> tgt.system = translate(system, '#OIDtoURI', 'code');
+
     translation.displayName as display -> coding.display = cast(display, 'string');
   } "translation";
 }
