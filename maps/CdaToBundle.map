@@ -1058,7 +1058,7 @@ group CdaLaboratorySpecialtySectionToFhirSection (source cda_section: Section, t
                 fhir_observation.hasMember = create('Reference') as fhir_observation_hasMember_reference,
                 fhir_observation_hasMember_reference.reference = reference(fhir_laboratory_observation),
                 fhir_observation_hasMember_reference.type = 'Observation'
-                then CdaLaboratoryObservationToFhirObservation(cda_laboratory_observation, fhir_laboratory_observation);
+                then CdaLaboratoryObservationToFhirObservation(cda_laboratory_observation, fhir_laboratory_observation, fhir_patient, fhir_bundle);
             };
           };
       };
@@ -1090,7 +1090,7 @@ group CdaObservationToFhirObservation(source cda_observation : CDAObservation, t
 
 }
 
-group CdaLaboratoryObservationToFhirObservation(source cda_laboratory_observation : CDAObservation, target fhir_observation : Observation) {
+group CdaLaboratoryObservationToFhirObservation(source cda_laboratory_observation : CDAObservation, target fhir_observation : Observation, target fhir_patient: Patient, target fhir_bundle: Bundle) {
   cda_laboratory_observation ->
     fhir_observation.meta as fhir_observation_meta,
     fhir_observation_meta.profile = 'http://hl7.eu/fhir/laboratory/StructureDefinition/Observation-resultslab-eu-lab'
@@ -1099,7 +1099,6 @@ group CdaLaboratoryObservationToFhirObservation(source cda_laboratory_observatio
   // observation.id
   cda_laboratory_observation.id -> fhir_observation.identifier;
 
-  // TODO fhir_observation.performer
   // fhir_observation.category
   cda_laboratory_observation -> fhir_observation.category as fhir_category,
     fhir_category.coding as fhir_category_coding,
@@ -1157,7 +1156,21 @@ group CdaLaboratoryObservationToFhirObservation(source cda_laboratory_observatio
   cda_laboratory_observation.interpretationCode -> fhir_observation.interpretation;
 
   // observation.performer
-  // TODO
+  cda_laboratory_observation.performer as cda_laboratory_observation_performer where cda_laboratory_observation.performer.exists() then {
+    // observation.performer.time - it is assumed that only @value occurs and no interval
+    cda_laboratory_observation_performer.time  -> fhir_observation.issued;
+    // observation.performer.assignedEntity
+    cda_laboratory_observation_performer.assignedEntity as cda_performer_assignedEntity ->
+      // Create a PractitionerRole
+      fhir_bundle.entry as fhir_bundle_entry01,
+      fhir_bundle_entry01.resource = create('PractitionerRole') as fhir_practitionerRole,
+      fhir_practitionerRole.id = uuid() as fhir_practitionerRole_id,
+      fhir_bundle_entry01.fullUrl = append('urn:uuid:', fhir_practitionerRole_id),
+      fhir_observation.performer = create('Reference') as fhir_observation_performer_reference,
+      fhir_observation_performer_reference.reference = reference(fhir_practitionerRole),
+      fhir_observation_performer_reference.type = 'PractitionerRole'
+      then CdaAssignedEntityToFhirPractitionerRole(cda_performer_assignedEntity, fhir_practitionerRole, fhir_bundle);
+  };
 
   // observation.participant
   // TODO
