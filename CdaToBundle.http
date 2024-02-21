@@ -6,7 +6,7 @@
 # current matchbox
 # @host = http://localhost:8080/matchboxv3/fhir
 # matchbox 2.3.0
-@host = http://localhost:8081/matchbox/fhir
+@host = http://localhost:8084/matchboxv3/fhir
 
 ### Capability Statement
 GET {{host}}/metadata HTTP/1.1
@@ -18,7 +18,17 @@ Accept: application/fhir+xml;fhirVersion=4.0.1
 Content-Type: application/fhir+xml;fhirVersion=4.0.1
 
 ### StructureDefinition
-GET {{host}}/StructureDefinition
+GET {{host}}/StructureDefinition/ClinicalDocument
+Accept: application/fhir+xml
+Content-Type: application/fhir+xml
+
+### StructureMap
+GET {{host}}/StructureMap/at-cda-to-bundle
+Accept: application/fhir+xml
+Content-Type: application/fhir+xml
+
+### StructureMap
+GET {{host}}/StructureMap/?url=http://hl7.at/fhir/HL7ATCoreProfiles/4.0.1/StructureMap/at-cda-to-bundle
 Accept: application/fhir+xml
 Content-Type: application/fhir+xml
 
@@ -75,3 +85,4 @@ Accept: application/fhir+xml;fhirVersion=4.0.1
 Content-Type: application/fhir+xml;fhirVersion=4.0.1
 
 < ./input/FHIR_AT_Lab.xml
+
