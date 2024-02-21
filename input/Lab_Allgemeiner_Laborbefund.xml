@@ -49,7 +49,7 @@
     <!-- Dokumententyp (siehe spezieller Leitfaden: Labor- und Mikrobiologiebefund -> Laborbefund) -->
     <code code="11502-2" displayName="Laboratory report" codeSystem="2.16.840.1.113883.6.1" codeSystemName="LOINC">
         <!-- Dokumentenklasse (siehe spezieller Leitfaden: Labor- und Mikrobiologiebefund -> Laborbefund) -->
-        <translation code="11502-2" displayName="Laboratory report" codeSystem="2.16.840.1.113883.6.1" codeSystemName="LOINC"/>
+        <translation code="12222-2" displayName="Laboratory report" codeSystem="2.16.840.1.113883.6.1" codeSystemName="LOINC"/>
     </code>
     <!-- Titel des Dokuments (siehe spezieller Leitfaden: Labor- und Mikrobiologiebefund) -->
     <title>Allgemeiner Laborbefund</title>
@@ -7123,7 +7123,11 @@
                                             </text>
                                             <statusCode code="completed"/>
                                             <effectiveTime value="20210601130100+0200"/>
-                                            <value unit="%" value="75" xsi:type="PQ"/>
+                                            <!-- <value unit="%" value="75" xsi:type="PQ"/> -->
+                                            <value xsi:type="IVL_PQ">
+                                                <low value="60" unit="%"/>
+                                                <high value="140" unit="%"/>
+                                            </value>
                                             <interpretationCode code="N" codeSystemName="HL7:ObservationInterpretation" codeSystem="2.16.840.1.113883.5.83" displayName="normal"/>
                                             <!-- Referenzbereich -->
                                             <referenceRange typeCode="REFV">
