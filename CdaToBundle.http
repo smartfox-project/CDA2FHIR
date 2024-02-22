@@ -6,7 +6,7 @@
 # current matchbox
 # @host = http://localhost:8080/matchboxv3/fhir
 # matchbox 2.3.0
-@host = http://localhost:8084/matchboxv3/fhir
+@host = http://localhost:8080/matchbox/fhir
 
 ### Capability Statement
 GET {{host}}/metadata HTTP/1.1
