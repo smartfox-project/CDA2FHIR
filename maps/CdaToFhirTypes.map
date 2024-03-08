@@ -506,6 +506,7 @@ uses "http://hl7.org/fhir/StructureDefinition/instant" as target
 uses "http://hl7.org/fhir/cda/StructureDefinition/CS" as source
 uses "http://hl7.org/fhir/StructureDefinition/code" as target
 uses "http://hl7.org/fhir/cda/StructureDefinition/CE" as source
+uses "http://hl7.org/fhir/cda/StructureDefinition/CD" as source
 uses "http://hl7.org/fhir/StructureDefinition/CodeableConcept" as target
 uses "http://hl7.org/fhir/StructureDefinition/Coding" as target
 uses "http://hl7.org/fhir/cda/StructureDefinition/ST" as source
@@ -635,6 +636,10 @@ group CECoding(source src : CE, target tgt : Coding) extends Any <<types>> {
   src.codeSystem as system -> tgt.system = translate(system, '#OIDtoURI', 'code');
 
   src.displayName as display -> tgt.display = cast(display, 'string');
+}
+
+group CDCoding(source src : CD target tgt : Coding) extends CECoding <<types>> {
+
 }
 
 group CECodeableConcept(source src : CE, target tgt : CodeableConcept) extends Any <<types>> {

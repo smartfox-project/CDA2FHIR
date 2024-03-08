@@ -1038,16 +1038,86 @@ group CdaLaboratorySpecialtySectionToFhirSection (source cda: ClinicalDocument, 
           fhir_section_entry_reference.reference = reference(fhir_observation),
           fhir_section_entry_reference.type = 'Observation' then {
 
+            cda_laboratory_battery_organizer ->
+              fhir_observation.meta as fhir_observation_meta,
+              fhir_observation_meta.profile = 'http://hl7.eu/fhir/laboratory/StructureDefinition/Observation-resultslab-eu-lab'
+              "FhirObservationProfile";
+
+            // fhir_observation.category
+            cda_laboratory_battery_organizer -> fhir_observation.category as fhir_category,
+              fhir_category.coding as fhir_category_coding,
+              fhir_category_coding.system = 'http://terminology.hl7.org/CodeSystem/observation-category',
+              fhir_category_coding.code = 'laboratory'
+              "FhirObservationCategoryCoding";
+            // fhir_observation.subject
+            cda_laboratory_battery_organizer ->
+              fhir_observation.subject = create('Reference') as fhir_observation_subject_reference,
+              fhir_observation_subject_reference.reference = reference(fhir_patient)
+              "FhirObservationSubject";
+
             // organizer.code
             cda_laboratory_battery_organizer.code -> fhir_observation.category;
+            cda_laboratory_battery_organizer.code -> fhir_observation.code;
             // organizer.statusCode
             cda_laboratory_battery_organizer.statusCode as organizer_statusCode then {
               organizer_statusCode.code as cda_code -> fhir_observation.status = translate(cda_code, '#act-status-2-observation-status' , 'code');
             } "CdaStatusCodeToFhirObservationStatusMapped";
             // organizer.effectiveTime
-            cda_laboratory_battery_organizer.effectiveTime as cda_effectiveTime -> fhir_observation.effective = create('dateTime') as fhir_observation_effective then TSDateTime(cda_effectiveTime, fhir_observation_effective) "CdaEffectiveTimeToFhirObservationEffective";
-            // organizer.performer
-            // TODO
+            cda_laboratory_battery_organizer.effectiveTime as cda_effectiveTime ->
+              fhir_observation.effective = create('dateTime') as fhir_observation_effective,
+              fhir_observation_effective.extension as fhir_observation_effective_extenstion,
+              fhir_observation_effective_extenstion.url = 'http://hl7.org/fhir/StructureDefinition/data-absent-reason',
+              fhir_observation_effective_extenstion.value = create('code') as fhir_observation_effective_extenstion_code,
+              fhir_observation_effective_extenstion_code.value = 'not-applicable'
+               then TSDateTime(cda_effectiveTime, fhir_observation_effective)
+               "CdaEffectiveTimeToFhirObservationEffective";
+            cda_laboratory_battery_organizer
+              where cda_laboratory_battery_organizer.effectiveTime.exists().not() ->
+              fhir_observation.effective = create('dateTime') as fhir_observation_effective,
+              fhir_observation_effective.value = '1900-01-01',
+              fhir_observation_effective.extension as fhir_observation_effective_extenstion,
+              fhir_observation_effective_extenstion.url = 'http://hl7.org/fhir/StructureDefinition/data-absent-reason',
+              fhir_observation_effective_extenstion.value = create('code') as fhir_observation_effective_extenstion_code,
+              fhir_observation_effective_extenstion_code.value = 'not-applicable'
+               "CdaEffectiveTimeExistsNotToFhirObservationEffective";
+
+
+            // organizer.performer if existent in organizer
+            cda_laboratory_battery_organizer.performer as cda_laboratory_battery_organizer_performer
+              where cda_laboratory_battery_organizer.performer.exists()
+              then CdaPerformerToFhirObservationPerformer(cda_laboratory_battery_organizer_performer, fhir_observation, fhir_bundle)
+              "CdaBatteryOrganizerPerformerToFhirObservationPerformer";
+            // organizer.performer if not existent in organizer
+            cda_laboratory_battery_organizer where cda_laboratory_battery_organizer.performer.exists().not() then {
+              // performer has been specified in documentationOf[1]serviceEvent.performer
+              cda where cda.documentationOf[0].serviceEvent.performer.exists() then {
+                // ClinicalDocument.documentationOf
+                cda.documentationOf first as cda_documentationOf then {
+                  // ClinicalDocument.documentationOf.serviceEvent
+                  cda_documentationOf.serviceEvent as cda_documentationOf_serviceEvent then {
+                    cda_documentationOf_serviceEvent.performer as cda_documentationOf_serviceEvent_performer
+                    then CdaPerformerToFhirObservationPerformer(cda_documentationOf_serviceEvent_performer, fhir_observation, fhir_bundle)
+                    "CdaServiceEventPerformerToFhirObservationPerformer";
+                  };
+                };
+              } "CdaDocumentationOfServiceEventPerformerExists";
+              // no performer has been specified in documentationOf[1]serviceEvent.performer. as a result the ClinicalDocument.authors will be taken as performer
+              cda where cda.documentationOf[0].serviceEvent.performer.exists().not() then {
+                // ClinicalDocument.author (as person)
+                cda.author as cda_author where $this.assignedAuthor.assignedPerson.exists() ->
+                  // create the PractitionerRole in order to capture the author.functionCode
+                  fhir_bundle.entry as fhir_bundle_entry,
+                  fhir_bundle_entry.resource = create('PractitionerRole') as fhir_practitionerRole,
+                  fhir_practitionerRole.id = uuid() as fhir_practitionerRole_id,
+                  fhir_bundle_entry.fullUrl = append('urn:uuid:', fhir_practitionerRole_id),
+                  fhir_observation.performer = create('Reference') as fhir_observation_performer_reference,
+                  fhir_observation_performer_reference.reference = reference(fhir_practitionerRole),
+                  fhir_observation_performer_reference.type = 'PractitionerRole' then
+                  CdaAuthorToFhirPractitionerRole(cda_author, fhir_practitionerRole, fhir_bundle)
+                  "CdaAuthorToObservationPerformer";
+              } "CdaDocumentationOfServiceEventPerformerExistsNot";
+            } "CdaBatteryOrganizerPerformerExistsNot";
+
             // organizer.component (Laboratory Observation)
             cda_laboratory_battery_organizer.component as cda_component where $this.observation.templateId.where(root='1.3.6.1.4.1.19376.1.3.1.6') then {
               cda_component.observation as cda_laboratory_observation ->
