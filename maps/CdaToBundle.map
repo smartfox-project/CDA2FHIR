@@ -54,13 +54,13 @@ uses "http://hl7.org/fhir/cda/StructureDefinition/Performer2" alias Performer as
 uses "http://hl7.org/fhir/StructureDefinition/Bundle" alias Bundle as target
 uses "http://hl7.org/fhir/StructureDefinition/Composition" alias Composition as target
 uses "http://hl7.org/fhir/StructureDefinition/Patient" alias Patient as target
-uses "http://hl7.org/fhir/StructureDefinition/Person" alias Patient as target
+uses "http://hl7.org/fhir/StructureDefinition/Person" alias Person as target
 uses "http://hl7.org/fhir/StructureDefinition/Practitioner" alias Practitioner as target
 uses "http://hl7.org/fhir/StructureDefinition/PractitionerRole" alias PractitionerRole as target
 uses "http://hl7.org/fhir/StructureDefinition/Organization" alias Organization as target
 uses "http://hl7.org/fhir/StructureDefinition/DiagnosticReport" alias DiagnosticReport as target
 uses "http://hl7.org/fhir/StructureDefinition/ServiceRequest" alias ServiceRequest as target
-uses "http://hl7.org/fhir/StructureDefinition/Observation" alias ServiceRequest as target
+uses "http://hl7.org/fhir/StructureDefinition/Observation" alias Observation as target
 
 imports "http://hl7.at/fhir/HL7ATCoreProfiles/4.0.1/StructureMap/at-cda-to-fhir-types"
 
@@ -498,7 +498,7 @@ group CdaPatientRoleToFhirPatient(source cda_patientRole : PatientRole, target f
     cda_patientRole_id then II(cda_patientRole_id, fhir_patient_identifier) "CdaIdToFhirIdentifier";
 
     // setting identifier.type.coding according to profile for Social Security Number
-    cda_patientRole_id where (cda_patientRole_id.root = "1.2.40.0.10.1.4.3.1") ->
+    cda_patientRole_id where (cda_patientRole_id.root = '1.2.40.0.10.1.4.3.1') ->
       // according to profile no or this fixed value is required
       fhir_patient_identifier.assigner as assigner,
       assigner.display = 'Dachverband der österreichischen Sozialversicherungsträger',
@@ -511,7 +511,7 @@ group CdaPatientRoleToFhirPatient(source cda_patientRole : PatientRole, target f
       "FhirPatientIdentifierTypeCodingSS";
 
     // setting identifier.type.coding according to profile for National unique individual identifier
-    cda_patientRole_id where (cda_patientRole_id.root = "1.2.40.0.10.2.1.1.149") ->
+    cda_patientRole_id where (cda_patientRole_id.root = '1.2.40.0.10.2.1.1.149') ->
       // according to profile no or this fixed value is required
       fhir_patient_identifier.assigner as assigner,
       assigner.display = 'Bundesministerium für Inneres',
@@ -550,7 +550,7 @@ group CdaPatientRoleToFhirPatient(source cda_patientRole : PatientRole, target f
     cda_patient.birthTime as cda_patient_birthTime where (cda_patient.birthTime.value.length() > 10) -> fhir_patient.birthDate as fhir_patient_birthDate,
       fhir_patient_birthDate.extension as extension,
       extension.url = 'http://hl7.org/fhir/StructureDefinition/patient-birthTime',
-      extension.value = (cda_patient_birthTime.value) "CdaPatientBirthTimeToFhirPatientBirthTimeExtension";
+      extension.value = (cda_patient_birthTime.value.toDateTime()) "CdaPatientBirthTimeToFhirPatientBirthTimeExtension";
     // patient.deceasedInd
     cda_patient.deceasedInd as cda_patient_deceasedInd where cda_patient.deceasedTime.empty() -> fhir_patient.deceased = create('boolean') as fhir_patient_deceased then BL(cda_patient_deceasedInd, fhir_patient_deceased) "CdaPatientDeceasedIndToFhirPatientDeceasedBoolean";
     // patient.deceasedTime
@@ -1152,7 +1152,7 @@ group CdaLaboratorySpecialtySectionToFhirSection (source cda: ClinicalDocument, 
 
 group CdaObservationToFhirObservation(source cda_observation : CDAObservation, target fhir_observation : Observation) {
   // observation.id
-  cda_laboratory_observation.id -> fhir_observation.identifier;
+  cda_observation.id -> fhir_observation.identifier;
   // observation.code
   // to be defined in derived versions of this group
   // observation.text
