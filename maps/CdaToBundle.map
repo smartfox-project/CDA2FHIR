@@ -550,7 +550,7 @@ group CdaPatientRoleToFhirPatient(source cda_patientRole : PatientRole, target f
     cda_patient.birthTime as cda_patient_birthTime where (cda_patient.birthTime.value.length() > 10) -> fhir_patient.birthDate as fhir_patient_birthDate,
       fhir_patient_birthDate.extension as extension,
       extension.url = 'http://hl7.org/fhir/StructureDefinition/patient-birthTime',
-      extension.value = (cda_patient_birthTime.value.toDateTime()) "CdaPatientBirthTimeToFhirPatientBirthTimeExtension";
+      extension.value = create('dateTime') as fhir_patient_birthTime_dateTime then TSDateTime(cda_patient_birthTime, fhir_patient_birthTime_dateTime) "CdaPatientBirthTimeToFhirPatientBirthTimeExtension";
     // patient.deceasedInd
     cda_patient.deceasedInd as cda_patient_deceasedInd where cda_patient.deceasedTime.empty() -> fhir_patient.deceased = create('boolean') as fhir_patient_deceased then BL(cda_patient_deceasedInd, fhir_patient_deceased) "CdaPatientDeceasedIndToFhirPatientDeceasedBoolean";
     // patient.deceasedTime
