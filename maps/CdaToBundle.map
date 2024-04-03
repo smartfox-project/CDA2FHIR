@@ -4,6 +4,14 @@ map "http://hl7.at/fhir/HL7ATCoreProfiles/4.0.1/StructureMap/at-cda-to-bundle" =
 // Mapping CDA2FHIR
 //
 
+conceptmap "cda-code-2-fhir-category" {
+  prefix s = "http://loinc.org"
+  prefix t = "http://loinc.org"
+
+  s:"11502-2" == t:"26436-6"
+  s:"18725-2" == t:"18725-2"
+}
+
 conceptmap "cda-sdtc-statuscode-2-fhir-composition-status" {
   prefix s = "http://hl7.org/fhir/ValueSet/composition-status"
   prefix t = "http://hl7.org/fhir/ValueSet/composition-status"
@@ -178,10 +186,12 @@ group CdaHeaderToFhirComposition(source cda : ClinicalDocument, target fhir_comp
     "FhirCompositionProfile";
 
   // ClinicalDocument.code
-  cda.code as cda_code -> fhir_composition.category as fhir_composition_category then {
-    cda_code.originalText -> fhir_composition_category.text;
-    cda_code -> fhir_composition_category.coding as coding then CECoding(cda_code, coding) "code";
-  } "code";
+  cda.code as cda_code then {
+    cda_code.code as code_code ->
+    fhir_composition.category as fhir_composition_category,
+    fhir_composition_category.coding = translate(code_code, '#cda-code-2-fhir-category' , 'Coding') "code";
+  };
+
   // ClinicalDocument.code.translation
   cda.code as cda_code then {
     cda_code.translation -> fhir_composition.type;
