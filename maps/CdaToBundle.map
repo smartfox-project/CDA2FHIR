@@ -928,18 +928,34 @@ group CdaSectionToFhirSection(source cda_section: Section, target fhir_section, 
       };
   };
 
+  // TODO (currently disabled)
+  // - deal with text in lab-subsections
+  // - take a look into properly transform <reference>-tags
+  //
   // Comment Entry
   // section.entry
-  cda_section.entry as cda_entry where $this.act.templateId.where(root='2.16.840.1.113883.10.20.1.40') then {
-    // section.entry.act
-    cda_entry.act as cda_act then {
-      cda_act.text as cda_act_text ->
-        fhir_section.section as fhir_section_section,
-        fhir_section_section.text as fhir_section_section_text,
-        fhir_section_section_text.status = 'generated',
-        fhir_section_section_text.div = cda_act_text;
-    };
-  };
+  //
+  // cda_section.entry as cda_entry where $this.act.templateId.where(root='2.16.840.1.113883.10.20.1.40') then {
+  //   // section.entry.act
+  //   cda_entry.act as cda_act then {
+  //     cda_act.text as cda_act_text ->
+  //       fhir_section.section as fhir_section_section,
+  //       fhir_section_section.text as fhir_section_section_text,
+  //       fhir_section_section_text.status = 'generated',
+
+  //       // TODO take a look into properly transform <reference>-tags
+  //       fhir_section_section_text.div = cda_act_text;
+
+  //       // fhir_section.title = cda_act_text;
+  //       // fhir_section.title = cast(cda_act_text, 'string');
+  //       // fhir_section.title = (cda_act_text.data);
+  //       // fhir_section.title = append('<div xmlns="http://www.w3.org/1999/xhtml">', cda_act_text, '</div>') "asdf";
+  //       // fhir_section_section_text.div = (cda_act_text.dataString);
+  //       // fhir_section_section_text.div = append('<div xmlns="http://www.w3.org/1999/xhtml">', cda_act_text, '</div>') "asdf";
+
+  //       // cda_section.title as cda_section_title -> fhir_section.title = (cda_section_title.dataString) "test";
+  //   };
+  // };
 
   // TODO (currently disabled)
   // - section code has to be defined
