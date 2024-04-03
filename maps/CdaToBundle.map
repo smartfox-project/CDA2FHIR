@@ -819,8 +819,7 @@ group CdaBodyToFhirComposition(source cda: ClinicalDocument, source cda_structur
       // complex sections
 
     // Probeninformation (Specimen Section)
-    cda_component.section as cda_section where code.where(code='10' and codeSystem='1.2.40.0.34.5.11')
-      -> fhir_composition.section as fhir_section then CdaSpecimenSectionToFhirSection(cda_section, fhir_section, fhir_patient, fhir_diagnosticReport, fhir_bundle);
+    cda_component.section as cda_section where code.where(code='10' and codeSystem='1.2.40.0.34.5.11') then CdaSpecimenSectionToFhirSpecimen(cda_section, fhir_patient, fhir_diagnosticReport, fhir_bundle);
 
     // Laboratory Specialty Section
     cda_component.section as cda_section where templateId.where(root='1.2.40.0.34.6.0.11.2.102' or root='1.3.6.1.4.1.19376.1.3.3.2.1')
@@ -971,7 +970,7 @@ group CdaSectionToFhirSection(source cda_section: Section, target fhir_section, 
   // };
 }
 
-group CdaSpecimenSectionToFhirSection(source cda_section: Section, target fhir_section, target fhir_patient: Patient, target fhir_diagnosticReport: DiagnosticReport, target fhir_bundle: Bundle) extends CdaSectionToFhirSection {
+group CdaSpecimenSectionToFhirSpecimen(source cda_section: Section, target fhir_patient: Patient, target fhir_diagnosticReport: DiagnosticReport, target fhir_bundle: Bundle) {
   // section.entry (Probeninformation (Specimen Entry))
   cda_section.entry as cda_section_entry then {
     // section.entry.act
@@ -995,12 +994,6 @@ group CdaSpecimenSectionToFhirSection(source cda_section: Section, target fhir_s
           fhir_diagnosticReport.specimen = create('Reference') as fhir_diagnosticReport_specimen_reference,
           fhir_diagnosticReport_specimen_reference.reference = reference(fhir_specimen),
           fhir_diagnosticReport_specimen_reference.type = 'Specimen',
-
-          // create relation from Section to specimen
-          // TODO or use section.focus?
-          fhir_section.entry = create('Reference') as fhir_section_specimen_reference,
-          fhir_section_specimen_reference.reference = reference(fhir_specimen),
-          fhir_section_specimen_reference.type = 'Specimen',
 
           fhir_specimen.collection as fhir_specimen_collection then {
             // Abnahmedatum/-zeit bzw. -zeitintervall des Untersuchungsmaterials
