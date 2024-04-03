@@ -868,12 +868,19 @@ group CdaSectionToFhirSection(source cda_section: Section, target fhir_section, 
     fhir_section_text.status = 'generated' then {
       // section.text where no section.languageCode exists
       cda_section_text where cda_section.languageCode.exists().not() -> fhir_section_text.div = cda_section_text "asdf";
+
       // section.text with section.languageCode
-      // TODO correct?
       cda_section_text where cda_section.languageCode.exists() then {
         cda_section.languageCode as cda_languageCode then {
           cda_languageCode.code as cda_languageCode_code ->
-            fhir_section_text.div = append('<div xml:lang="', cda_languageCode_code, '">', cda_section_text, '</div>') "asdf";
+
+            // as long as TODO below has not been solved
+            fhir_section_text.div = cda_section_text "asdf";
+            // TODO fix output:
+            //   Currently, the output will look like <div xml:lang="XX"><div xmlns="http://www.w3.org/1999/xhtml">section.text</div></div>
+            //   However, the div-tag with the xml:lang should be within the div-tag with the xmlns.
+            //
+            //  fhir_section_text.div = append('<div xml:lang="', cda_languageCode_code, '">', cda_section_text, '</div>') "asdf";
         };
       } "CdaSectionTextToFhirSectionTextWithLanguage";
     };
@@ -934,13 +941,18 @@ group CdaSectionToFhirSection(source cda_section: Section, target fhir_section, 
     };
   };
 
+  // TODO (currently disabled)
+  // - section code has to be defined
+  // - dealing with transformation of section.text in connection with xml:lang
+  //
   // Übersetzung
   // section.component
-  cda_section.component as cda_section_component then {
-    cda_section_component.section as cda_section_component_section where templateId.where(root='1.2.40.0.34.6.0.11.2.8') // Übersetzung
-      -> fhir_section.section as fhir_section_section
-      then CdaSectionToFhirSection(cda_section_component_section, fhir_section_section, fhir_bundle);
-  };
+  //
+  // cda_section.component as cda_section_component then {
+  //   cda_section_component.section as cda_section_component_section where templateId.where(root='1.2.40.0.34.6.0.11.2.8') // Übersetzung
+  //     -> fhir_section.section as fhir_section_section
+  //     then CdaSectionToFhirSection(cda_section_component_section, fhir_section_section, fhir_bundle);
+  // };
 }
 
 group CdaSpecimenSectionToFhirSection(source cda_section: Section, target fhir_section, target fhir_patient: Patient, target fhir_diagnosticReport: DiagnosticReport, target fhir_bundle: Bundle) extends CdaSectionToFhirSection {
