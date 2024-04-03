@@ -110,7 +110,7 @@ group CdaToFhirBundle(source cda : ClinicalDocument, target fhir_bundle : Bundle
 
     // create relation from Composition to ServiceRequest
     fhir_composition.extension as fhir_composition_extenstion,
-    fhir_composition_extenstion.url = 'http://hl7.eu/fhir/laboratory/StructureDefinition/composition-basedOn-order-or-requisition',
+    fhir_composition_extenstion.url = 'http://hl7.eu/fhir/StructureDefinition/composition-basedOn-order-or-requisition',
     fhir_composition_extenstion.value = create('Reference') as fhir_diagnosticReport_composition_reference,
     fhir_diagnosticReport_composition_reference.reference = reference(fhir_serviceRequest),
     fhir_diagnosticReport_composition_reference.type = 'ServiceRequest',
