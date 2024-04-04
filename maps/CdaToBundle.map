@@ -440,10 +440,12 @@ group CdaHeaderToFhirDiagnosticReport(source cda : ClinicalDocument, target fhir
     "FhirDiagnosticReportProfile";
 
   // ClinicalDocument.code
-  cda.code as cda_code -> fhir_diagnosticReport.category as fhir_diagnosticReport_category then {
-    cda_code.originalText -> fhir_diagnosticReport_category.text;
-    cda_code -> fhir_diagnosticReport_category.coding as coding then CECoding(cda_code, coding) "code";
-  } "code";
+  cda.code as cda_code then {
+    cda_code.code as code_code ->
+    fhir_diagnosticReport.category as fhir_diagnosticReport_category,
+    fhir_diagnosticReport_category.coding = translate(code_code, '#cda-code-2-fhir-category' , 'Coding') "code";
+  };
+
   // ClinicalDocument.code.translation
   cda.code as cda_code then {
     cda_code.translation -> fhir_diagnosticReport.code;
