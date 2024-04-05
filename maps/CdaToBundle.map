@@ -629,8 +629,14 @@ group CdaPatientRoleToFhirPatient(source cda_patientRole : PatientRole, target f
     // patient.languageCommunication
     cda_patient.languageCommunication as cda_patient_language -> fhir_patient.communication as fhir_patient_communication then {
       // patient.languageCommunication.languageCode
-      // TODO code mapping
-      cda_patient_language.languageCode -> fhir_patient_communication.language;
+      cda_patient_language.languageCode as cda_patient_languageCode then {
+        cda_patient_languageCode.code as cda_patient_languageCode_code ->
+        fhir_patient_communication.language as fhir_patient_communication_language,
+        fhir_patient_communication_language.coding as fhir_patient_communication_language_coding,
+        fhir_patient_communication_language_coding.system = 'urn:ietf:bcp:47',
+        fhir_patient_communication_language_coding.code = cda_patient_languageCode_code
+        "CdaPatientLanguageToFhirPatientLanguage";
+      };
       // patient.languageCommunication.preferenceInd
       cda_patient_language.preferenceInd -> fhir_patient_communication.preferred;
 
