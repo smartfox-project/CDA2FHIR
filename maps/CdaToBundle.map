@@ -105,8 +105,6 @@ group CdaToFhirBundle(source cda : ClinicalDocument, target fhir_bundle : Bundle
     fhir_bundle_entry_2.resource = create('Patient') as fhir_patient,
     fhir_patient.id = uuid() as fhir_patient_uuid,
     fhir_bundle_entry_2.fullUrl = append('urn:uuid:', fhir_patient_uuid),
-    fhir_patient.meta as fhir_patient_meta,
-    fhir_patient_meta.profile = 'http://hl7.eu/fhir/laboratory/StructureDefinition/Patient-eu-xpandh',
 
     // create the ServiceRequest to have it as reference for later transformations
     fhir_bundle.entry as fhir_bundle_entry_5,
@@ -491,6 +489,10 @@ group CdaHeaderToFhirDiagnosticReport(source cda : ClinicalDocument, target fhir
 // Source: https://art-decor.org/art-decor/decor-templates--at-lab-?section=templates&id=1.2.40.0.34.6.0.11.1.3&effectiveDate=2020-11-24T10:03:02&language=de-DE
 // Target: http://hl7.at/fhir/HL7ATCoreProfiles/4.0.1/StructureDefinition/at-core-patient
 group CdaPatientRoleToFhirPatient(source cda_patientRole : PatientRole, target fhir_patient : Patient, target fhir_bundle : Bundle) {
+  cda_patientRole ->
+    fhir_patient.meta as fhir_patient_meta,
+    fhir_patient_meta.profile = 'http://hl7.eu/fhir/laboratory/StructureDefinition/Patient-eu-lab'
+    "FhirPatientEuLab";
   cda_patientRole ->
     fhir_patient.meta as fhir_patient_meta,
     fhir_patient_meta.profile = 'http://hl7.at/fhir/HL7ATCoreProfiles/4.0.1/StructureDefinition/at-core-patient'
