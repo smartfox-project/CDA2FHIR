@@ -496,6 +496,7 @@ conceptmap "OIDtoURI" {
   s:"2.16.840.1.113883.6.24" == t:"https://termgit.elga.gv.at/CodeSystem/mdc-medicaldevicecommunications"
   s:"2.16.840.1.113883.6.254-2005" == t:"https://termgit.elga.gv.at/CodeSystem/icf"
   s:"2.16.840.1.113883.6.43.1" == t:"https://termgit.elga.gv.at/CodeSystem/icd-o-3"
+  s:"2.16.840.1.113883.6.121" == t:"urn:ietf:bcp:47"
 }
 
 uses "http://hl7.org/fhir/cda/StructureDefinition/ED" alias ED as source
