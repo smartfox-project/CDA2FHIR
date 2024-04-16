@@ -1291,6 +1291,14 @@ group CdaLaboratoryObservationToFhirObservation(source cda: ClinicalDocument, so
 
   // observation.effectiveTime
   cda_laboratory_observation.effectiveTime as cda_effectiveTime -> fhir_observation.effective = create('dateTime') as fhir_observation_effective then TSDateTime(cda_effectiveTime, fhir_observation_effective) "CdaEffectiveTimeToFhirObservationEffective";
+  cda_laboratory_observation
+    where cda_laboratory_observation.effectiveTime.where(nullFlavor = 'UNK') ->
+    fhir_observation.effective = create('dateTime') as fhir_observation_effective,
+    fhir_observation_effective.extension as fhir_observation_effective_extenstion,
+    fhir_observation_effective_extenstion.url = 'http://hl7.org/fhir/StructureDefinition/data-absent-reason',
+    fhir_observation_effective_extenstion.value = create('code') as fhir_observation_effective_extenstion_code,
+    fhir_observation_effective_extenstion_code.value = 'unknown'
+      "CdaEffectiveTimeExistsNotToFhirObservationEffective";
 
   // observation.value(xsi:type="PQ")
   cda_laboratory_observation.value: PQ as cda_observation_value -> fhir_observation.value = create('Quantity') as fhir_observation_value then PQQuantity(cda_observation_value, fhir_observation_value) "CdaObservationValueToFhirObservationValuePQ";
