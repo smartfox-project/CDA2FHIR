@@ -118,34 +118,34 @@ group CdaToFhirBundle(source cda : ClinicalDocument, target fhir_bundle : Bundle
     fhir_composition.extension as fhir_composition_extenstion,
     fhir_composition_extenstion.url = 'http://hl7.eu/fhir/StructureDefinition/composition-basedOn-order-or-requisition',
     fhir_composition_extenstion.value = create('Reference') as fhir_diagnosticReport_composition_reference,
-    fhir_diagnosticReport_composition_reference.reference = reference(fhir_serviceRequest),
+    fhir_diagnosticReport_composition_reference.reference = append('urn:uuid:', fhir_serviceRequest_id),
     fhir_diagnosticReport_composition_reference.type = 'ServiceRequest',
 
     // create relation from Composition to Patient
     fhir_composition.subject = create('Reference') as fhir_composition_subject_reference,
-    fhir_composition_subject_reference.reference = reference(fhir_patient),
+    fhir_composition_subject_reference.reference = append('urn:uuid:', fhir_patient_uuid),
     fhir_composition_subject_reference.type = 'Patient',
 
     // create relation from DiagnosticReport to Composition
     fhir_diagnosticReport.extension as fhir_diagnosticReport_extension,
     fhir_diagnosticReport_extension.url = 'http://hl7.org/fhir/5.0/StructureDefinition/extension-DiagnosticReport.composition',
     fhir_diagnosticReport_extension.value = create('Reference') as fhir_diagnosticReport_composition_reference,
-    fhir_diagnosticReport_composition_reference.reference = reference(fhir_composition),
+    fhir_diagnosticReport_composition_reference.reference = append('urn:uuid:', fhir_composition_uuid),
     fhir_diagnosticReport_composition_reference.type = 'Composition',
 
     // create relation from DiagnosticReport to ServiceRequest
     fhir_diagnosticReport.basedOn = create('Reference') as fhir_diagnosticReport_basedOn_reference,
-    fhir_diagnosticReport_basedOn_reference.reference = reference(fhir_serviceRequest),
+    fhir_diagnosticReport_basedOn_reference.reference = append('urn:uuid:', fhir_serviceRequest_id),
     fhir_diagnosticReport_basedOn_reference.type = 'ServiceRequest',
 
     // create relation from DiagnosticReport to Patient
     fhir_diagnosticReport.subject = create('Reference') as fhir_diagnosticReport_subject_reference,
-    fhir_diagnosticReport_subject_reference.reference = reference(fhir_patient),
+    fhir_diagnosticReport_subject_reference.reference = append('urn:uuid:', fhir_patient_uuid),
     fhir_diagnosticReport_subject_reference.type = 'Patient',
 
     // create relation from ServiceRequest to Patient
     fhir_serviceRequest.subject = create('Reference') as fhir_serviceRequest_subject_reference,
-    fhir_serviceRequest_subject_reference.reference = reference(fhir_patient),
+    fhir_serviceRequest_subject_reference.reference = append('urn:uuid:', fhir_patient_uuid),
     fhir_serviceRequest_subject_reference.type = 'Patient',
 
     // PractitionerRole
@@ -245,7 +245,7 @@ group CdaHeaderToFhirComposition(source cda : ClinicalDocument, target fhir_comp
     fhir_practitionerRole.id = uuid() as fhir_practitionerRole_id,
     fhir_bundle_entry.fullUrl = append('urn:uuid:', fhir_practitionerRole_id),
     fhir_composition.author = create('Reference') as fhir_composition_author_reference,
-    fhir_composition_author_reference.reference = reference(fhir_practitionerRole),
+    fhir_composition_author_reference.reference = append('urn:uuid:', fhir_practitionerRole_id),
     fhir_composition_author_reference.type = 'PractitionerRole' then
     CdaAuthorToFhirPractitionerRole(cda_author, fhir_practitionerRole, fhir_bundle);
 
@@ -257,7 +257,7 @@ group CdaHeaderToFhirComposition(source cda : ClinicalDocument, target fhir_comp
     fhir_device.id = uuid() as fhir_device_id,
     fhir_bundle_entry.fullUrl = append('urn:uuid:', fhir_device_id),
     fhir_composition.author = create('Reference') as fhir_composition_author_reference,
-    fhir_composition_author_reference.reference = reference(fhir_device),
+    fhir_composition_author_reference.reference = append('urn:uuid:', fhir_device_id),
     fhir_composition_author_reference.type = 'Device' then
     CdaAuthorToFhirDevice(cda_author, fhir_device, fhir_bundle);
 
@@ -276,7 +276,7 @@ group CdaHeaderToFhirComposition(source cda : ClinicalDocument, target fhir_comp
         fhir_custodian_organization.id = uuid() as fhir_custodian_organization_id,
         fhir_bundle_entry.fullUrl = append('urn:uuid:', fhir_custodian_organization_id),
         fhir_composition.custodian = create('Reference') as fhir_composition_custodian_reference,
-        fhir_composition_custodian_reference.reference = reference(fhir_custodian_organization),
+        fhir_composition_custodian_reference.reference = append('urn:uuid:', fhir_custodian_organization_id),
         fhir_composition_custodian_reference.type = 'Organization' then {
           // ClinicalDocument.custodian.assignedCustodian.representedCustodianOrganization.id
           cda_representedCustodianOrganization.id -> fhir_custodian_organization.identifier;
@@ -313,7 +313,7 @@ group CdaHeaderToFhirComposition(source cda : ClinicalDocument, target fhir_comp
         fhir_practitionerRole.id = uuid() as fhir_practitionerRole_id,
         fhir_bundle_entry01.fullUrl = append('urn:uuid:', fhir_practitionerRole_id),
         fhir_composition_attester.party = create('Reference') as fhir_composition_attester_reference,
-        fhir_composition_attester_reference.reference = reference(fhir_practitionerRole),
+        fhir_composition_attester_reference.reference = append('urn:uuid:', fhir_practitionerRole_id),
         fhir_composition_attester_reference.type = 'PractitionerRole'
         then CdaAssignedEntityToFhirPractitionerRole(cda_legalAuthenticator_assignedEntity, fhir_practitionerRole, fhir_bundle);
   };
@@ -330,7 +330,7 @@ group CdaHeaderToFhirComposition(source cda : ClinicalDocument, target fhir_comp
     fhir_practitionerRole.id = uuid() as fhir_practitionerRole_id,
     fhir_bundle_entry.fullUrl = append('urn:uuid:', fhir_practitionerRole_id),
     fhir_serviceRequest.requester = create('Reference') as fhir_serviceRequest_requester_reference,
-    fhir_serviceRequest_requester_reference.reference = reference(fhir_practitionerRole),
+    fhir_serviceRequest_requester_reference.reference = append('urn:uuid:', fhir_practitionerRole_id),
     fhir_serviceRequest_requester_reference.type = 'PractitionerRole' then {
       // ClinicalDocument.participant[@typeCode='REF'].time
       cda_orderingProvider.time as cda_orderingProvider_time then {
@@ -432,12 +432,12 @@ group CdaHeaderToFhirComposition(source cda : ClinicalDocument, target fhir_comp
       fhir_bundle_entry.fullUrl = append('urn:uuid:', fhir_encounter_id),
       // create reference between composition and encounter
       fhir_composition.encounter = create('Reference') as fhir_composition_encounter_reference,
-      fhir_composition_encounter_reference.reference = reference(fhir_encounter),
+      fhir_composition_encounter_reference.reference = append('urn:uuid:', fhir_encounter_id),
       fhir_composition_encounter_reference.type = 'Encounter',
 
       // create reference between diagnosticReport and encounter
       fhir_diagnosticReport.encounter = create('Reference') as fhir_diagnosticReport_encounter_reference,
-      fhir_diagnosticReport_encounter_reference.reference = reference(fhir_encounter),
+      fhir_diagnosticReport_encounter_reference.reference = append('urn:uuid:', fhir_encounter_id),
       fhir_diagnosticReport_encounter_reference.type = 'Encounter'
       then CdaEncompassingEncounterToFhirEncounter(cda_encompassingEncounter, fhir_encounter, fhir_bundle);
   };
@@ -623,7 +623,7 @@ group CdaPatientRoleToFhirPatient(source cda_patientRole : PatientRole, target f
           fhir_bundle_entry.fullUrl = append('urn:uuid:', fhir_contact_organization_id),
 
           fhir_patient_contact.organization = create('Reference') as fhir_contact_organization_reference,
-          fhir_contact_organization_reference.reference = reference(fhir_contact_organization)
+          fhir_contact_organization_reference.reference = append('urn:uuid:', fhir_contact_organization_id)
           "CdaPatientGuardianOrganizationNameToFhirContactOrganizationReference";
       } "CdaPatientGuardianOrganizationToFhirPatientContactOrganization";
     } "CdaPatientGuardianToFhirPatientContact";
@@ -683,7 +683,7 @@ group CdaAuthorToFhirPractitionerRole(source cda_author : Author, target fhir_pr
     fhir_practitioner.id = uuid() as fhir_practitioner_id,
     fhir_bundle_entry.fullUrl = append('urn:uuid:', fhir_practitioner_id),
     fhir_practitionerRole.practitioner = create('Reference') as fhir_practitionerRole_practitioner_reference,
-    fhir_practitionerRole_practitioner_reference.reference = reference(fhir_practitioner),
+    fhir_practitionerRole_practitioner_reference.reference = append('urn:uuid:', fhir_practitioner_id),
     fhir_practitionerRole_practitioner_reference.type = 'Practitioner' then {
       // ClinicalDocument.author.functionCode
       cda_author.functionCode -> fhir_practitionerRole.code;
@@ -713,7 +713,7 @@ group CdaAuthorToFhirPractitionerRole(source cda_author : Author, target fhir_pr
           fhir_organization.id = uuid() as fhir_organization_id,
           fhir_bundle_entry.fullUrl = append('urn:uuid:', fhir_organization_id),
           fhir_practitionerRole.organization = create('Reference') as fhir_practitionerRole_organization,
-          fhir_practitionerRole_organization.reference = reference(fhir_organization),
+          fhir_practitionerRole_organization.reference = append('urn:uuid:', fhir_organization_id),
           fhir_practitionerRole_organization.type = 'Organization' then
           CdaOrganizationCompilationToFhirOrganization(cda_representedOrganization, fhir_organization);
       };
@@ -759,7 +759,7 @@ group CdaAuthorToFhirDevice(source cda_author : Author, target fhir_device : Dev
         fhir_organization.id = uuid() as fhir_organization_id,
         fhir_bundle_entry.fullUrl = append('urn:uuid:', fhir_organization_id),
         fhir_device.owner = create('Reference') as fhir_device_owner,
-        fhir_device_owner.reference = reference(fhir_organization),
+        fhir_device_owner.reference = append('urn:uuid:', fhir_organization_id),
         fhir_device_owner.type = 'Organization' then
         CdaOrganizationCompilationToFhirOrganization(cda_representedOrganization, fhir_organization);
     };
@@ -783,7 +783,7 @@ group CdaEncompassingEncounterToFhirEncounter(source cda_encompassingEncounter :
       fhir_practitionerRole.id = uuid() as fhir_practitionerRole_id,
       fhir_bundle_entry.fullUrl = append('urn:uuid:', fhir_practitionerRole_id),
       fhir_encounter_participant.individual = create('Reference') as fhir_practitionerRole_reference,
-      fhir_practitionerRole_reference.reference = reference(fhir_practitionerRole),
+      fhir_practitionerRole_reference.reference = append('urn:uuid:', fhir_practitionerRole_id),
       fhir_practitionerRole_reference.type = 'PractitionerRole' then
       CdaAssignedEntityToFhirPractitionerRole(cda_assignedEntity, fhir_practitionerRole, fhir_bundle);
   };
@@ -798,7 +798,7 @@ group CdaEncompassingEncounterToFhirEncounter(source cda_encompassingEncounter :
       fhir_location.id = uuid() as fhir_location_id,
       fhir_bundle_entry.fullUrl = append('urn:uuid:', fhir_location_id),
       fhir_encounter_location.location = create('Reference') as fhir_location_reference,
-      fhir_location_reference.reference = reference(fhir_location),
+      fhir_location_reference.reference = append('urn:uuid:', fhir_location_id),
       fhir_location_reference.type = 'Location' then {
         // encompassingEncounter.location.healthCareFacility.code
         cda_healthCareFacility.code -> fhir_location.type;
@@ -809,7 +809,7 @@ group CdaEncompassingEncounterToFhirEncounter(source cda_encompassingEncounter :
           fhir_organization.id = uuid() as fhir_organization_id,
           fhir_bundle_entry.fullUrl = append('urn:uuid:', fhir_organization_id),
           fhir_location.managingOrganization	 = create('Reference') as fhir_location_managingOrganization,
-          fhir_location_managingOrganization.reference = reference(fhir_organization),
+          fhir_location_managingOrganization.reference = append('urn:uuid:', fhir_organization_id),
           fhir_location_managingOrganization.type = 'Organization' then
           CdaOrganizationCompilationToFhirOrganization(cda_serviceProviderOrganization, fhir_organization);
       };
@@ -925,7 +925,7 @@ group CdaSectionToFhirSection(source cda_section: Section, target fhir_section, 
     fhir_practitionerRole.id = uuid() as fhir_practitionerRole_id,
     fhir_bundle_entry.fullUrl = append('urn:uuid:', fhir_practitionerRole_id),
     fhir_section.author = create('Reference') as fhir_section_author_reference,
-    fhir_section_author_reference.reference = reference(fhir_practitionerRole),
+    fhir_section_author_reference.reference = append('urn:uuid:', fhir_practitionerRole_id),
     fhir_section_author_reference.type = 'PractitionerRole' then
     CdaAuthorToFhirPractitionerRole(cda_section_author, fhir_practitionerRole, fhir_bundle);
   // section.informant
@@ -942,7 +942,7 @@ group CdaSectionToFhirSection(source cda_section: Section, target fhir_section, 
       fhir_binary.id = uuid() as fhir_binary_id,
       fhir_bundle_entry.fullUrl = append('urn:uuid:', fhir_binary_id),
       fhir_section.entry = create('Reference') as fhir_section_entry_reference,
-      fhir_section_entry_reference.reference = reference(fhir_binary),
+      fhir_section_entry_reference.reference = append('urn:uuid:', fhir_binary_id),
       fhir_section_entry_reference.type = 'Binary' then {
         // section.entry.observationMedia.value
         cda_observationMedia.value as cda_observationMedia_value then {
@@ -1110,7 +1110,7 @@ group CdaLaboratorySpecialtySectionToFhirSection (source cda: ClinicalDocument, 
       //     fhir_observation.id = uuid() as fhir_observation_id,
       //     fhir_bundle_entry.fullUrl = append('urn:uuid:', fhir_observation_id),
       //     fhir_section.entry = create('Reference') as fhir_section_entry_reference,
-      //     fhir_section_entry_reference.reference = reference(fhir_observation),
+      //     fhir_section_entry_reference.reference = append('urn:uuid:', fhir_observation_id),
       //     fhir_section_entry_reference.type = 'Observation';// then CdaLaboratoryObservationToFhirObservation(cda_laboratory_observation, fhir_section_section);
       // };
 
@@ -1123,7 +1123,7 @@ group CdaLaboratorySpecialtySectionToFhirSection (source cda: ClinicalDocument, 
           fhir_observation.id = uuid() as fhir_observation_id,
           fhir_bundle_entry.fullUrl = append('urn:uuid:', fhir_observation_id),
           fhir_section.entry = create('Reference') as fhir_section_entry_reference,
-          fhir_section_entry_reference.reference = reference(fhir_observation),
+          fhir_section_entry_reference.reference = append('urn:uuid:', fhir_observation_id),
           fhir_section_entry_reference.type = 'Observation' then {
 
             cda_laboratory_battery_organizer ->
@@ -1206,7 +1206,7 @@ group CdaLaboratorySpecialtySectionToFhirSection (source cda: ClinicalDocument, 
                 fhir_laboratory_observation.id = uuid() as fhir_laboratory_observation_id,
                 fhir_bundle_entry.fullUrl = append('urn:uuid:', fhir_laboratory_observation_id),
                 fhir_observation.hasMember = create('Reference') as fhir_observation_hasMember_reference,
-                fhir_observation_hasMember_reference.reference = reference(fhir_laboratory_observation),
+                fhir_observation_hasMember_reference.reference = append('urn:uuid:', fhir_laboratory_observation_id),
                 fhir_observation_hasMember_reference.type = 'Observation'
                 then CdaLaboratoryObservationToFhirObservation(cda, cda_laboratory_observation, fhir_laboratory_observation, fhir_practitionerRole, fhir_patient, fhir_bundle);
             };
@@ -1443,7 +1443,7 @@ group CdaAssignedEntityToFhirPractitionerRole(source cda_assignedEntity : Assign
         fhir_organization.id = uuid() as fhir_organization_id,
         fhir_bundle_entry.fullUrl = append('urn:uuid:', fhir_organization_id),
         fhir_practitionerRole.organization = create('Reference') as fhir_practitionerRole_organization,
-        fhir_practitionerRole_organization.reference = reference(fhir_organization),
+        fhir_practitionerRole_organization.reference = append('urn:uuid:', fhir_organization_id),
         fhir_practitionerRole_organization.type = 'Organization' then
         CdaOrganizationCompilationToFhirOrganization(cda_representedOrganization, fhir_organization);
   } "CdaAssignedEntityToFhirPractitionerRole";
@@ -1460,7 +1460,7 @@ group CdaAssociatedEntityToFhirPractitionerRole(source cda_associatedEntity : As
     fhir_practitioner.id = uuid() as fhir_practitioner_id,
     fhir_bundle_entry.fullUrl = append('urn:uuid:', fhir_practitioner_id),
     fhir_practitionerRole.practitioner = create('Reference') as fhir_practitionerRole_practitioner_reference,
-    fhir_practitionerRole_practitioner_reference.reference = reference(fhir_practitioner),
+    fhir_practitionerRole_practitioner_reference.reference = append('urn:uuid:', fhir_practitioner_id),
     fhir_practitionerRole_practitioner_reference.type = 'Practitioner' then {
       // associatedEntity.id
       cda_associatedEntity.id -> fhir_practitionerRole.identifier;
@@ -1480,7 +1480,7 @@ group CdaAssociatedEntityToFhirPractitionerRole(source cda_associatedEntity : As
         fhir_organization.id = uuid() as fhir_organization_id,
         fhir_bundle_entry.fullUrl = append('urn:uuid:', fhir_organization_id),
         fhir_practitionerRole.organization = create('Reference') as fhir_practitionerRole_organization,
-        fhir_practitionerRole_organization.reference = reference(fhir_organization),
+        fhir_practitionerRole_organization.reference = append('urn:uuid:', fhir_organization_id),
         fhir_practitionerRole_organization.type = 'Organization' then
         CdaOrganizationCompilationToFhirOrganization(cda_scopingOrganization, fhir_organization);
   } "CdaAssociatedEntityToFhirPractitionerRole";
@@ -1497,7 +1497,7 @@ group CdaPerformerToFhirObservationPerformer(source cda_performer: Performer, ta
     fhir_practitionerRole.id = uuid() as fhir_practitionerRole_id,
     fhir_bundle_entry01.fullUrl = append('urn:uuid:', fhir_practitionerRole_id),
     fhir_observation.performer = create('Reference') as fhir_observation_performer_reference,
-    fhir_observation_performer_reference.reference = reference(fhir_practitionerRole),
+    fhir_observation_performer_reference.reference = append('urn:uuid:', fhir_practitionerRole_id),
     fhir_observation_performer_reference.type = 'PractitionerRole'
     then CdaAssignedEntityToFhirPractitionerRole(cda_performer_assignedEntity, fhir_practitionerRole, fhir_bundle);
 }
