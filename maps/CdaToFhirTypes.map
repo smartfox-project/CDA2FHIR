@@ -867,6 +867,12 @@ group PQQuantity(source src : PQ, target tgt : Quantity) extends Any <<types>> {
   src.value as value -> tgt.value = value;
 }
 
+group IVLPQRange(source src : IVL_PQ, target tgt : Range) extends Any <<types>> {
+  src.low as source_low -> tgt.low as target_low then PQQuantity(source_low, target_low) "IVLPQLow";
+  src.high as source_high -> tgt.high as target_high then PQQuantity(source_high, target_high) "IVLPQHigh";
+  // Range does not support any other elements, no official extensions defined
+}
+
 group IVXB_PQQuantity(source src : IVXB_PQ, target tgt : SimpleQuantity) extends PQQuantity <<types>> {
 }
 
