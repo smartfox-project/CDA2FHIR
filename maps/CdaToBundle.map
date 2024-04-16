@@ -430,9 +430,15 @@ group CdaHeaderToFhirComposition(source cda : ClinicalDocument, target fhir_comp
       fhir_bundle_entry.resource = create('Encounter') as fhir_encounter,
       fhir_encounter.id = uuid() as fhir_encounter_id,
       fhir_bundle_entry.fullUrl = append('urn:uuid:', fhir_encounter_id),
+      // create reference between composition and encounter
       fhir_composition.encounter = create('Reference') as fhir_composition_encounter_reference,
       fhir_composition_encounter_reference.reference = reference(fhir_encounter),
-      fhir_composition_encounter_reference.type = 'Encounter'
+      fhir_composition_encounter_reference.type = 'Encounter',
+
+      // create reference between diagnosticReport and encounter
+      fhir_diagnosticReport.encounter = create('Reference') as fhir_diagnosticReport_encounter_reference,
+      fhir_diagnosticReport_encounter_reference.reference = reference(fhir_encounter),
+      fhir_diagnosticReport_encounter_reference.type = 'Encounter'
       then CdaEncompassingEncounterToFhirEncounter(cda_encompassingEncounter, fhir_encounter, fhir_bundle);
   };
 }
