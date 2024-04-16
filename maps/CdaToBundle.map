@@ -1303,6 +1303,9 @@ group CdaLaboratoryObservationToFhirObservation(source cda: ClinicalDocument, so
   // observation.value(xsi:type="PQ")
   cda_laboratory_observation.value: PQ as cda_observation_value -> fhir_observation.value = create('Quantity') as fhir_observation_value then PQQuantity(cda_observation_value, fhir_observation_value) "CdaObservationValueToFhirObservationValuePQ";
 
+  // observation.value(xsi:type="IVL_PQ")
+  cda_laboratory_observation.value: IVL_PQ as cda_observation_value -> fhir_observation.value = create('Range') as fhir_observation_value then IVLPQRange(cda_observation_value, fhir_observation_value) "CdaObservationValueToFhirObservationValueIVLPQ";
+
   // TODO other datatypes
   // // Concept Descriptor
 	// cdaObs.value: CD as obsValueCDA -> observation.value = create('CodeableConcept') as value then CDCodeableConcept(obsValueCDA,value) "observationValueCD";
