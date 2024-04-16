@@ -1021,7 +1021,8 @@ group CdaSpecimenSectionToFhirSpecimen(source cda_section: Section, target fhir_
 
           // create relation from specimen to patient
           fhir_specimen.subject = create('Reference') as fhir_specimen_patient_reference,
-          fhir_specimen_patient_reference.reference = reference(fhir_patient),
+          fhir_patient.id as fhir_patient_id,
+          fhir_specimen_patient_reference.reference = append('urn:uuid:', fhir_patient_id),
           fhir_specimen_patient_reference.type = 'Patient',
 
           // create relation from DiagnosticReport to specimen
@@ -1139,7 +1140,8 @@ group CdaLaboratorySpecialtySectionToFhirSection (source cda: ClinicalDocument, 
             // fhir_observation.subject
             cda_laboratory_battery_organizer ->
               fhir_observation.subject = create('Reference') as fhir_observation_subject_reference,
-              fhir_observation_subject_reference.reference = reference(fhir_patient)
+              fhir_patient.id as fhir_patient_id,
+              fhir_observation_subject_reference.reference = append('urn:uuid:', fhir_patient_id)
               "FhirObservationSubject";
 
             // organizer.code
@@ -1266,7 +1268,8 @@ group CdaLaboratoryObservationToFhirObservation(source cda: ClinicalDocument, so
   // fhir_observation.subject
   cda_laboratory_observation ->
     fhir_observation.subject = create('Reference') as fhir_observation_subject_reference,
-    fhir_observation_subject_reference.reference = reference(fhir_patient)
+    fhir_patient.id as fhir_patient_id,
+    fhir_observation_subject_reference.reference = append('urn:uuid:', fhir_patient_id)
     "FhirObservationSubject";
 
   // observation.code
