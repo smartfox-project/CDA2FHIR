@@ -1150,6 +1150,7 @@ group CdaLaboratorySpecialtySectionToFhirSection (source cda: ClinicalDocument, 
               organizer_statusCode.code as cda_code -> fhir_observation.status = translate(cda_code, '#act-status-2-observation-status' , 'code');
             } "CdaStatusCodeToFhirObservationStatusMapped";
             // organizer.effectiveTime
+            // TODO
             cda_laboratory_battery_organizer.effectiveTime as cda_effectiveTime ->
               fhir_observation.effective = create('dateTime') as fhir_observation_effective,
               fhir_observation_effective.extension as fhir_observation_effective_extenstion,
