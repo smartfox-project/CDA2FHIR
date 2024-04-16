@@ -112,7 +112,7 @@ group CdaToFhirBundle(source cda : ClinicalDocument, target fhir_bundle : Bundle
     fhir_serviceRequest.id = uuid() as fhir_serviceRequest_id,
     fhir_bundle_entry_5.fullUrl = append('urn:uuid:', fhir_serviceRequest_id),
     fhir_serviceRequest.meta as fhir_serviceRequest_meta,
-    fhir_serviceRequest_meta.profile = 'http://hl7.eu/fhir/laboratory/StructureDefinition/ServiceRequest-lab-xpandh',
+    fhir_serviceRequest_meta.profile = 'http://hl7.eu/fhir/laboratory/StructureDefinition/ServiceRequest-eu-lab',
 
     // create relation from Composition to ServiceRequest
     fhir_composition.extension as fhir_composition_extenstion,
@@ -374,6 +374,11 @@ group CdaHeaderToFhirComposition(source cda : ClinicalDocument, target fhir_comp
     cda_inFulFillmentOf.order as cda_inFulFillmentOf_order then {
       // ClinicalDocument.inFulfillmentOf.order.id
       cda_inFulFillmentOf_order.id -> fhir_serviceRequest.identifier;
+      // fhir_serviceRequest.status
+      // TODO if a laboratory report is a preliminary report the status of the servicerequest should be "active"
+      cda -> fhir_serviceRequest.status = 'completed' "FhirServiceRequestStatus";
+      // fhir_serviceRequest.intent
+      cda -> fhir_serviceRequest.intent = 'order' "FhirServiceRequestIntent";
     };
   };
 
