@@ -1085,18 +1085,20 @@ group CdaSpecimenSectionToFhirSpecimen(source cda_section: Section, target fhir_
                 };
                 // TODO act.effectiveTime high / low -> Period
 
-                // Anmerkung zur Qualität des Untersuchungsmaterials
-                // act.entryRelationship
-                cda_act.entryRelationship as cda_comment_entryRelationship then {
-                  // act.entryRelationship.act
-                  cda_comment_entryRelationship.act as cda_comment_act then {
-                    // act.entryRelationship.act.text
-                    // TODO CDA level 4 Referenzen müssen noch aufgelöst werden
-                    cda_comment_act.text as cda_comment_act_text ->
-                      fhir_specimen.note as fhir_specimen_note,
-                      fhir_specimen_note.text = cda_comment_act_text;
-                  };
-                };
+
+                // TODO CDA level 4 Referenzen müssen noch aufgelöst werden
+                // // Anmerkung zur Qualität des Untersuchungsmaterials
+                // // act.entryRelationship
+                // cda_act.entryRelationship as cda_comment_entryRelationship then {
+                //   // act.entryRelationship.act
+                //   cda_comment_entryRelationship.act as cda_comment_act then {
+                //     // act.entryRelationship.act.text
+                //     // TODO CDA level 4 Referenzen müssen noch aufgelöst werden
+                //     cda_comment_act.text as cda_comment_act_text ->
+                //       fhir_specimen.note as fhir_specimen_note,
+                //       fhir_specimen_note.text = cda_comment_act_text;
+                //   };
+                // };
               };
             };
         };
