@@ -778,7 +778,7 @@ group CdaEncompassingEncounterToFhirEncounter(source cda_encompassingEncounter :
   // fhir_encounter.status
   cda_encompassingEncounter -> fhir_encounter.status = 'finished' "FhirEncounterStatus";
   // encompassingEncounter.code
-  cda_encompassingEncounter.code -> fhir_encounter.type;
+  cda_encompassingEncounter.code -> fhir_encounter.class;
   // encompassingEncounter.effectiveTime
   cda_encompassingEncounter.effectiveTime -> fhir_encounter.period;
   // encompassingEncounter.responsibleParty
