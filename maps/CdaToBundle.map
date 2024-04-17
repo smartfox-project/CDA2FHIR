@@ -775,6 +775,8 @@ group CdaAuthorToFhirDevice(source cda_author : Author, target fhir_device : Dev
 group CdaEncompassingEncounterToFhirEncounter(source cda_encompassingEncounter : EncompassingEncounter, target fhir_encounter : Encounter, target fhir_bundle : Bundle) {
   // encompassingEncounter.id
   cda_encompassingEncounter.id -> fhir_encounter.identifier;
+  // fhir_encounter.status
+  cda_encompassingEncounter -> fhir_encounter.status = 'finished' "FhirEncounterStatus";
   // encompassingEncounter.code
   cda_encompassingEncounter.code -> fhir_encounter.type;
   // encompassingEncounter.effectiveTime
