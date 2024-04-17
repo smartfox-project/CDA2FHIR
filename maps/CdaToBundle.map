@@ -1036,7 +1036,8 @@ group CdaSpecimenSectionToFhirSpecimen(source cda_section: Section, target fhir_
 
           // create relation from DiagnosticReport to specimen
           fhir_diagnosticReport.specimen = create('Reference') as fhir_diagnosticReport_specimen_reference,
-          fhir_diagnosticReport_specimen_reference.reference = reference(fhir_specimen),
+          fhir_specimen.id as fhir_specimen_id,
+          fhir_diagnosticReport_specimen_reference.reference = append('urn:uuid:', fhir_specimen_id),
           fhir_diagnosticReport_specimen_reference.type = 'Specimen',
 
           fhir_specimen.collection as fhir_specimen_collection then {
@@ -1201,7 +1202,8 @@ group CdaLaboratorySpecialtySectionToFhirSection (source cda: ClinicalDocument, 
                 } "CdaDocumentationOfServiceEventPerformerExists";
                 cda ->
                     fhir_observation.performer = create('Reference') as fhir_observation_performer_reference,
-                    fhir_observation_performer_reference.reference = reference(fhir_practitionerRole),
+                    fhir_practitionerRole.id as fhir_practitionerRole_id,
+                    fhir_observation_performer_reference.reference = append('urn:uuid:', fhir_practitionerRole_id),
                     fhir_observation_performer_reference.type = 'PractitionerRole'
                 "CdaBatteryOrganizerPerformerExistsNotRole";
             } "CdaBatteryOrganizerPerformerExistsNot";
@@ -1376,7 +1378,8 @@ group CdaLaboratoryObservationToFhirObservation(source cda: ClinicalDocument, so
     } "CdaDocumentationOfServiceEventPerformerExists";
     cda ->
         fhir_observation.performer = create('Reference') as fhir_observation_performer_reference,
-        fhir_observation_performer_reference.reference = reference(fhir_practitionerRole),
+        fhir_practitionerRole.id as fhir_practitionerRole_id,
+        fhir_observation_performer_reference.reference = append('urn:uuid:', fhir_practitionerRole_id),
         fhir_observation_performer_reference.type = 'PractitionerRole'
     "CdaObservationPerformerExistsNotRole";
 
@@ -1430,7 +1433,7 @@ group CdaAssignedEntityToFhirPractitionerRole(source cda_assignedEntity : Assign
     fhir_practitioner.id = uuid() as fhir_practitioner_id,
     fhir_bundle_entry.fullUrl = append('urn:uuid:', fhir_practitioner_id),
     fhir_practitionerRole.practitioner = create('Reference') as fhir_practitionerRole_practitioner_reference,
-    fhir_practitionerRole_practitioner_reference.reference = reference(fhir_practitioner),
+    fhir_practitionerRole_practitioner_reference.reference = append('urn:uuid:', fhir_practitioner_id),
     fhir_practitionerRole_practitioner_reference.type = 'Practitioner' then {
       // assignedEntity.id
       cda_assignedEntity.id -> fhir_practitionerRole.identifier;
