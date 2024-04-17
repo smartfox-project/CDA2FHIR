@@ -942,33 +942,36 @@ group CdaSectionToFhirSection(source cda_section: Section, target fhir_section, 
 
   // Observation Media
   // section.entry with observationMedia
-  cda_section.entry as cda_section_entry where $this.observationMedia.exists() then {
-    // section.entry.observationMedia
-    cda_section_entry.observationMedia as cda_observationMedia ->
-      // create Binary
-      fhir_bundle.entry as fhir_bundle_entry,
-      fhir_bundle_entry.resource = create('Binary') as fhir_binary,
-      fhir_binary.id = uuid() as fhir_binary_id,
-      fhir_bundle_entry.fullUrl = append('urn:uuid:', fhir_binary_id),
-      fhir_section.entry = create('Reference') as fhir_section_entry_reference,
-      fhir_section_entry_reference.reference = append('urn:uuid:', fhir_binary_id),
-      fhir_section_entry_reference.type = 'Binary' then {
-        // section.entry.observationMedia.value
-        cda_observationMedia.value as cda_observationMedia_value then {
-          cda_observationMedia_value -> fhir_binary.data = (cda_observationMedia_value.dataBase64Binary) "CdaObservationMediaValueToFhirBinaryData";
-          // section.entry.observationMedia.value.mediaType
-          cda_observationMedia_value.mediaType as cda_mediaType -> fhir_binary.contentType = cda_mediaType;
-        };
-        // section.entry.observationMedia.performer
-        // TODO ?
-        // section.entry.observationMedia.author
-        // TODO ?
-        // section.entry.observationMedia.informant
-        // TODO ?
-        // section.entry.observationMedia.participant
-        // TODO ?
-      };
-  };
+  //
+  // TODO currently unclear where to place attachments
+  //
+  // cda_section.entry as cda_section_entry where $this.observationMedia.exists() then {
+  //   // section.entry.observationMedia
+  //   cda_section_entry.observationMedia as cda_observationMedia ->
+  //     // create Binary
+  //     fhir_bundle.entry as fhir_bundle_entry,
+  //     fhir_bundle_entry.resource = create('Binary') as fhir_binary,
+  //     fhir_binary.id = uuid() as fhir_binary_id,
+  //     fhir_bundle_entry.fullUrl = append('urn:uuid:', fhir_binary_id),
+  //     fhir_section.entry = create('Reference') as fhir_section_entry_reference,
+  //     fhir_section_entry_reference.reference = append('urn:uuid:', fhir_binary_id),
+  //     fhir_section_entry_reference.type = 'Binary' then {
+  //       // section.entry.observationMedia.value
+  //       cda_observationMedia.value as cda_observationMedia_value then {
+  //         cda_observationMedia_value -> fhir_binary.data = (cda_observationMedia_value.dataBase64Binary) "CdaObservationMediaValueToFhirBinaryData";
+  //         // section.entry.observationMedia.value.mediaType
+  //         cda_observationMedia_value.mediaType as cda_mediaType -> fhir_binary.contentType = cda_mediaType;
+  //       };
+  //       // section.entry.observationMedia.performer
+  //       // TODO ?
+  //       // section.entry.observationMedia.author
+  //       // TODO ?
+  //       // section.entry.observationMedia.informant
+  //       // TODO ?
+  //       // section.entry.observationMedia.participant
+  //       // TODO ?
+  //     };
+  // };
 
   // TODO (currently disabled)
   // - deal with text in lab-subsections
