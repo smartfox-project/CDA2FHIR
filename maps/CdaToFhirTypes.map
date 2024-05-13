@@ -519,7 +519,7 @@ uses "http://hl7.org/fhir/StructureDefinition/string" alias string as target
 uses "http://hl7.org/cda/stds/core/StructureDefinition/EN" alias EN as source
 uses "http://hl7.org/cda/stds/core/StructureDefinition/PN" alias PN as source
 uses "http://hl7.org/cda/stds/core/StructureDefinition/PQ" alias PQ as source
-uses "http://hl7.org/cda/stds/core/StructureDefinition/IVXB_PQ" alias IVXB_PQ as source
+uses "http://hl7.org/cda/stds/core/StructureDefinition/IVXB-PQ" alias IVXB_PQ as source
 uses "http://hl7.org/cda/stds/core/StructureDefinition/ON" alias ON as source
 uses "http://hl7.org/fhir/StructureDefinition/HumanName" alias HumanName as target
 uses "http://hl7.org/fhir/StructureDefinition/Organization" alias Organization as target
@@ -529,7 +529,7 @@ uses "http://hl7.org/cda/stds/core/StructureDefinition/TEL" alias TEL as source
 uses "http://hl7.org/fhir/StructureDefinition/ContactPoint" alias ContactPoint as target
 uses "http://hl7.org/cda/stds/core/StructureDefinition/BL" alias BL as source
 uses "http://hl7.org/fhir/StructureDefinition/boolean" alias boolean as target
-uses "http://hl7.org/cda/stds/core/StructureDefinition/IVL_TS" alias IVL_TS as source
+uses "http://hl7.org/cda/stds/core/StructureDefinition/IVL-TS" alias IVL_TS as source
 uses "http://hl7.org/cda/stds/core/StructureDefinition/IVXB-TS" alias IVXB_TS as source
 
 uses "http://hl7.org/fhir/StructureDefinition/Quantity" alias Quantity as target
