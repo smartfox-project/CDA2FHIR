@@ -511,10 +511,6 @@ group CdaPatientRoleToFhirPatient(source cda_patientRole : PatientRole, target f
     fhir_patient.meta as fhir_patient_meta,
     fhir_patient_meta.profile = 'http://hl7.eu/fhir/laboratory/StructureDefinition/Patient-eu-lab'
     "FhirPatientEuLab";
-  cda_patientRole ->
-    fhir_patient.meta as fhir_patient_meta,
-    fhir_patient_meta.profile = 'http://hl7.at/fhir/HL7ATCoreProfiles/4.0.1/StructureDefinition/at-core-patient'
-    "FhirPatientAtCorePatientProfile";
 
   // TODO check with TC FHIR how profile has to be read - are there additional identifier having no coding allowed apart from PI, SS, or NI?
   // patientRole.id[1]
@@ -599,10 +595,8 @@ group CdaPatientRoleToFhirPatient(source cda_patientRole : PatientRole, target f
     // patient.religiousAffiliationCode
     cda_patient.religiousAffiliationCode as cda_patient_religiousAffiliationCode ->
       fhir_patient.extension as religion_extension,
-      religion_extension.url = 'http://hl7.at/fhir/HL7ATCoreProfiles/4.0.1/StructureDefinition/at-core-ext-patient-religion',
-      religion_extension.extension as religion_extension_code,
-      religion_extension_code.url = 'code',
-      religion_extension_code.value = create('CodeableConcept') as religion_extension_codeableConcept then CECodeableConcept(cda_patient_religiousAffiliationCode, religion_extension_codeableConcept)
+      religion_extension.url = 'http://hl7.org/fhir/StructureDefinition/patient-religion',
+      religion_extension.value = create('CodeableConcept') as religion_extension_codeableConcept then CECodeableConcept(cda_patient_religiousAffiliationCode, religion_extension_codeableConcept)
       "CdaPatientReligiousAffiliationCodeToFhirPatientReligionExtension";
     // patient.raceCode NP
     // patient.ethnicGroupCode NP
