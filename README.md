@@ -44,6 +44,10 @@ In order to execute a transformation execute the following REST calls from withi
 
 https://validator.fhir.org/
 
+    java -jar validator_cli.jar hl7at/hl7at_CDA2FHIR/output/hl7eu_patient.json -version 4.0 -ig hl7eu_laboratory_package.tgz > hl7at/hl7at_CDA2FHIR/output/validation.log
+
+    java -jar validator_cli.jar hl7at/hl7at_CDA2FHIR/output/hl7eu_bundle.json -version 4.0 -ig hl7eu_laboratory_package.tgz -ig hl7at_fhir_core_package.tgz > hl7at/hl7at_CDA2FHIR/output/validation.log
+
 ## Built With
 
 * [Matchbox 2.3.0](https://github.com/ahdis/matchbox/releases/tag/v2.3.0) - The mapping engine used
