@@ -108,6 +108,401 @@ conceptmap "ELGAEntityNamePartQualifierFHIRNamePartQualifier" {
   s:"VV" == t:"VV"
 }
 
+conceptmap "OIDtoURI" {
+  prefix s = "http://cda.oid"
+  prefix t = "http://fhir.system"
+
+  // entries based on https://github.com/hapifhir/org.hl7.fhir.core/blob/b590cb3fedbb0791702c637e76fefdae2cba2f78/org.hl7.fhir.utilities/src/main/java/org/hl7/fhir/utilities/OIDUtils.java#L43
+  // lines have been commented out where they're not supposed to be relevant for AT
+  s:"2.16.840.1.113883.6.96" == t:"http://snomed.info/sct"
+  s:"2.16.840.1.113883.6.1" == t:"http://loinc.org"
+  s:"2.16.840.1.113883.6.8" == t:"http://unitsofmeasure.org"
+  s:"2.16.840.1.113883.6.3" == t:"http://hl7.org/fhir/sid/icd-10"
+  // s:"2.16.840.1.113883.6.42" == t:"http://hl7.org/fhir/sid/icd-9"
+  // s:"2.16.840.1.113883.6.104" == t:"http://hl7.org/fhir/sid/icd-9"
+  // s:"2.16.840.1.113883.6.103" == t:"http://hl7.org/fhir/sid/icd-9" // TODO confirm this
+  s:"2.16.840.1.113883.6.73" == t:"http://www.whocc.no/atc"
+  // s:"2.16.840.1.113883.3.26.1.1" == t:"http://ncimeta.nci.nih.gov"
+  // s:"2.16.840.1.113883.3.26.1.1.1" == t:"http://ncimeta.nci.nih.gov"
+  // s:"2.16.840.1.113883.6.88" == t:"http://www.nlm.nih.gov/research/umls/rxnorm" // TODO confirm this
+  // s:"2.16.840.1.113883.6.59" == t:"http://hl7.org/fhir/sid/cvx"
+  // s:"2.16.840.1.113883.12.292" == t:"http://hl7.org/fhir/sid/cvx"
+  // s:"2.16.840.1.113883.6.12" == t:"http://www.ama-assn.org/go/cpt"
+
+  // additional mappings relevant for AT (based on termgit.elga.gv.at)
+  s:"2.16.840.1.113883.2.16.1.4.9" == t:"urn:oid:2.16.840.1.113883.2.16.1.4.9"
+  s:"2.16.840.1.113883.5.83" == t:"http://terminology.hl7.org/CodeSystem/v3-ObservationInterpretation"
+  s:"0.4.0.127.0.16.1.1.2.1" == t:"https://termgit.elga.gv.at/CodeSystem/ehdsi-edqm-auszug"
+  s:"1.0.3166.1.2.2" == t:"https://termgit.elga.gv.at/CodeSystem/iso-3166-alpha-2-code"
+  s:"1.0.3166.1.2.3" == t:"https://termgit.elga.gv.at/CodeSystem/iso-3166-1-alpha-3"
+  s:"1.0.5218" == t:"https://termgit.elga.gv.at/CodeSystem/geschlechtercodes-iso-iec-5218"
+  s:"1.0.639.2" == t:"https://termgit.elga.gv.at/CodeSystem/iso-639-2"
+  s:"1.2.276.0.76.5.547" == t:"https://termgit.elga.gv.at/CodeSystem/atc-deutsch-wido"
+  s:"1.2.40.0.10.1.4.3.4.3.2" == t:"https://termgit.elga.gv.at/CodeSystem/elga-medikationmengenartalternativ"
+  s:"1.2.40.0.10.1.4.3.4.3.3" == t:"https://termgit.elga.gv.at/CodeSystem/medikationrezeptart"
+  s:"1.2.40.0.10.1.4.3.4.3.4" == t:"https://termgit.elga.gv.at/CodeSystem/medikationartanwendung"
+  s:"1.2.40.0.10.1.4.3.4.3.5" == t:"https://termgit.elga.gv.at/CodeSystem/medikationdarreichungsform"
+  s:"1.2.40.0.10.1.4.3.4.3.6" == t:"https://termgit.elga.gv.at/CodeSystem/medikationtherapieart"
+  s:"1.2.40.0.10.1.4.3.4.3.7" == t:"https://termgit.elga.gv.at/CodeSystem/medikationrezeptpflichtstatus"
+  s:"1.2.40.0.34.10.10" == t:"https://termgit.elga.gv.at/ValueSet/elga-languagecode"
+  s:"1.2.40.0.34.10.11" == t:"https://termgit.elga.gv.at/ValueSet/elga-maritalstatus"
+  s:"1.2.40.0.34.10.13" == t:"https://termgit.elga.gv.at/ValueSet/elga-observationinterpretation"
+  s:"1.2.40.0.34.10.14" == t:"https://termgit.elga.gv.at/ValueSet/langid-at"
+  s:"1.2.40.0.34.10.15" == t:"https://termgit.elga.gv.at/ValueSet/elga-participationfunctioncode"
+  s:"1.2.40.0.34.10.150" == t:"https://termgit.elga.gv.at/ValueSet/elga-auditeventid"
+  s:"1.2.40.0.34.10.151" == t:"https://termgit.elga.gv.at/ValueSet/elga-auditeventtype"
+  s:"1.2.40.0.34.10.152" == t:"https://termgit.elga.gv.at/ValueSet/elga-auditsourcetype"
+  s:"1.2.40.0.34.10.153" == t:"https://termgit.elga.gv.at/ValueSet/elga-auditroleid"
+  s:"1.2.40.0.34.10.154" == t:"https://termgit.elga.gv.at/ValueSet/elga-auditparticipantobjecttype"
+  s:"1.2.40.0.34.10.155" == t:"https://termgit.elga.gv.at/ValueSet/elga-auditparticipantobjecttyperole"
+  s:"1.2.40.0.34.10.156" == t:"https://termgit.elga.gv.at/ValueSet/elga-auditparticipantobjectidtype"
+  s:"1.2.40.0.34.10.158" == t:"https://termgit.elga.gv.at/ValueSet/dicom-sopclasses"
+  s:"1.2.40.0.34.10.159" == t:"https://termgit.elga.gv.at/ValueSet/elga-medikationabgabeart"
+  s:"1.2.40.0.34.10.16" == t:"https://termgit.elga.gv.at/ValueSet/elga-addressuse"
+  s:"1.2.40.0.34.10.160" == t:"https://termgit.elga.gv.at/ValueSet/elga-actcode-abginfo"
+  s:"1.2.40.0.34.10.161" == t:"https://termgit.elga.gv.at/ValueSet/elga-actcode-patinfo"
+  s:"1.2.40.0.34.10.162" == t:"https://termgit.elga.gv.at/ValueSet/elga-wirkstoffe-ages"
+  s:"1.2.40.0.34.10.164" == t:"https://termgit.elga.gv.at/ValueSet/elga-sectionspflegesitber"
+  s:"1.2.40.0.34.10.165" == t:"https://termgit.elga.gv.at/ValueSet/elga-auditeventtype-a-arr"
+  s:"1.2.40.0.34.10.166" == t:"https://termgit.elga.gv.at/ValueSet/elga-dosisparameter"
+  s:"1.2.40.0.34.10.167" == t:"https://termgit.elga.gv.at/ValueSet/elga-problemstatuscode"
+  s:"1.2.40.0.34.10.168" == t:"https://termgit.elga.gv.at/ValueSet/elga-diagnosesicherheit"
+  s:"1.2.40.0.34.10.169" == t:"https://termgit.elga.gv.at/ValueSet/elga-problemkataloge"
+  s:"1.2.40.0.34.10.17" == t:"https://termgit.elga.gv.at/ValueSet/elga-personalrelationship"
+  s:"1.2.40.0.34.10.171" == t:"https://termgit.elga.gv.at/ValueSet/elga-kulturerregernachweis"
+  s:"1.2.40.0.34.10.172" == t:"https://termgit.elga.gv.at/ValueSet/elga-laendercodes"
+  s:"1.2.40.0.34.10.173" == t:"https://termgit.elga.gv.at/ValueSet/elga-humanlanguage"
+  s:"1.2.40.0.34.10.174" == t:"https://termgit.elga.gv.at/ValueSet/elga-proficiencylevelcode"
+  s:"1.2.40.0.34.10.175" == t:"https://termgit.elga.gv.at/ValueSet/elga-languageabilitymode"
+  s:"1.2.40.0.34.10.176" == t:"https://termgit.elga.gv.at/ValueSet/elga-seitenlokalisation"
+  s:"1.2.40.0.34.10.177" == t:"https://termgit.elga.gv.at/ValueSet/elga-allergyorintolerancetype"
+  s:"1.2.40.0.34.10.178" == t:"https://termgit.elga.gv.at/ValueSet/elga-absentorunknownallergies"
+  s:"1.2.40.0.34.10.179" == t:"https://termgit.elga.gv.at/ValueSet/elga-absentorunknownproblems"
+  s:"1.2.40.0.34.10.18" == t:"https://termgit.elga.gv.at/ValueSet/elga-religiousaffiliation"
+  s:"1.2.40.0.34.10.180" == t:"https://termgit.elga.gv.at/ValueSet/elga-allergyorintoleranceagent"
+  s:"1.2.40.0.34.10.181" == t:"https://termgit.elga.gv.at/ValueSet/elga-allergyreaction"
+  s:"1.2.40.0.34.10.182" == t:"https://termgit.elga.gv.at/ValueSet/elga-criticalityobservationvalue"
+  s:"1.2.40.0.34.10.183" == t:"https://termgit.elga.gv.at/ValueSet/elga-allergystatuscode"
+  s:"1.2.40.0.34.10.184" == t:"https://termgit.elga.gv.at/ValueSet/elga-conditionverificationstatus"
+  s:"1.2.40.0.34.10.186" == t:"https://termgit.elga.gv.at/ValueSet/elga-nachweisergebnis"
+  s:"1.2.40.0.34.10.187" == t:"https://termgit.elga.gv.at/ValueSet/elga-probenmaterial"
+  s:"1.2.40.0.34.10.188" == t:"https://termgit.elga.gv.at/ValueSet/elga-mikroorganismen"
+  s:"1.2.40.0.34.10.189" == t:"https://termgit.elga.gv.at/ValueSet/elga-problemseverity"
+  s:"1.2.40.0.34.10.19" == t:"https://termgit.elga.gv.at/ValueSet/elga-roleclass"
+  s:"1.2.40.0.34.10.191" == t:"https://termgit.elga.gv.at/ValueSet/elga-absentorunknownmedication"
+  s:"1.2.40.0.34.10.192" == t:"https://termgit.elga.gv.at/ValueSet/elga-absentorunknowndevices"
+  s:"1.2.40.0.34.10.193" == t:"https://termgit.elga.gv.at/ValueSet/elga-absentorunknownprocedures"
+  s:"1.2.40.0.34.10.198" == t:"https://termgit.elga.gv.at/ValueSet/elga-conditionstatuscode"
+  s:"1.2.40.0.34.10.2" == t:"https://termgit.elga.gv.at/ValueSet/elga-nullflavor"
+  s:"1.2.40.0.34.10.202" == t:"https://termgit.elga.gv.at/ValueSet/elga-expecteddeliverydatemethod"
+  s:"1.2.40.0.34.10.203" == t:"https://termgit.elga.gv.at/ValueSet/elga-pregnanciessummary"
+  s:"1.2.40.0.34.10.204" == t:"https://termgit.elga.gv.at/ValueSet/elga-currentsmokingstatus"
+  s:"1.2.40.0.34.10.205" == t:"https://termgit.elga.gv.at/ValueSet/elga-typeofproblem"
+  s:"1.2.40.0.34.10.206" == t:"https://termgit.elga.gv.at/ValueSet/elga-allergietyp"
+  s:"1.2.40.0.34.10.210" == t:"https://termgit.elga.gv.at/ValueSet/atcdabbr-noinformationqualifier"
+  s:"1.2.40.0.34.10.211" == t:"https://termgit.elga.gv.at/ValueSet/atcdabbr-lateralityqualifiercode"
+  s:"1.2.40.0.34.10.22" == t:"https://termgit.elga.gv.at/ValueSet/elga-serviceeventslabor"
+  s:"1.2.40.0.34.10.25" == t:"https://termgit.elga.gv.at/ValueSet/elga-urlscheme"
+  s:"1.2.40.0.34.10.26" == t:"https://termgit.elga.gv.at/ValueSet/elga-rollen"
+  s:"1.2.40.0.34.10.27" == t:"https://termgit.elga.gv.at/ValueSet/elga-entitynameuse"
+  s:"1.2.40.0.34.10.29" == t:"https://termgit.elga.gv.at/ValueSet/elga-informationrecipienttype"
+  s:"1.2.40.0.34.10.3" == t:"https://termgit.elga.gv.at/ValueSet/elga-realmcode"
+  s:"1.2.40.0.34.10.30" == t:"https://termgit.elga.gv.at/ValueSet/elga-medikationtherapieart"
+  s:"1.2.40.0.34.10.32" == t:"https://termgit.elga.gv.at/ValueSet/elga-medikationmengenart"
+  s:"1.2.40.0.34.10.33" == t:"https://termgit.elga.gv.at/ValueSet/elga-noinformation"
+  s:"1.2.40.0.34.10.34" == t:"https://termgit.elga.gv.at/ValueSet/elga-vitalparameterarten"
+  s:"1.2.40.0.34.10.35" == t:"https://termgit.elga.gv.at/ValueSet/elga-problemarten"
+  s:"1.2.40.0.34.10.36" == t:"https://termgit.elga.gv.at/ValueSet/elga-telecomaddressuse"
+  s:"1.2.40.0.34.10.360" == t:"https://termgit.elga.gv.at/ValueSet/elga-sectionsserviceevents"
+  s:"1.2.40.0.34.10.39" == t:"https://termgit.elga.gv.at/ValueSet/elga-dokumentenklassen"
+  s:"1.2.40.0.34.10.4" == t:"https://termgit.elga.gv.at/ValueSet/elga-administrativegender"
+  s:"1.2.40.0.34.10.42" == t:"https://termgit.elga.gv.at/ValueSet/elga-medientyp"
+  s:"1.2.40.0.34.10.43" == t:"https://termgit.elga.gv.at/ValueSet/elga-serviceeventperformer"
+  s:"1.2.40.0.34.10.44" == t:"https://termgit.elga.gv.at/ValueSet/elga-laborparameter"
+  s:"1.2.40.0.34.10.46" == t:"https://termgit.elga.gv.at/ValueSet/elga-specimentype"
+  s:"1.2.40.0.34.10.47" == t:"https://termgit.elga.gv.at/ValueSet/elga-laborstruktur"
+  s:"1.2.40.0.34.10.48" == t:"https://termgit.elga.gv.at/ValueSet/elga-sectionsentlassungaerztl"
+  s:"1.2.40.0.34.10.49" == t:"https://termgit.elga.gv.at/ValueSet/elga-sectionsentlassungpflege"
+  s:"1.2.40.0.34.10.5" == t:"https://termgit.elga.gv.at/ValueSet/elga-actencountercode"
+  s:"1.2.40.0.34.10.50" == t:"https://termgit.elga.gv.at/ValueSet/elga-sectionsradiologie"
+  s:"1.2.40.0.34.10.52" == t:"https://termgit.elga.gv.at/ValueSet/elga-humanactsite"
+  s:"1.2.40.0.34.10.53" == t:"https://termgit.elga.gv.at/ValueSet/elga-entlassungsmanagementa"
+  s:"1.2.40.0.34.10.55" == t:"https://termgit.elga.gv.at/ValueSet/elga-mammogramassessment"
+  s:"1.2.40.0.34.10.57" == t:"https://termgit.elga.gv.at/ValueSet/elga-serviceeventsentlassbr"
+  s:"1.2.40.0.34.10.58" == t:"https://termgit.elga.gv.at/ValueSet/elga-significantpathogens"
+  s:"1.2.40.0.34.10.59" == t:"https://termgit.elga.gv.at/ValueSet/elga-einnahmezeitpunkte"
+  s:"1.2.40.0.34.10.6" == t:"https://termgit.elga.gv.at/ValueSet/elga-authorspeciality"
+  s:"1.2.40.0.34.10.60" == t:"https://termgit.elga.gv.at/ValueSet/elga-formatcodezusatz"
+  s:"1.2.40.0.34.10.61" == t:"https://termgit.elga.gv.at/ValueSet/elga-formatcode"
+  s:"1.2.40.0.34.10.62" == t:"https://termgit.elga.gv.at/ValueSet/appc-modalitaet"
+  s:"1.2.40.0.34.10.63" == t:"https://termgit.elga.gv.at/ValueSet/appc-lateralitaet"
+  s:"1.2.40.0.34.10.64" == t:"https://termgit.elga.gv.at/ValueSet/appc-prozeduren"
+  s:"1.2.40.0.34.10.65" == t:"https://termgit.elga.gv.at/ValueSet/appc-anatomie"
+  s:"1.2.40.0.34.10.66" == t:"https://termgit.elga.gv.at/ValueSet/elga-medikationartanwendung"
+  s:"1.2.40.0.34.10.67" == t:"https://termgit.elga.gv.at/ValueSet/elga-medikationmengenartalternativ"
+  s:"1.2.40.0.34.10.68" == t:"https://termgit.elga.gv.at/ValueSet/elga-medikationrezeptart"
+  s:"1.2.40.0.34.10.69" == t:"https://termgit.elga.gv.at/ValueSet/elga-medikationfrequenz"
+  s:"1.2.40.0.34.10.7" == t:"https://termgit.elga.gv.at/ValueSet/elga-confidentiality"
+  s:"1.2.40.0.34.10.70" == t:"https://termgit.elga.gv.at/ValueSet/elga-medikationdarreichungsform"
+  s:"1.2.40.0.34.10.71" == t:"https://termgit.elga.gv.at/ValueSet/elga-medikationpharmazeutischeempfehlungstatus"
+  s:"1.2.40.0.34.10.72" == t:"https://termgit.elga.gv.at/ValueSet/elga-healthcarefacilitytypecode"
+  s:"1.2.40.0.34.10.74" == t:"https://termgit.elga.gv.at/ValueSet/elga-medikationrezeptpflichtstatus"
+  s:"1.2.40.0.34.10.75" == t:"https://termgit.elga.gv.at/ValueSet/elga-practicesetting"
+  s:"1.2.40.0.34.10.86" == t:"https://termgit.elga.gv.at/ValueSet/hl7-at-xds-dokumentenklassen"
+  s:"1.2.40.0.34.10.9" == t:"https://termgit.elga.gv.at/ValueSet/elga-insuredassocentity"
+  s:"1.2.40.0.34.10.90" == t:"https://termgit.elga.gv.at/ValueSet/ems-anti-hcv-immunoassay"
+  s:"1.2.40.0.34.10.91" == t:"https://termgit.elga.gv.at/ValueSet/ems-anti-hcv-immunoblot-assay"
+  s:"1.2.40.0.34.10.92" == t:"https://termgit.elga.gv.at/ValueSet/ems-hcv-core-ag-assay"
+  s:"1.2.40.0.34.10.93" == t:"https://termgit.elga.gv.at/ValueSet/ems-hbv-status"
+  s:"1.2.40.0.34.3.1.10" == t:"https://termgit.elga.gv.at/CodeSystem/oeaek-berechtigungen"
+  s:"1.2.40.0.34.3.1.10.20" == t:"https://termgit.elga.gv.at/CodeSystem/oeaek-fachrichtung"
+  s:"1.2.40.0.34.3.1.10.30" == t:"https://termgit.elga.gv.at/CodeSystem/oeaek-additivfach"
+  s:"1.2.40.0.34.3.1.10.40" == t:"https://termgit.elga.gv.at/CodeSystem/oeaek-spezialdiplom"
+  s:"1.2.40.0.34.3.1.10.50" == t:"https://termgit.elga.gv.at/CodeSystem/oeaek-zertifikate"
+  s:"1.2.40.0.34.3.1.10.60" == t:"https://termgit.elga.gv.at/CodeSystem/oeaek-spezialisierung"
+  s:"1.2.40.0.34.4.16" == t:"https://termgit.elga.gv.at/CodeSystem/asp-liste"
+  s:"1.2.40.0.34.4.16.1" == t:"https://termgit.elga.gv.at/CodeSystem/eimpf-impfstoffe"
+  s:"1.2.40.0.34.5.101" == t:"https://termgit.elga.gv.at/CodeSystem/ems-parameter"
+  s:"1.2.40.0.34.5.102" == t:"https://termgit.elga.gv.at/CodeSystem/ems-methoden"
+  s:"1.2.40.0.34.5.103" == t:"https://termgit.elga.gv.at/CodeSystem/elga-actcode"
+  s:"1.2.40.0.34.5.104" == t:"https://termgit.elga.gv.at/CodeSystem/rast-klassen"
+  s:"1.2.40.0.34.5.105" == t:"https://termgit.elga.gv.at/CodeSystem/ems-krankheitsmerkmale"
+  s:"1.2.40.0.34.5.106" == t:"https://termgit.elga.gv.at/CodeSystem/ems-hcv-rna"
+  s:"1.2.40.0.34.5.109" == t:"https://termgit.elga.gv.at/CodeSystem/ems-klinischemanifestation"
+  s:"1.2.40.0.34.5.11" == t:"https://termgit.elga.gv.at/CodeSystem/elga-laborparameterergaenzung"
+  s:"1.2.40.0.34.5.110" == t:"https://termgit.elga.gv.at/CodeSystem/ems-wurdekrankheitimportiert"
+  s:"1.2.40.0.34.5.12" == t:"https://termgit.elga.gv.at/CodeSystem/elga-practicesetting"
+  s:"1.2.40.0.34.5.150" == t:"https://termgit.elga.gv.at/CodeSystem/elga-auditeventid"
+  s:"1.2.40.0.34.5.151" == t:"https://termgit.elga.gv.at/CodeSystem/elga-auditeventtype"
+  s:"1.2.40.0.34.5.152" == t:"https://termgit.elga.gv.at/CodeSystem/elga-auditsourcetype"
+  s:"1.2.40.0.34.5.153" == t:"https://termgit.elga.gv.at/CodeSystem/elga-auditparticipantobjecttype"
+  s:"1.2.40.0.34.5.154" == t:"https://termgit.elga.gv.at/CodeSystem/elga-auditparticipantobjecttyperole"
+  s:"1.2.40.0.34.5.155" == t:"https://termgit.elga.gv.at/CodeSystem/elga-auditparticipantobjectidtype"
+  s:"1.2.40.0.34.5.156" == t:"https://termgit.elga.gv.at/CodeSystem/medikation-ages-wirkstoffe"
+  s:"1.2.40.0.34.5.158" == t:"https://termgit.elga.gv.at/CodeSystem/elga-funktionsrollen"
+  s:"1.2.40.0.34.5.159" == t:"https://termgit.elga.gv.at/CodeSystem/elga-e-health-anwendungen"
+  s:"1.2.40.0.34.5.160" == t:"https://termgit.elga.gv.at/CodeSystem/elga-fachaerzte"
+  s:"1.2.40.0.34.5.161" == t:"https://termgit.elga.gv.at/CodeSystem/elga-kontakttypen"
+  s:"1.2.40.0.34.5.162" == t:"https://termgit.elga.gv.at/CodeSystem/elga-patienten-identifizierungsmethoden"
+  s:"1.2.40.0.34.5.165" == t:"https://termgit.elga.gv.at/CodeSystem/elga-auditeventtypea-arr"
+  s:"1.2.40.0.34.5.171" == t:"https://termgit.elga.gv.at/CodeSystem/icd-10-bmg-2017"
+  s:"1.2.40.0.34.5.173" == t:"https://termgit.elga.gv.at/CodeSystem/elga-specimentype-ergaenzung"
+  s:"1.2.40.0.34.5.175" == t:"https://termgit.elga.gv.at/CodeSystem/icpc2"
+  s:"1.2.40.0.34.5.179" == t:"https://termgit.elga.gv.at/CodeSystem/elga-ergaenzungsliste"
+  s:"1.2.40.0.34.5.180" == t:"https://termgit.elga.gv.at/CodeSystem/elga-allergietyp"
+  s:"1.2.40.0.34.5.183" == t:"https://termgit.elga.gv.at/CodeSystem/eimpf-ergaenzung"
+  s:"1.2.40.0.34.5.184" == t:"https://termgit.elga.gv.at/CodeSystem/icd-10-bmg-2020"
+  s:"1.2.40.0.34.5.186" == t:"https://termgit.elga.gv.at/CodeSystem/eimpf-historischeimpfstoffe"
+  s:"1.2.40.0.34.5.187" == t:"https://termgit.elga.gv.at/CodeSystem/ems-ergaenzungmeldepflichtigekrankheiten"
+  s:"1.2.40.0.34.5.190" == t:"https://termgit.elga.gv.at/CodeSystem/elga-pflegestufen"
+  s:"1.2.40.0.34.5.191" == t:"https://termgit.elga.gv.at/CodeSystem/eimpf-zuordnungsmatrix"
+  s:"1.2.40.0.34.5.194" == t:"https://termgit.elga.gv.at/CodeSystem/exnds-sections"
+  s:"1.2.40.0.34.5.195" == t:"https://termgit.elga.gv.at/CodeSystem/exnds-concepts"
+  s:"1.2.40.0.34.5.196" == t:"https://termgit.elga.gv.at/CodeSystem/ems-betreuung"
+  s:"1.2.40.0.34.5.197" == t:"https://termgit.elga.gv.at/CodeSystem/ems-listeschulen"
+  s:"1.2.40.0.34.5.198" == t:"https://termgit.elga.gv.at/CodeSystem/exnds-metadaten"
+  s:"1.2.40.0.34.5.199" == t:"https://termgit.elga.gv.at/CodeSystem/exnds-formatcodes"
+  s:"1.2.40.0.34.5.2" == t:"https://termgit.elga.gv.at/CodeSystem/elga-gtelvogdarollen"
+  s:"1.2.40.0.34.5.200" == t:"https://termgit.elga.gv.at/CodeSystem/eimpf-schemamatrix"
+  s:"1.2.40.0.34.5.202" == t:"https://termgit.elga.gv.at/CodeSystem/dgc-qr"
+  s:"1.2.40.0.34.5.203" == t:"https://termgit.elga.gv.at/CodeSystem/dgc-antibody-test"
+  s:"1.2.40.0.34.5.205" == t:"https://termgit.elga.gv.at/CodeSystem/dgc-ratnamemanufacturer"
+  s:"1.2.40.0.34.5.206" == t:"https://termgit.elga.gv.at/CodeSystem/lkf-diagnose-typ"
+  s:"1.2.40.0.34.5.207" == t:"https://termgit.elga.gv.at/CodeSystem/lkf-diagnose-art"
+  s:"1.2.40.0.34.5.208" == t:"https://termgit.elga.gv.at/CodeSystem/lkf-diagnose-statauf"
+  s:"1.2.40.0.34.5.209" == t:"https://termgit.elga.gv.at/CodeSystem/bmg-icd-10-2022"
+  s:"1.2.40.0.34.5.21" == t:"https://termgit.elga.gv.at/CodeSystem/elga-serviceeventsentlassbrief"
+  s:"1.2.40.0.34.5.211" == t:"https://termgit.elga.gv.at/CodeSystem/lkf-ergaenzung"
+  s:"1.2.40.0.34.5.215" == t:"https://termgit.elga.gv.at/CodeSystem/elga-lebensmittelallergene"
+  s:"1.2.40.0.34.5.216" == t:"https://termgit.elga.gv.at/CodeSystem/bmg-lkf-2023"
+  s:"1.2.40.0.34.5.217" == t:"https://termgit.elga.gv.at/CodeSystem/austrian-designation-use"
+  s:"1.2.40.0.34.5.219" == t:"https://termgit.elga.gv.at/CodeSystem/medikationpackaging"
+  s:"1.2.40.0.34.5.221" == t:"https://termgit.elga.gv.at/CodeSystem/medikationactiveingredient"
+  s:"1.2.40.0.34.5.222" == t:"https://termgit.elga.gv.at/CodeSystem/bmg-icd-10-2024"
+  s:"1.2.40.0.34.5.223" == t:"https://termgit.elga.gv.at/CodeSystem/bmg-lkf-2024"
+  s:"1.2.40.0.34.5.224" == t:"https://termgit.elga.gv.at/CodeSystem/hl7-at-administrativegender-ergaenzung"
+  s:"1.2.40.0.34.5.28" == t:"https://termgit.elga.gv.at/CodeSystem/elga-entlassungsmanagementart"
+  s:"1.2.40.0.34.5.3" == t:"https://termgit.elga.gv.at/CodeSystem/elga-gda-aggregatrollen"
+  s:"1.2.40.0.34.5.37" == t:"https://termgit.elga.gv.at/CodeSystem/elga-formatcode"
+  s:"1.2.40.0.34.5.38.1" == t:"https://termgit.elga.gv.at/CodeSystem/appc-modalitaet"
+  s:"1.2.40.0.34.5.38.2" == t:"https://termgit.elga.gv.at/CodeSystem/appc-lateralitaet"
+  s:"1.2.40.0.34.5.38.3" == t:"https://termgit.elga.gv.at/CodeSystem/appc-prozeduren"
+  s:"1.2.40.0.34.5.38.4" == t:"https://termgit.elga.gv.at/CodeSystem/appc-anatomie"
+  s:"1.2.40.0.34.5.4" == t:"https://termgit.elga.gv.at/CodeSystem/gda-attribute"
+  s:"1.2.40.0.34.5.40" == t:"https://termgit.elga.gv.at/CodeSystem/elga-sections"
+  s:"1.2.40.0.34.5.41" == t:"https://termgit.elga.gv.at/CodeSystem/elga-formatcodezusatz"
+  s:"1.2.40.0.34.5.45" == t:"https://termgit.elga.gv.at/CodeSystem/elga-significantpathogens"
+  s:"1.2.40.0.34.5.49" == t:"https://termgit.elga.gv.at/CodeSystem/elga-mammogramassessment"
+  s:"1.2.40.0.34.5.5" == t:"https://termgit.elga.gv.at/CodeSystem/gda-org"
+  s:"1.2.40.0.34.5.55" == t:"https://termgit.elga.gv.at/CodeSystem/elga-urlschemeergaenzung"
+  s:"1.2.40.0.34.5.56" == t:"https://termgit.elga.gv.at/CodeSystem/icd-10-bmg-2014"
+  s:"1.2.40.0.34.5.58" == t:"https://termgit.elga.gv.at/CodeSystem/ems-material"
+  s:"1.2.40.0.34.5.59" == t:"https://termgit.elga.gv.at/CodeSystem/ems-janein"
+  s:"1.2.40.0.34.5.60" == t:"https://termgit.elga.gv.at/CodeSystem/ems-analysedetails"
+  s:"1.2.40.0.34.5.61" == t:"https://termgit.elga.gv.at/CodeSystem/ems-antigenh"
+  s:"1.2.40.0.34.5.62" == t:"https://termgit.elga.gv.at/CodeSystem/ems-artmalaria"
+  s:"1.2.40.0.34.5.63" == t:"https://termgit.elga.gv.at/CodeSystem/ems-artquartier"
+  s:"1.2.40.0.34.5.64" == t:"https://termgit.elga.gv.at/CodeSystem/ems-befundart"
+  s:"1.2.40.0.34.5.65" == t:"https://termgit.elga.gv.at/CodeSystem/ems-biotyp-biovar"
+  s:"1.2.40.0.34.5.66" == t:"https://termgit.elga.gv.at/CodeSystem/ems-antigeno"
+  s:"1.2.40.0.34.5.67" == t:"https://termgit.elga.gv.at/CodeSystem/ems-tbc-resistenzergaenzung"
+  s:"1.2.40.0.34.5.68" == t:"https://termgit.elga.gv.at/CodeSystem/ems-quartiercode"
+  s:"1.2.40.0.34.5.69" == t:"https://termgit.elga.gv.at/CodeSystem/ems-aviditaet"
+  s:"1.2.40.0.34.5.70" == t:"https://termgit.elga.gv.at/CodeSystem/ems-genogruppe"
+  s:"1.2.40.0.34.5.71" == t:"https://termgit.elga.gv.at/CodeSystem/ems-genotyp"
+  s:"1.2.40.0.34.5.72" == t:"https://termgit.elga.gv.at/CodeSystem/ems-genotyppora-r1"
+  s:"1.2.40.0.34.5.73" == t:"https://termgit.elga.gv.at/CodeSystem/ems-genotyppora-r2"
+  s:"1.2.40.0.34.5.74" == t:"https://termgit.elga.gv.at/CodeSystem/ems-durchgefuehrt"
+  s:"1.2.40.0.34.5.75" == t:"https://termgit.elga.gv.at/CodeSystem/ems-tbc-resultat"
+  s:"1.2.40.0.34.5.76" == t:"https://termgit.elga.gv.at/CodeSystem/ems-ergebnis"
+  s:"1.2.40.0.34.5.77" == t:"https://termgit.elga.gv.at/CodeSystem/ems-wowurdekrankheiterworben"
+  s:"1.2.40.0.34.5.78" == t:"https://termgit.elga.gv.at/CodeSystem/ems-nachweisbar"
+  s:"1.2.40.0.34.5.79" == t:"https://termgit.elga.gv.at/CodeSystem/ems-testmethodemic-ipd"
+  s:"1.2.40.0.34.5.80" == t:"https://termgit.elga.gv.at/CodeSystem/ems-testmethodetypingipd"
+  s:"1.2.40.0.34.5.81" == t:"https://termgit.elga.gv.at/CodeSystem/ems-nachweis"
+  s:"1.2.40.0.34.5.82" == t:"https://termgit.elga.gv.at/CodeSystem/ems-multilocsequ"
+  s:"1.2.40.0.34.5.83" == t:"https://termgit.elga.gv.at/CodeSystem/ems-monoclonalsub"
+  s:"1.2.40.0.34.5.84" == t:"https://termgit.elga.gv.at/CodeSystem/ems-organ"
+  s:"1.2.40.0.34.5.85" == t:"https://termgit.elga.gv.at/CodeSystem/ems-yersinapathogen"
+  s:"1.2.40.0.34.5.86" == t:"https://termgit.elga.gv.at/CodeSystem/ems-phagentyp-vtec"
+  s:"1.2.40.0.34.5.87" == t:"https://termgit.elga.gv.at/CodeSystem/ems-phagentyp"
+  s:"1.2.40.0.34.5.88" == t:"https://termgit.elga.gv.at/CodeSystem/ems-posneg"
+  s:"1.2.40.0.34.5.89" == t:"https://termgit.elga.gv.at/CodeSystem/ems-ribotype"
+  s:"1.2.40.0.34.5.90" == t:"https://termgit.elga.gv.at/CodeSystem/ems-serogruppe"
+  s:"1.2.40.0.34.5.91" == t:"https://termgit.elga.gv.at/CodeSystem/ems-serotyp-gene-feta"
+  s:"1.2.40.0.34.5.92" == t:"https://termgit.elga.gv.at/CodeSystem/ems-serotyp"
+  s:"1.2.40.0.34.5.93" == t:"https://termgit.elga.gv.at/CodeSystem/ems-gewinnung"
+  s:"1.2.40.0.34.5.94" == t:"https://termgit.elga.gv.at/CodeSystem/ems-tbc-typ"
+  s:"1.2.40.0.34.5.95" == t:"https://termgit.elga.gv.at/CodeSystem/ems-orth20probe"
+  s:"1.2.40.0.34.5.96" == t:"https://termgit.elga.gv.at/CodeSystem/ems-reiseland"
+  s:"1.2.40.0.34.5.97" == t:"https://termgit.elga.gv.at/CodeSystem/ems-verotoxin-2-subtyp"
+  s:"1.2.40.0.34.5.98" == t:"https://termgit.elga.gv.at/CodeSystem/ems-verotoxin-1-subtyp"
+  s:"1.2.40.0.34.5.99" == t:"https://termgit.elga.gv.at/CodeSystem/ems-materialmethode"
+  s:"1.2.40.0.34.6.0.10.10" == t:"https://termgit.elga.gv.at/ValueSet/eimpf-historischeimpfstoffe"
+  s:"1.2.40.0.34.6.0.10.11" == t:"https://termgit.elga.gv.at/ValueSet/eimpf-impfrollen"
+  s:"1.2.40.0.34.6.0.10.13" == t:"https://termgit.elga.gv.at/ValueSet/eimpf-antikoerperbestimmung"
+  s:"1.2.40.0.34.6.0.10.14" == t:"https://termgit.elga.gv.at/ValueSet/eimpf-impfstoffe"
+  s:"1.2.40.0.34.6.0.10.15" == t:"https://termgit.elga.gv.at/ValueSet/eimpf-specialsituationindication"
+  s:"1.2.40.0.34.6.0.10.16" == t:"https://termgit.elga.gv.at/ValueSet/ems-materialmethode"
+  s:"1.2.40.0.34.6.0.10.18" == t:"https://termgit.elga.gv.at/ValueSet/ems-krankheitsmerkmale"
+  s:"1.2.40.0.34.6.0.10.19" == t:"https://termgit.elga.gv.at/ValueSet/ems-meldepflichtige-krankheiten"
+  s:"1.2.40.0.34.6.0.10.2" == t:"https://termgit.elga.gv.at/ValueSet/eimpf-impfrelevanteerkrankung"
+  s:"1.2.40.0.34.6.0.10.21" == t:"https://termgit.elga.gv.at/ValueSet/ems-taetigkeitsbereich"
+  s:"1.2.40.0.34.6.0.10.23" == t:"https://termgit.elga.gv.at/ValueSet/elga-artderdiagnose"
+  s:"1.2.40.0.34.6.0.10.24" == t:"https://termgit.elga.gv.at/ValueSet/ems-impfstatus"
+  s:"1.2.40.0.34.6.0.10.25" == t:"https://termgit.elga.gv.at/ValueSet/ems-klinischemanifestation"
+  s:"1.2.40.0.34.6.0.10.26" == t:"https://termgit.elga.gv.at/ValueSet/elga-serviceeventstelemonepi"
+  s:"1.2.40.0.34.6.0.10.27" == t:"https://termgit.elga.gv.at/ValueSet/hl7-at-actconsenttype"
+  s:"1.2.40.0.34.6.0.10.29" == t:"https://termgit.elga.gv.at/ValueSet/ems-lebensmittelbedingteintoxikationen"
+  s:"1.2.40.0.34.6.0.10.3" == t:"https://termgit.elga.gv.at/ValueSet/eimpf-specialcasevaccination"
+  s:"1.2.40.0.34.6.0.10.30" == t:"https://termgit.elga.gv.at/ValueSet/elga-alcoholconsumption"
+  s:"1.2.40.0.34.6.0.10.31" == t:"https://termgit.elga.gv.at/ValueSet/ems-betreuung"
+  s:"1.2.40.0.34.6.0.10.4" == t:"https://termgit.elga.gv.at/ValueSet/eimpf-immunizationtarget"
+  s:"1.2.40.0.34.6.0.10.49" == t:"https://termgit.elga.gv.at/ValueSet/ems-hospitalisierung"
+  s:"1.2.40.0.34.6.0.10.5" == t:"https://termgit.elga.gv.at/ValueSet/eimpf-impfschema"
+  s:"1.2.40.0.34.6.0.10.51" == t:"https://termgit.elga.gv.at/ValueSet/ems-reiseland"
+  s:"1.2.40.0.34.6.0.10.52" == t:"https://termgit.elga.gv.at/ValueSet/elga-pregnancystatus"
+  s:"1.2.40.0.34.6.0.10.53" == t:"https://termgit.elga.gv.at/ValueSet/elga-antibiogramm"
+  s:"1.2.40.0.34.6.0.10.54" == t:"https://termgit.elga.gv.at/ValueSet/dgc-typeoftest"
+  s:"1.2.40.0.34.6.0.10.55" == t:"https://termgit.elga.gv.at/ValueSet/dgc-diseaseoragent"
+  s:"1.2.40.0.34.6.0.10.56" == t:"https://termgit.elga.gv.at/ValueSet/dgc-vaccine"
+  s:"1.2.40.0.34.6.0.10.57" == t:"https://termgit.elga.gv.at/ValueSet/dgc-medicinalproduct"
+  s:"1.2.40.0.34.6.0.10.58" == t:"https://termgit.elga.gv.at/ValueSet/dgc-vaccinemarketingauthorizationholder"
+  s:"1.2.40.0.34.6.0.10.59" == t:"https://termgit.elga.gv.at/ValueSet/dgc-doses"
+  s:"1.2.40.0.34.6.0.10.6" == t:"https://termgit.elga.gv.at/ValueSet/eimpf-impfdosis"
+  s:"1.2.40.0.34.6.0.10.60" == t:"https://termgit.elga.gv.at/ValueSet/dgc-resultofthetest"
+  s:"1.2.40.0.34.6.0.10.62" == t:"https://termgit.elga.gv.at/ValueSet/eimpf-zusatzklassifikation"
+  s:"1.2.40.0.34.6.0.10.63" == t:"https://termgit.elga.gv.at/ValueSet/dgc-country"
+  s:"1.2.40.0.34.6.0.10.65" == t:"https://termgit.elga.gv.at/ValueSet/dgc-ratnamemanufacturer"
+  s:"1.2.40.0.34.6.0.10.66" == t:"https://termgit.elga.gv.at/ValueSet/elga-anamneselabormikrobiologie"
+  s:"1.2.40.0.34.6.0.10.67" == t:"https://termgit.elga.gv.at/ValueSet/lkf-diagnose-art"
+  s:"1.2.40.0.34.6.0.10.68" == t:"https://termgit.elga.gv.at/ValueSet/lkf-diagnose-statauf"
+  s:"1.2.40.0.34.6.0.10.69" == t:"https://termgit.elga.gv.at/ValueSet/lkf-diagnose-typ"
+  s:"1.2.40.0.34.6.0.10.7" == t:"https://termgit.elga.gv.at/ValueSet/eimpf-impfgrund"
+  s:"1.2.40.0.34.6.0.10.74" == t:"https://termgit.elga.gv.at/ValueSet/eimpf-mengenart"
+  s:"1.2.40.0.34.6.0.10.75" == t:"https://termgit.elga.gv.at/ValueSet/elga-lebensmittelallergene"
+  s:"1.2.40.0.34.6.0.10.76" == t:"https://termgit.elga.gv.at/ValueSet/austrian-designation-use"
+  s:"1.2.40.0.34.6.0.10.77" == t:"https://termgit.elga.gv.at/ValueSet/hl7-at-patientidentifier"
+  s:"1.2.40.0.34.6.0.10.78" == t:"https://termgit.elga.gv.at/ValueSet/eimpf-zusatzklassifikation-impfprogramm"
+  s:"1.2.40.0.34.6.0.10.79" == t:"https://termgit.elga.gv.at/ValueSet/eimpf-zusatzklassifikation-impfsetting"
+  s:"1.2.40.0.34.6.0.10.8" == t:"https://termgit.elga.gv.at/ValueSet/elga-entitynamepartqualifier"
+  s:"1.2.40.0.34.6.0.10.81" == t:"https://termgit.elga.gv.at/ValueSet/hl7-at-administrativegender-v2"
+  s:"1.2.40.0.34.6.0.10.83" == t:"https://termgit.elga.gv.at/ValueSet/hl7-at-administrativegender-fhir-extension"
+  s:"1.2.40.0.34.6.0.10.84" == t:"https://termgit.elga.gv.at/ValueSet/orphanet-rare-diseases"
+  s:"1.2.40.0.34.6.0.10.85" == t:"https://termgit.elga.gv.at/ValueSet/snomed-rare-diseases"
+  s:"1.2.40.0.34.6.0.10.86" == t:"https://termgit.elga.gv.at/ValueSet/hl7-at-organizationtype"
+  s:"1.2.40.0.34.6.0.10.87" == t:"https://termgit.elga.gv.at/ValueSet/hl7-at-practitionerrole"
+  s:"1.2.840.10003.5.109" == t:"https://termgit.elga.gv.at/CodeSystem/iana-mime-type"
+  s:"1.2.840.10008.2.16.4" == t:"https://termgit.elga.gv.at/CodeSystem/dcm"
+  s:"1.2.840.10008.2.6.1" == t:"https://termgit.elga.gv.at/CodeSystem/dicom-sopclasses"
+  s:"1.3.6.1.4.1.12559.11.10.1.3.1.42.1" == t:"https://termgit.elga.gv.at/ValueSet/ehdsi-healthcare-professional-role"
+  s:"1.3.6.1.4.1.12559.11.10.1.3.1.42.12" == t:"https://termgit.elga.gv.at/ValueSet/ehdsi-route-of-administration"
+  s:"1.3.6.1.4.1.12559.11.10.1.3.1.42.16" == t:"https://termgit.elga.gv.at/ValueSet/ehdsi-unit"
+  s:"1.3.6.1.4.1.12559.11.10.1.3.1.42.2" == t:"https://termgit.elga.gv.at/ValueSet/ehdsi-doseform"
+  s:"1.3.6.1.4.1.12559.11.10.1.3.1.42.24" == t:"https://termgit.elga.gv.at/ValueSet/ehdsi-activeingredient"
+  s:"1.3.6.1.4.1.12559.11.10.1.3.1.42.3" == t:"https://termgit.elga.gv.at/ValueSet/ehdsi-package"
+  s:"1.3.6.1.4.1.12559.11.10.1.3.1.42.31" == t:"https://termgit.elga.gv.at/ValueSet/ehdsi-confidentiality"
+  s:"1.3.6.1.4.1.12559.11.10.1.3.1.42.34" == t:"https://termgit.elga.gv.at/ValueSet/ehdsi-administrative-gender"
+  s:"1.3.6.1.4.1.12559.11.10.1.3.1.42.4" == t:"https://termgit.elga.gv.at/ValueSet/ehdsi-country"
+  s:"1.3.6.1.4.1.12559.11.10.1.3.1.42.40" == t:"https://termgit.elga.gv.at/ValueSet/ehdsi-telecom-address"
+  s:"1.3.6.1.4.1.12559.11.10.1.3.1.42.41" == t:"https://termgit.elga.gv.at/ValueSet/ehdsi-timing-event"
+  s:"1.3.6.1.4.1.12559.11.10.1.3.1.42.56" == t:"https://termgit.elga.gv.at/ValueSet/ehdsi-quantity-unit"
+  s:"1.3.6.1.4.1.12559.11.10.1.3.1.42.6" == t:"https://termgit.elga.gv.at/ValueSet/ehdsi-language"
+  s:"1.3.6.1.4.1.12559.11.10.1.3.1.42.61" == t:"https://termgit.elga.gv.at/ValueSet/ehdsi-substance"
+  s:"1.3.6.1.4.1.19376.1.9.2.1" == t:"https://termgit.elga.gv.at/CodeSystem/ihe-pharmaceutical-advice-status-list"
+  s:"1dd183a6-6d2b-4a9d-8f5d-be09d6bb5a6e" == t:"https://termgit.elga.gv.at/CodeSystem/ehdsi-language"
+  s:"2.16.840.1.113883.1.11.19708" == t:"https://termgit.elga.gv.at/ValueSet/ehdsi-actsubstanceadministrationcode"
+  s:"2.16.840.1.113883.12.1" == t:"https://termgit.elga.gv.at/CodeSystem/hl7-administrative-sex"
+  s:"2.16.840.1.113883.12.496" == t:"https://termgit.elga.gv.at/CodeSystem/hl7-consent-type"
+  s:"2.16.840.1.113883.12.497" == t:"https://termgit.elga.gv.at/CodeSystem/hl7-consent-mode"
+  s:"2.16.840.1.113883.12.498" == t:"https://termgit.elga.gv.at/CodeSystem/hl7-consent-status"
+  s:"2.16.840.1.113883.12.548" == t:"https://termgit.elga.gv.at/CodeSystem/hl7-signatorys-relationship-to-subject"
+  s:"2.16.840.1.113883.18.108" == t:"http://terminology.hl7.org/CodeSystem/v2-0203"
+  s:"2.16.840.1.113883.18.2" == t:"http://terminology.hl7.org/CodeSystem/v2-0001"
+  s:"2.16.840.1.113883.18.320" == t:"http://terminology.hl7.org/CodeSystem/v2-0496"
+  s:"2.16.840.1.113883.18.321" == t:"http://terminology.hl7.org/CodeSystem/v2-0497"
+  s:"2.16.840.1.113883.18.322" == t:"http://terminology.hl7.org/CodeSystem/v2-0498"
+  s:"2.16.840.1.113883.18.355" == t:"http://terminology.hl7.org/CodeSystem/v2-0548"
+
+  // as long as HL7AT Core has not resolved https://github.com/HL7Austria/HL7-AT-FHIR-Core-R4/issues/83 the "wrong" code system will be used in order to have passing validation
+  s:"2.16.840.1.113883.2.16.1.4.1" == t:"http://hl7.at/fhir/HL7ATCoreProfiles/4.0.1/CodeSystem/at-core-cs-religion"
+  // s:"2.16.840.1.113883.2.16.1.4.1" == t:"https://termgit.elga.gv.at/CodeSystem/hl7-at-religionaustria"
+
+  s:"2.16.840.1.113883.2.16.1.4.10" == t:"https://termgit.elga.gv.at/CodeSystem/hl7-at-formatcodes"
+  s:"2.16.840.1.113883.2.9.6.2.7" == t:"https://termgit.elga.gv.at/CodeSystem/isco"
+  s:"2.16.840.1.113883.3.6905.2" == t:"https://termgit.elga.gv.at/CodeSystem/ehdsi-substance"
+  s:"2.16.840.1.113883.3.7.1.7" == t:"https://termgit.elga.gv.at/CodeSystem/sciphox-seitenlokalisation"
+  s:"2.16.840.1.113883.3.7.1.8" == t:"https://termgit.elga.gv.at/CodeSystem/sciphox-diagnosenzusatz"
+  s:"2.16.840.1.113883.4.642.1.76" == t:"http://hl7.org/fhir/event-timing"
+  s:"2.16.840.1.113883.4.642.3.115" == t:"https://termgit.elga.gv.at/CodeSystem/ips-conditionverificationstatus"
+  s:"2.16.840.1.113883.4.642.3.155" == t:"https://termgit.elga.gv.at/CodeSystem/ips-conditionclinicalstatuscodes"
+  s:"2.16.840.1.113883.5.1" == t:"http://terminology.hl7.org/CodeSystem/v3-AdministrativeGender"
+  s:"2.16.840.1.113883.5.1008" == t:"http://terminology.hl7.org/CodeSystem/v3-NullFlavor"
+  s:"2.16.840.1.113883.5.1052" == t:"http://terminology.hl7.org/CodeSystem/v3-ActSite"
+  s:"2.16.840.1.113883.5.110" == t:"http://terminology.hl7.org/CodeSystem/v3-RoleClass"
+  s:"2.16.840.1.113883.5.111" == t:"http://terminology.hl7.org/CodeSystem/v3-RoleCode"
+  s:"2.16.840.1.113883.5.1119" == t:"http://terminology.hl7.org/CodeSystem/v3-AddressUse"
+  s:"2.16.840.1.113883.5.1150.1" == t:"https://termgit.elga.gv.at/CodeSystem/ips-absentorunknowndata"
+  s:"2.16.840.1.113883.5.129" == t:"http://terminology.hl7.org/CodeSystem/v3-SpecimenType"
+  s:"2.16.840.1.113883.5.139" == t:"http://terminology.hl7.org/CodeSystem/v3-TimingEvent"
+  s:"2.16.840.1.113883.5.14" == t:"http://terminology.hl7.org/CodeSystem/v3-ActStatus"
+  s:"2.16.840.1.113883.5.143" == t:"http://terminology.hl7.org/CodeSystem/v3-URLScheme"
+  s:"2.16.840.1.113883.5.2" == t:"http://terminology.hl7.org/CodeSystem/v3-MaritalStatus"
+  s:"2.16.840.1.113883.5.25" == t:"http://terminology.hl7.org/CodeSystem/v3-Confidentiality"
+  s:"2.16.840.1.113883.5.4" == t:"http://terminology.hl7.org/CodeSystem/v3-ActCode"
+  s:"2.16.840.1.113883.5.43" == t:"http://terminology.hl7.org/CodeSystem/v3-EntityNamePartQualifier"
+  s:"2.16.840.1.113883.5.45" == t:"http://terminology.hl7.org/CodeSystem/v3-EntityNameUse"
+  s:"2.16.840.1.113883.5.60" == t:"http://terminology.hl7.org/CodeSystem/v3-LanguageAbilityMode"
+  s:"2.16.840.1.113883.5.61" == t:"http://terminology.hl7.org/CodeSystem/v3-LanguageAbilityProficiency"
+  s:"2.16.840.1.113883.5.88" == t:"http://terminology.hl7.org/CodeSystem/v3-ParticipationFunction"
+  s:"2.16.840.1.113883.5.90" == t:"http://terminology.hl7.org/CodeSystem/v3-ParticipationType"
+  s:"2.16.840.1.113883.6.121" == t:"https://termgit.elga.gv.at/CodeSystem/hl7-language-identification"
+  s:"2.16.840.1.113883.6.24" == t:"https://termgit.elga.gv.at/CodeSystem/mdc-medicaldevicecommunications"
+  s:"2.16.840.1.113883.6.254-2005" == t:"https://termgit.elga.gv.at/CodeSystem/icf"
+  s:"2.16.840.1.113883.6.43.1" == t:"https://termgit.elga.gv.at/CodeSystem/icd-o-3"
+  s:"2.16.840.1.113883.6.121" == t:"urn:ietf:bcp:47"
+}
+
 uses "http://hl7.org/fhir/cda/StructureDefinition/ED" alias ED as source
 uses "http://hl7.org/fhir/cda/StructureDefinition/II" as source
 uses "http://hl7.org/fhir/StructureDefinition/Identifier" as target
@@ -116,12 +511,15 @@ uses "http://hl7.org/fhir/StructureDefinition/instant" as target
 uses "http://hl7.org/fhir/cda/StructureDefinition/CS" as source
 uses "http://hl7.org/fhir/StructureDefinition/code" as target
 uses "http://hl7.org/fhir/cda/StructureDefinition/CE" as source
+uses "http://hl7.org/fhir/cda/StructureDefinition/CD" as source
 uses "http://hl7.org/fhir/StructureDefinition/CodeableConcept" as target
 uses "http://hl7.org/fhir/StructureDefinition/Coding" as target
 uses "http://hl7.org/fhir/cda/StructureDefinition/ST" as source
 uses "http://hl7.org/fhir/StructureDefinition/string" as target
 uses "http://hl7.org/fhir/cda/StructureDefinition/EN" as source
 uses "http://hl7.org/fhir/cda/StructureDefinition/PN" as source
+uses "http://hl7.org/fhir/cda/StructureDefinition/PQ" alias PQ as source
+uses "http://hl7.org/fhir/cda/StructureDefinition/IVXB_PQ" alias IVXB_PQ as source
 uses "http://hl7.org/fhir/cda/StructureDefinition/ON" as source
 uses "http://hl7.org/fhir/StructureDefinition/HumanName" as target
 uses "http://hl7.org/fhir/StructureDefinition/Organization" as target
@@ -133,6 +531,9 @@ uses "http://hl7.org/fhir/cda/StructureDefinition/BL" as source
 uses "http://hl7.org/fhir/StructureDefinition/boolean" as target
 uses "http://hl7.org/fhir/cda/StructureDefinition/IVL_TS" as source
 uses "http://hl7.org/fhir/cda/StructureDefinition/IVXB-TS" alias IVXB_TS as source
+
+uses "http://hl7.org/fhir/StructureDefinition/Quantity" alias Quantity as target
+uses "http://hl7.org/fhir/StructureDefinition/SimpleQuantity" alias SimpleQuantity as target
 uses "http://hl7.org/fhir/StructureDefinition/Period" as target
 
 group Any(source src, target tgt) {
@@ -141,6 +542,9 @@ group Any(source src, target tgt) {
 group II(source src : II, target tgt : Identifier) extends Any <<types>> {
   src.root as r where src.extension.exists()
      -> tgt.system = translate(r, 'http://hl7.org/fhir/ConceptMap/special-oid2uri', 'uri') "root1";
+  // src.root as r where src.extension.exists()
+  //    -> tgt.system = translate(r, '#OIDtoURI', 'code') "root1";
+
   src.root as r where src.extension.empty()
         and src.root.matches('[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}')
      -> tgt.system = 'urn:ietf:rfc:3986', tgt.value = ('urn:uuid:' + r.lower()) "rootuuid";
@@ -178,6 +582,9 @@ group Negation(source negation : BL, target tgt) {
 
 group TSInstant(source src : TS, target tgt : instant) extends Any <<types>> {
   src.value as v -> tgt.value = cast(v, 'string');
+}
+
+group IVL_TSDateTime(source src : IVL_TS, target tgt : instant) extends TSInstant <<types>> {
 }
 
 group TSDateTime(source src : TS, target tgt : dateTime) extends TSInstant <<types>> {
@@ -226,11 +633,20 @@ group CDCode(source src : CD, target tgt : code) extends CSCode <<types>> {
 
 group CECoding(source src : CE, target tgt : Coding) extends Any <<types>> {
   src.code as code -> tgt.code = cast(code, 'string');
+
   // https://github.com/hapifhir/org.hl7.fhir.core/blob/master/org.hl7.fhir.dstu2016may/src/main/java/org/hl7/fhir/dstu2016may/utils/StructureMapUtilities.java#L1027
   // https://github.com/hapifhir/org.hl7.fhir.core/blob/b590cb3fedbb0791702c637e76fefdae2cba2f78/org.hl7.fhir.r5/src/main/java/org/hl7/fhir/r5/context/ContextUtilities.java#L65
   // https://github.com/hapifhir/org.hl7.fhir.core/blob/b590cb3fedbb0791702c637e76fefdae2cba2f78/org.hl7.fhir.utilities/src/main/java/org/hl7/fhir/utilities/OIDUtils.java#L43
-  src.codeSystem as system -> tgt.system = translate(system, 'http://hl7.org/fhir/ConceptMap/special-oid2uri', 'uri');
-  src.displayName as display -> tgt.display = cast(display, 'string');
+  // src.codeSystem as system -> tgt.system = translate(system, 'http://hl7.org/fhir/ConceptMap/special-oid2uri', 'uri');
+  src.codeSystem as system -> tgt.system = translate(system, '#OIDtoURI', 'code');
+
+  // TODO for testing purposes (validation with java validator), no displayNames will be mapped
+    //      later the NCPeH will have to translate them
+  // src.displayName as display -> tgt.display = cast(display, 'string');
+}
+
+group CDCoding(source src : CD target tgt : Coding) extends CECoding <<types>> {
+
 }
 
 group CECodeableConcept(source src : CE, target tgt : CodeableConcept) extends Any <<types>> {
@@ -238,8 +654,13 @@ group CECodeableConcept(source src : CE, target tgt : CodeableConcept) extends A
   src -> tgt.coding as coding then CECoding(src, coding) "code";
   src.translation as translation -> tgt.coding as coding then {
     translation.code as code -> coding.code = cast(code, 'string');
-    translation.codeSystem as system -> coding.system = translate(system, 'http://hl7.org/fhir/ConceptMap/special-oid2uri', 'uri');
-    translation.displayName as display -> coding.display = cast(display, 'string');
+
+    // translation.codeSystem as system -> coding.system = translate(system, 'http://hl7.org/fhir/ConceptMap/special-oid2uri', 'uri');
+    src.codeSystem as system -> tgt.system = translate(system, '#OIDtoURI', 'code');
+
+    // TODO for testing purposes (validation with java validator), no displayNames will be mapped
+    //      later the NCPeH will have to translate them
+    // translation.displayName as display -> coding.display = cast(display, 'string');
   } "translation";
 }
 
@@ -449,10 +870,29 @@ group TELContactPoint(source src : TEL, target tgt : ContactPoint) extends Any <
 }
 
 group PQQuantity(source src : PQ, target tgt : Quantity) extends Any <<types>> {
-  //src.unit as unit -> tgt.code = unit;
-  src.unit as unit -> tgt.unit = unit;
+  src -> tgt.system = 'http://unitsofmeasure.org' "FhirQuantityIPSSystem";
+  src.unit as unit -> tgt.code = unit;
   src.value as value -> tgt.value = value;
 }
+
+group IVLPQRange(source src : IVL_PQ, target tgt : Range) extends Any <<types>> {
+  src.low as source_low -> tgt.low as target_low then PQQuantity(source_low, target_low) "IVLPQLow";
+  src.high as source_high -> tgt.high as target_high then PQQuantity(source_high, target_high) "IVLPQHigh";
+  // Range does not support any other elements, no official extensions defined
+}
+
+group IVXB_PQQuantity(source src : IVXB_PQ, target tgt : SimpleQuantity) extends PQQuantity <<types>> {
+}
+
+// group LowQuantity(source src : IVXB_PQ, target tgt : Quantity) extends PQQuantity <<types>> {
+//   // inclusive missing
+//   // TODO to be discussed
+//   src where $this.inclusive.exists().not() -> tgt.comparator = '>' "CdaInclusiveToFhirComparatorMissing";
+//   // inclusive = false
+//   src where $this.inclusive=false -> tgt.comparator = '>' "CdaInclusiveToFhirComparatorNotInclusive";
+//   // inclusive = true
+//   src where $this.inclusive=true -> tgt.comparator = '>=' "CdaInclusiveToFhirComparatorInclusive";
+// }
 
 group RTOPQPQRatio(source src : RTO_PQ_PQ, target tgt : Ratio) extends Any <<types>> {
   src.numerator as numerator -> tgt.numerator as targetNumerator then PQQuantity(numerator, targetNumerator) "numerator";
