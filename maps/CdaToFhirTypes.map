@@ -616,7 +616,7 @@ group EDstring(source src : ED, target tgt : string) extends STstring <<types>> 
 }
 
 group ENstring(source src : EN, target tgt : string) extends Any <<types>> {
-  src as v -> tgt.value = (v.other) "value";
+  src as v -> tgt.value = (v.item.xmlText) "value";
 }
 
 group ONstring(source src : ON, target tgt : string) extends ENstring <<types>> {
