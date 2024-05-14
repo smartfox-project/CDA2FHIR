@@ -620,7 +620,7 @@ group CdaPatientRoleToFhirPatient(source cda_patientRole : PatientRole, target f
           fhir_bundle_entry.resource = create('Organization') as fhir_contact_organization,
           fhir_contact_organization.id = uuid() as fhir_contact_organization_id,
           // patient.guardian.guardianOrganization.name
-          fhir_contact_organization.name = (cda_organization_name.other),
+          fhir_contact_organization.name = (cda_organization_name.item.xmlText),
           fhir_bundle_entry.fullUrl = append('urn:uuid:', fhir_contact_organization_id),
 
           fhir_patient_contact.organization = create('Reference') as fhir_contact_organization_reference,
@@ -744,13 +744,13 @@ group CdaAuthorToFhirDevice(source cda_author : Author, target fhir_device : Dev
         // author.assignedAuthor.assignedAuthoringDevice.manufacturerModelName
         cda_assignedAuthoringDevice.manufacturerModelName as cda_manufacturerModelName ->
           fhir_device.deviceName as fhir_device_deviceName,
-          fhir_device_deviceName.name = (cda_manufacturerModelName.dataString),
+          fhir_device_deviceName.name = (cda_manufacturerModelName.xmlText),
           fhir_device_deviceName.type = 'model-name';
         // author.assignedAuthor.assignedAuthoringDevice.softwareName
         // TODO not clear if this is the right place to store that information
         cda_assignedAuthoringDevice.softwareName as cda_softwareName ->
           fhir_device.deviceName as fhir_device_deviceName,
-          fhir_device_deviceName.name = (cda_softwareName.dataString),
+          fhir_device_deviceName.name = (cda_softwareName.xmlText),
           fhir_device_deviceName.type = 'other';
       };
       // author.assignedAuthor.representedOrganization
