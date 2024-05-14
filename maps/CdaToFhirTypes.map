@@ -596,7 +596,7 @@ group IVXB_TSDateTime(source src : IVXB_TS, target tgt : dateTime) extends TSDat
 
 group TSDate(source src : TS, target tgt : date) extends TSInstant <<types>> {
   // guaranteeing that only date will be transformed
-  src.value as v -> tgt.value = (v.substring(0,10));
+  src.value as v -> tgt.value = truncate(v,10) "TSdate";
 }
 
 group IVLTSPeriod(source src : IVL_TS, target tgt : Period) extends Any <<types>> {
