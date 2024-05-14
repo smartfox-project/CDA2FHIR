@@ -736,7 +736,7 @@ group CdaPersonNameCompilationToFhirHumanName(source cda_name : PN, target fhir_
           extension.url = 'http://hl7.org/fhir/StructureDefinition/iso21090-EN-qualifier' "extensionUrl";
           cda_name_item_suffix.qualifier as qualifier -> extension.value = translate(qualifier, '#ELGAEntityNamePartQualifierFHIRNamePartQualifier', 'code') "qualifierValue";
       } "CdaNameSuffixToFhirNameSuffix";
-  } "PNitem";
+  } "CdaNameItem";
 }
 
 // Source: https://art-decor.org/art-decor/decor-templates--at-lab-?section=templates&id=1.2.40.0.34.6.0.11.9.5&effectiveDate=2021-06-28T13:57:53&language=de-DE
