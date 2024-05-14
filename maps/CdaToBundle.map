@@ -208,7 +208,7 @@ group CdaHeaderToFhirComposition(source cda : ClinicalDocument, target fhir_comp
       "CdaMissingCodeTranslationToFhirCompositionType";
   };
   // ClinicalDocument.title
-  cda.title as cda_title -> fhir_composition.title = (cda_title.dataString);
+  cda.title as cda_title -> fhir_composition.title = (cda_title.xmlText);
   // ClinicalDocument.sdtc:statusCode
   // TODO clarify mapping
   cda.statusCode as cda_statusCode where cda.statusCode.exists() then {
@@ -902,7 +902,7 @@ group CdaSectionToFhirSection(source cda_section: Section, target fhir_section, 
   // section.code
   cda_section.code -> fhir_section.code;
   // section.title
-  cda_section.title as cda_section_title -> fhir_section.title = (cda_section_title.dataString) "test";
+  cda_section.title as cda_section_title -> fhir_section.title = (cda_section_title.xmlText) "test";
   // section.text
   cda_section.text as cda_section_text ->
     fhir_section.text as fhir_section_text,
