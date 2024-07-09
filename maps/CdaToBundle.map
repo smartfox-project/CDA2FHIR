@@ -211,10 +211,10 @@ group CdaHeaderToFhirComposition(source cda : ClinicalDocument, target fhir_comp
   cda.title as cda_title -> fhir_composition.title = (cda_title.xmlText);
   // ClinicalDocument.sdtc:statusCode
   // TODO clarify mapping
-  cda.sdtcStatusCode as cda_statusCode where cda.sdtcStatusCode.exists() then {
-    cda_statusCode.code as cda_code -> fhir_composition.status = translate(cda_code, '#cda-sdtc-statuscode-2-fhir-composition-status' , 'code');
-  } "CdaStatusCodeToFhirCompositionStatusMapped";
-  cda where cda.sdtcStatusCode.exists().not() -> fhir_composition.status = 'final' "CdaStatusCodeToFhirCompositionStatusFixed";
+  // cda.sdtcStatusCode as cda_statusCode where cda.sdtcStatusCode.exists() then {
+  //   cda_statusCode.code as cda_code -> fhir_composition.status = translate(cda_code, '#cda-sdtc-statuscode-2-fhir-composition-status' , 'code');
+  // } "CdaStatusCodeToFhirCompositionStatusMapped";
+  // cda where cda.sdtcStatusCode.exists().not() -> fhir_composition.status = 'final' "CdaStatusCodeToFhirCompositionStatusFixed";
   // TODO ClinicalDocument.hl7at:terminologyDate
   // cda.terminologyDate ->
   // TODO ClinicalDocument.hl7at:formatCode
@@ -360,8 +360,8 @@ group CdaHeaderToFhirComposition(source cda : ClinicalDocument, target fhir_comp
   // TODO based on analysis of sample reports currently not required
 
   // Participant Angehoerige
-  // ClinicalDocument.participant[hl7:templateId [@root='1.2.40.0.34.6.0.11.1.25']]
-  // TODO extension required
+  // ClinicalDocument.participant[hl7:templateId [@root='1.2.40.0.34.6.0.11.1.25']] or 1.2.40.0.34.11.1.1.5
+
 
   // Participant Versicherung
   // ClinicalDocument.participant[hl7:templateId [@root='1.2.40.0.34.6.0.11.1.26']]
@@ -478,10 +478,10 @@ group CdaHeaderToFhirDiagnosticReport(source cda : ClinicalDocument, target fhir
 
   // ClinicalDocument.sdtc:statusCode
   // TODO clarify mapping
-  cda.sdtcStatusCode as cda_statusCode where cda.sdtcStatusCode.exists() then {
-    cda_statusCode.code as cda_code -> fhir_diagnosticReport.status = translate(cda_code, '#cda-sdtc-statuscode-2-fhir-composition-status' , 'code');
-  } "CdaStatusCodeToFhirCompositionStatusMapped";
-  cda where cda.sdtcStatusCode.exists().not() -> fhir_diagnosticReport.status = 'final' "CdaStatusCodeToFhirCompositionStatusFixed";
+  // cda.sdtcStatusCode as cda_statusCode where cda.sdtcStatusCode.exists() then {
+  //   cda_statusCode.code as cda_code -> fhir_diagnosticReport.status = translate(cda_code, '#cda-sdtc-statuscode-2-fhir-composition-status' , 'code');
+  // } "CdaStatusCodeToFhirCompositionStatusMapped";
+  // cda where cda.sdtcStatusCode.exists().not() -> fhir_diagnosticReport.status = 'final' "CdaStatusCodeToFhirCompositionStatusFixed";
   // TODO ClinicalDocument.hl7at:terminologyDate
   // cda.terminologyDate ->
   // TODO ClinicalDocument.hl7at:formatCode
@@ -587,9 +587,9 @@ group CdaPatientRoleToFhirPatient(source cda_patientRole : PatientRole, target f
       extension.url = 'http://hl7.org/fhir/StructureDefinition/patient-birthTime',
       extension.value = create('dateTime') as fhir_patient_birthTime_dateTime then TSDateTime(cda_patient_birthTime, fhir_patient_birthTime_dateTime) "CdaPatientBirthTimeToFhirPatientBirthTimeExtension";
     // patient.deceasedInd
-    cda_patient.sdtcDeceasedInd as cda_patient_deceasedInd where cda_patient.sdtcDeceasedTime.empty() -> fhir_patient.deceased = create('boolean') as fhir_patient_deceased then BL(cda_patient_deceasedInd, fhir_patient_deceased) "CdaPatientDeceasedIndToFhirPatientDeceasedBoolean";
-    // patient.deceasedTime
-    cda_patient.sdtcDeceasedTime as cda_patient_deceasedTime -> fhir_patient.deceased = create('dateTime') as fhir_patient_deceased then TSDateTime(cda_patient_deceasedTime, fhir_patient_deceased) "CdaPatientDeceasedTimeToFhirPatientDeceasedDateTime";
+    // cda_patient.sdtcDeceasedInd as cda_patient_deceasedInd where cda_patient.sdtcDeceasedTime.empty() -> fhir_patient.deceased = create('boolean') as fhir_patient_deceased then BL(cda_patient_deceasedInd, fhir_patient_deceased) "CdaPatientDeceasedIndToFhirPatientDeceasedBoolean";
+    // // patient.deceasedTime
+    // cda_patient.sdtcDeceasedTime as cda_patient_deceasedTime -> fhir_patient.deceased = create('dateTime') as fhir_patient_deceased then TSDateTime(cda_patient_deceasedTime, fhir_patient_deceased) "CdaPatientDeceasedTimeToFhirPatientDeceasedDateTime";
     // patient.maritalStatusCode
     cda_patient.maritalStatusCode -> fhir_patient.maritalStatus;
     // patient.religiousAffiliationCode
@@ -620,7 +620,7 @@ group CdaPatientRoleToFhirPatient(source cda_patientRole : PatientRole, target f
           fhir_bundle_entry.resource = create('Organization') as fhir_contact_organization,
           fhir_contact_organization.id = uuid() as fhir_contact_organization_id,
           // patient.guardian.guardianOrganization.name
-          fhir_contact_organization.name = (cda_organization_name.item.xmlText),
+          fhir_contact_organization.name = (cda_organization_name.xmlText),
           fhir_bundle_entry.fullUrl = append('urn:uuid:', fhir_contact_organization_id),
 
           fhir_patient_contact.organization = create('Reference') as fhir_contact_organization_reference,
