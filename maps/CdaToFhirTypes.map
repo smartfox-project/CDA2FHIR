@@ -894,7 +894,7 @@ group IVLPQRange(source src : IVL_PQ, target tgt : Range) extends Any <<types>> 
   // Range does not support any other elements, no official extensions defined
 }
 
-group IVXB_PQQuantity(source src : IVXB_PQ, target tgt : SimpleQuantity) extends PQQuantity <<types>> {
+group IVXB_PQQuantity(source src : IVXB_PQ, target tgt : Quantity) extends PQQuantity <<types>> {
 }
 
 // group LowQuantity(source src : IVXB_PQ, target tgt : Quantity) extends PQQuantity <<types>> {
