@@ -546,6 +546,10 @@ group II(source src : II, target tgt : Identifier) extends Any <<types>> {
   // src.root as r where src.extension.exists()
   //    -> tgt.system = translate(r, '#OIDtoURI', 'code') "root1";
 
+  // testing if it is possible to use translate in where
+  // src.root as r where (translate('#OIDtoURI', r)) ->
+  //   tgt.system = translate(r, 'http://hl7.org/fhir/ConceptMap/special-oid2uri', 'uri') "root1";
+
   src.root as r where src.extension.empty()
         and src.root.matches('[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}')
      -> tgt.system = 'urn:ietf:rfc:3986', tgt.value = ('urn:uuid:' + r.lower()) "rootuuid";
