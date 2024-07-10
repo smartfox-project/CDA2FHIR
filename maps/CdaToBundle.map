@@ -1245,6 +1245,8 @@ group CdaBeilagenSectionToFhirDiagnosticReportMedia(source cda_section: Section,
     then {
       cda_section.entry as cda_section_entry then {
         cda_section_entry.observationMedia as cda_observationMedia then {
+          // cda_section.text
+          cda_section.text as cda_section_text -> fhir_diagnosticReport_media.comment = (cda_section_text);
           // cda_observationMedia@ID
           cda_observationMedia.ID as cda_observationMedia_ID ->
             fhir_media.identifier as fhir_media_identifier,
