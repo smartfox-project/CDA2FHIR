@@ -112,6 +112,8 @@ conceptmap "OIDtoURI" {
   prefix s = "http://cda.oid"
   prefix t = "http://fhir.system"
 
+  // following line breaks malac
+  //unmapped for s = provided
   // entries based on https://github.com/hapifhir/org.hl7.fhir.core/blob/b590cb3fedbb0791702c637e76fefdae2cba2f78/org.hl7.fhir.utilities/src/main/java/org/hl7/fhir/utilities/OIDUtils.java#L43
   // lines have been commented out where they're not supposed to be relevant for AT
   s:"2.16.840.1.113883.6.96" == t:"http://snomed.info/sct"
@@ -503,47 +505,48 @@ conceptmap "OIDtoURI" {
   s:"2.16.840.1.113883.6.121" == t:"urn:ietf:bcp:47"
 }
 
-uses "http://hl7.org/fhir/cda/StructureDefinition/ED" alias ED as source
-uses "http://hl7.org/fhir/cda/StructureDefinition/II" as source
-uses "http://hl7.org/fhir/StructureDefinition/Identifier" as target
-uses "http://hl7.org/fhir/cda/StructureDefinition/TS" as source
-uses "http://hl7.org/fhir/StructureDefinition/instant" as target
-uses "http://hl7.org/fhir/cda/StructureDefinition/CS" as source
-uses "http://hl7.org/fhir/StructureDefinition/code" as target
-uses "http://hl7.org/fhir/cda/StructureDefinition/CE" as source
-uses "http://hl7.org/fhir/cda/StructureDefinition/CD" as source
-uses "http://hl7.org/fhir/StructureDefinition/CodeableConcept" as target
-uses "http://hl7.org/fhir/StructureDefinition/Coding" as target
-uses "http://hl7.org/fhir/cda/StructureDefinition/ST" as source
-uses "http://hl7.org/fhir/StructureDefinition/string" as target
-uses "http://hl7.org/fhir/cda/StructureDefinition/EN" as source
-uses "http://hl7.org/fhir/cda/StructureDefinition/PN" as source
-uses "http://hl7.org/fhir/cda/StructureDefinition/PQ" alias PQ as source
-uses "http://hl7.org/fhir/cda/StructureDefinition/IVXB_PQ" alias IVXB_PQ as source
-uses "http://hl7.org/fhir/cda/StructureDefinition/ON" as source
-uses "http://hl7.org/fhir/StructureDefinition/HumanName" as target
-uses "http://hl7.org/fhir/StructureDefinition/Organization" as target
-uses "http://hl7.org/fhir/cda/StructureDefinition/AD" as source
-uses "http://hl7.org/fhir/StructureDefinition/Address" as target
-uses "http://hl7.org/fhir/cda/StructureDefinition/TEL" as source
-uses "http://hl7.org/fhir/StructureDefinition/ContactPoint" as target
-uses "http://hl7.org/fhir/cda/StructureDefinition/BL" as source
-uses "http://hl7.org/fhir/StructureDefinition/boolean" as target
-uses "http://hl7.org/fhir/cda/StructureDefinition/IVL_TS" as source
-uses "http://hl7.org/fhir/cda/StructureDefinition/IVXB-TS" alias IVXB_TS as source
+uses "http://hl7.org/cda/stds/core/StructureDefinition/ED" alias ED as source
+uses "http://hl7.org/cda/stds/core/StructureDefinition/II" alias II as source
+uses "http://hl7.org/fhir/4.3/StructureDefinition/Identifier" alias Identifier as target
+uses "http://hl7.org/cda/stds/core/StructureDefinition/TS" alias TS as source
+uses "http://hl7.org/fhir/4.3/StructureDefinition/instant" alias instant as target
+uses "http://hl7.org/cda/stds/core/StructureDefinition/CS" alias CS as source
+uses "http://hl7.org/fhir/4.3/StructureDefinition/code" alias code as target
+uses "http://hl7.org/cda/stds/core/StructureDefinition/CE" alias CE as source
+uses "http://hl7.org/cda/stds/core/StructureDefinition/CD" alias CD as source
+uses "http://hl7.org/fhir/4.3/StructureDefinition/CodeableConcept" alias CodeableConcept as target
+uses "http://hl7.org/fhir/4.3/StructureDefinition/Coding" alias Coding as target
+uses "http://hl7.org/cda/stds/core/StructureDefinition/ST" alias ST as source
+uses "http://hl7.org/fhir/4.3/StructureDefinition/string" alias string as target
+uses "http://hl7.org/cda/stds/core/StructureDefinition/EN" alias EN as source
+uses "http://hl7.org/cda/stds/core/StructureDefinition/PN" alias PN as source
+uses "http://hl7.org/cda/stds/core/StructureDefinition/PQ" alias PQ as source
+uses "http://hl7.org/cda/stds/core/StructureDefinition/IVXB-PQ" alias IVXB_PQ as source
+uses "http://hl7.org/cda/stds/core/StructureDefinition/ON" alias ON as source
+uses "http://hl7.org/fhir/4.3/StructureDefinition/HumanName" alias HumanName as target
+uses "http://hl7.org/cda/stds/core/StructureDefinition/Organization" alias CdaOrganization as source
+uses "http://hl7.org/fhir/4.3/StructureDefinition/Organization" alias Organization as target
+uses "http://hl7.org/cda/stds/core/StructureDefinition/AD" alias AD as source
+uses "http://hl7.org/fhir/4.3/StructureDefinition/Address" alias Address as target
+uses "http://hl7.org/cda/stds/core/StructureDefinition/TEL" alias TEL as source
+uses "http://hl7.org/fhir/4.3/StructureDefinition/ContactPoint" alias ContactPoint as target
+uses "http://hl7.org/cda/stds/core/StructureDefinition/BL" alias BL as source
+uses "http://hl7.org/fhir/4.3/StructureDefinition/boolean" alias boolean as target
+uses "http://hl7.org/cda/stds/core/StructureDefinition/IVL-TS" alias IVL_TS as source
+uses "http://hl7.org/cda/stds/core/StructureDefinition/IVXB-TS" alias IVXB_TS as source
 
-uses "http://hl7.org/fhir/StructureDefinition/Quantity" alias Quantity as target
-uses "http://hl7.org/fhir/StructureDefinition/SimpleQuantity" alias SimpleQuantity as target
-uses "http://hl7.org/fhir/StructureDefinition/Period" as target
+uses "http://hl7.org/fhir/4.3/StructureDefinition/Quantity" alias Quantity as target
+uses "http://hl7.org/fhir/4.3/StructureDefinition/SimpleQuantity" alias SimpleQuantity as target
+uses "http://hl7.org/fhir/4.3/StructureDefinition/Period" alias Period as target
 
 group Any(source src, target tgt) {
 }
 
 group II(source src : II, target tgt : Identifier) extends Any <<types>> {
+  //src.root as r where src.extension.exists()
+  //   -> tgt.system = translate(r, 'http://hl7.org/fhir/ConceptMap/special-oid2uri', 'uri') "root1";
   src.root as r where src.extension.exists()
-     -> tgt.system = translate(r, 'http://hl7.org/fhir/ConceptMap/special-oid2uri', 'uri') "root1";
-  // src.root as r where src.extension.exists()
-  //    -> tgt.system = translate(r, '#OIDtoURI', 'code') "root1";
+     -> tgt.system = translate(r, '#OIDtoURI', 'code') "root1";
 
   src.root as r where src.extension.empty()
         and src.root.matches('[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}')
@@ -551,9 +554,10 @@ group II(source src : II, target tgt : Identifier) extends Any <<types>> {
   src.root as r where src.extension.empty() and src.root.contains('.')
      ->  tgt.system = 'urn:ietf:rfc:3986',  tgt.value = append('urn:oid:', r) "rootoid";
   src.extension as e -> tgt.value = e;
-  src.assigningAuthorityName as s ->  tgt.assigner as a,  a.display = s; // there's no equivalent for displayable in FHIR - and it probably will never matter, but if it does, it might map to Identifier.use.
+  src.assigningAuthorityName as s ->  tgt.assigner as a,  a.display = s;
+  // there's no equivalent for displayable in FHIR - and it probably will never matter, but if it does, it might map to Identifier.use.
   src.displayable as displayable -> tgt.extension as ext then {
-    displayable -> ext.url = 'http://hl7.org/fhir/cdaStructureDefinition/extension-displayable' "url";
+    displayable -> ext.url = 'http://hl7.org/cda/stds/core/StructureDefinition/extension-displayable' "url";
     displayable.value as v -> ext.value = cast(v, 'string');
   } "extension";
 }
@@ -568,14 +572,14 @@ group BL(source src : BL, target tgt: boolean) extends Any <<types>> {
 
 group TemplateID(source template : II, target tgt) {
   template -> tgt.extension as ext then {
-    template -> ext.url = 'http://hl7.org/fhir/cda/StructureDefinition/templateID' "url";
+    template -> ext.url = 'http://hl7.org/cda/stds/core/StructureDefinition/templateID' "url";
     template -> ext.value = create('Identifier') as value then II(template, value) "value";
   } "templateId";
 }
 
 group Negation(source negation : BL, target tgt) {
   negation -> tgt.modifierExtension as ext then {
-    negation -> ext.url = 'http://hl7.org/fhir/cda/StructureDefinition/negationIndicator' "url";
+    negation -> ext.url = 'http://hl7.org/cda/stds/core/StructureDefinition/negationIndicator' "url";
     negation as neg ->  ext.value = create('boolean'),  ext.value = neg "value";
   } "negation";
 }
@@ -595,7 +599,7 @@ group IVXB_TSDateTime(source src : IVXB_TS, target tgt : dateTime) extends TSDat
 
 group TSDate(source src : TS, target tgt : date) extends TSInstant <<types>> {
   // guaranteeing that only date will be transformed
-  src.value as v -> tgt.value = (v.substring(0,10));
+  src.value as v -> tgt.value = truncate(v,10) "TSdate";
 }
 
 group IVLTSPeriod(source src : IVL_TS, target tgt : Period) extends Any <<types>> {
@@ -608,14 +612,14 @@ group IVLTSDateTime(source src : IVL_TS, target tgt : dateTime) extends Any <<ty
 }
 
 group STstring(source src : ST, target tgt : string) extends Any <<types>> {
-  src as v -> tgt.value = cast(v, 'string') "value";
+  src as v -> tgt.value = (v.xmlText) "STstring";
 }
 
 group EDstring(source src : ED, target tgt : string) extends STstring <<types>> {
 }
 
 group ENstring(source src : EN, target tgt : string) extends Any <<types>> {
-  src as v -> tgt.value = (v.other) "value";
+  src as v -> tgt.value = (v.xmlText) "value";
 }
 
 group ONstring(source src : ON, target tgt : string) extends ENstring <<types>> {
@@ -645,7 +649,7 @@ group CECoding(source src : CE, target tgt : Coding) extends Any <<types>> {
   // src.displayName as display -> tgt.display = cast(display, 'string');
 }
 
-group CDCoding(source src : CD target tgt : Coding) extends CECoding <<types>> {
+group CDCoding(source src : CD, target tgt : Coding) extends CECoding <<types>> {
 
 }
 
@@ -670,14 +674,14 @@ group CSCodeableConcept(source src : CS, target tgt : CodeableConcept) extends C
 group CDCodeableConcept(source src : CD, target tgt : CodeableConcept) extends CECodeableConcept <<types>> {
 }
 
-group ENHumanName(source src : EN, target tgt : HumanName) extends Any <<types>> {
-  src.family as v -> tgt.family = (v.dataString);
-  src.given as v -> tgt.given = (v.dataString);
-  src.prefix as v -> tgt.prefix = (v.dataString);
-  src.suffix as v -> tgt.suffix = (v.dataString);
-  //src.use as c -> tgt.use = translate(c, 'http://hl7.org/fhir/ConceptMap/cm-name-use-v3', 'code');
-  src.validTime -> tgt.period;
-}
+// group ENHumanName(source src : EN, target tgt : HumanName) extends Any <<types>> {
+//   src.family as v -> tgt.family = (v.dataString);
+//   src.given as v -> tgt.given = (v.dataString);
+//   src.prefix as v -> tgt.prefix = (v.dataString);
+//   src.suffix as v -> tgt.suffix = (v.dataString);
+//   //src.use as c -> tgt.use = translate(c, 'http://hl7.org/fhir/ConceptMap/cm-name-use-v3', 'code');
+//   src.validTime -> tgt.period;
+// }
 
 // Source: https://art-decor.org/ad/#/at-lab-/rules/templates/1.2.40.0.34.6.0.11.9.12/2021-02-19T13:36:43
 //         https://art-decor.org/ad/#/at-lab-/rules/templates/1.2.40.0.34.6.0.11.9.6/2021-02-19T13:36:49
@@ -738,7 +742,7 @@ group CdaPersonNameCompilationToFhirHumanName(source cda_name : PN, target fhir_
 
 // Source: https://art-decor.org/art-decor/decor-templates--at-lab-?section=templates&id=1.2.40.0.34.6.0.11.9.5&effectiveDate=2021-06-28T13:57:53&language=de-DE
 // Target: http://hl7.org/fhir/organization.html
-group CdaOrganizationCompilationToFhirOrganization(source cda_organization, target fhir_organization : Organization) {
+group CdaOrganizationCompilationToFhirOrganization(source cda_organization: CdaOrganization, target fhir_organization : Organization) {
   cda_organization.id -> fhir_organization.identifier;
   cda_organization.name -> fhir_organization.name;
   cda_organization.telecom -> fhir_organization.telecom;
@@ -881,7 +885,7 @@ group IVLPQRange(source src : IVL_PQ, target tgt : Range) extends Any <<types>> 
   // Range does not support any other elements, no official extensions defined
 }
 
-group IVXB_PQQuantity(source src : IVXB_PQ, target tgt : SimpleQuantity) extends PQQuantity <<types>> {
+group IVXB_PQQuantity(source src : IVXB_PQ, target tgt : Quantity) extends PQQuantity <<types>> {
 }
 
 // group LowQuantity(source src : IVXB_PQ, target tgt : Quantity) extends PQQuantity <<types>> {
