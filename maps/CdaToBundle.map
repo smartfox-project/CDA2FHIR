@@ -59,16 +59,16 @@ uses "http://hl7.org/cda/stds/core/StructureDefinition/PatientRole" alias Patien
 uses "http://hl7.org/cda/stds/core/StructureDefinition/StructuredBody" alias StructuredBody as source
 uses "http://hl7.org/cda/stds/core/StructureDefinition/Observation" alias CDAObservation as source
 uses "http://hl7.org/cda/stds/core/StructureDefinition/Performer2" alias Performer as source
-uses "http://hl7.org/fhir/StructureDefinition/Bundle" alias Bundle as target
-uses "http://hl7.org/fhir/StructureDefinition/Composition" alias Composition as target
-uses "http://hl7.org/fhir/StructureDefinition/Patient" alias Patient as target
-uses "http://hl7.org/fhir/StructureDefinition/Person" alias Person as target
-uses "http://hl7.org/fhir/StructureDefinition/Practitioner" alias Practitioner as target
-uses "http://hl7.org/fhir/StructureDefinition/PractitionerRole" alias PractitionerRole as target
-uses "http://hl7.org/fhir/StructureDefinition/Organization" alias Organization as target
-uses "http://hl7.org/fhir/StructureDefinition/DiagnosticReport" alias DiagnosticReport as target
-uses "http://hl7.org/fhir/StructureDefinition/ServiceRequest" alias ServiceRequest as target
-uses "http://hl7.org/fhir/StructureDefinition/Observation" alias Observation as target
+uses "http://hl7.org/fhir/4.3/StructureDefinition/Bundle" alias Bundle as target
+uses "http://hl7.org/fhir/4.3/StructureDefinition/Composition" alias Composition as target
+uses "http://hl7.org/fhir/4.3/StructureDefinition/Patient" alias Patient as target
+uses "http://hl7.org/fhir/4.3/StructureDefinition/Person" alias Person as target
+uses "http://hl7.org/fhir/4.3/StructureDefinition/Practitioner" alias Practitioner as target
+uses "http://hl7.org/fhir/4.3/StructureDefinition/PractitionerRole" alias PractitionerRole as target
+uses "http://hl7.org/fhir/4.3/StructureDefinition/Organization" alias Organization as target
+uses "http://hl7.org/fhir/4.3/StructureDefinition/DiagnosticReport" alias DiagnosticReport as target
+uses "http://hl7.org/fhir/4.3/StructureDefinition/ServiceRequest" alias ServiceRequest as target
+uses "http://hl7.org/fhir/4.3/StructureDefinition/Observation" alias Observation as target
 
 imports "http://hl7.at/fhir/HL7ATCoreProfiles/4.0.1/StructureMap/at-cda-to-fhir-types"
 
