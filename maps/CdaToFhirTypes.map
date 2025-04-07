@@ -652,7 +652,7 @@ group CECoding(source src : CE, target tgt : Coding) extends Any <<types>> {
   // src.displayName as display -> tgt.display = cast(display, 'string');
 }
 
-group CDCoding(source src : CD target tgt : Coding) extends CECoding <<types>> {
+group CDCoding(source src : CD, target tgt : Coding) extends CECoding <<types>> {
 
 }
 
