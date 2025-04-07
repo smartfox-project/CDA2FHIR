@@ -311,7 +311,8 @@ group CdaHeaderToFhirComposition(source cda : ClinicalDocument, target fhir_comp
       cda_legalAuthenticator.time -> fhir_composition_attester.time;
       // ClinicalDocument.legalAuthenticator.signatureCode
       // in CDA constantly 'S' -> in FHIR 'legal'
-      cda_legalAuthenticator.signatureCode -> fhir_composition_attester.mode = 'legal' "CdaLegalAuthenticatorSignatureCodeToFhirCompositionAttesterMode";
+      cda_legalAuthenticator.signatureCode -> fhir_composition_attester.mode as fhir_composition_attester_mode,
+        fhir_composition_attester_mode.code = 'legal' "CdaLegalAuthenticatorSignatureCodeToFhirCompositionAttesterMode";
       // ClinicalDocument.legalAuthenticator.assignedEntity
       cda_legalAuthenticator.assignedEntity as cda_legalAuthenticator_assignedEntity ->
         // Create a PractitionerRole
