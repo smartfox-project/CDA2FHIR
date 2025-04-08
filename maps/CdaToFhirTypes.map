@@ -542,10 +542,11 @@ group Any(source src, target tgt) {
 }
 
 group II(source src : II, target tgt : Identifier) extends Any <<types>> {
-  src.root as r where src.extension.exists()
-     -> tgt.system = translate(r, 'http://hl7.org/fhir/ConceptMap/special-oid2uri', 'uri') "root1";
+  // TODO deal with OIDs which are not part of the map (e.g. certain identifiers, GDA-IDs, etc.)
   // src.root as r where src.extension.exists()
-  //    -> tgt.system = translate(r, '#OIDtoURI', 'code') "root1";
+  //    -> tgt.system = translate(r, 'http://hl7.org/fhir/ConceptMap/special-oid2uri', 'uri') "root1";
+  src.root as r where src.extension.exists()
+     -> tgt.system = translate(r, '#OIDtoURI', 'code') "root1";
 
   // testing if it is possible to use translate in where
   // src.root as r where (translate('#OIDtoURI', r)) ->
