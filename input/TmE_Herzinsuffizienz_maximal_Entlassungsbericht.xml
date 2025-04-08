@@ -959,6 +959,35 @@ Bestimmte auffallende Beobachtungen wie pathologische Parameter oder ausschlagge
                       </text>
                       <statusCode code="completed"/>
                       <value xsi:type="PQ" value="121" unit="mm[Hg]"/>
+                      <performer>
+                      <assignedEntity>
+                           <id nullFlavor="UNK" />
+                            <assignedPerson>
+                                <name>
+                                    <given>Maria</given>
+                                    <family>Bauer</family>
+                                </name>
+                            </assignedPerson>
+                    </assignedEntity>
+                    </performer>
+                    <infromant>
+                    <relatedEntity classCode="PRS">
+                    <code code="SELF" displayName="self" codeSystem="2.16.840.1.113883.5.111" codeSystemName="HL7 Role Code"/>
+                    </relatedEntity>
+                    </infromant>
+                      <author>
+                        <!-- Zeit an dem das Gerät den Messwert übertragen hat -->
+                        <time value="20150822170952+0200"/>
+                        <assignedAuthor>
+                          <id root="1.2.840.10004.1.1.1.0.0.1.0.0.1.2680" extension="0E-ED-AB-EE-DE-AD-BE-09" assigningAuthorityName="EUI-64"/>
+                          <!-- Folgende Angaben müssen gemacht werden, jedoch wird hier wegen der Verlinkung durch das ID Element das Feld einfach mit einem "*" befüllt, 
+                            da Informationen sonst stark redundat (siehe Medizingeräte-Sektion) vorhanden wären. -->
+                          <assignedAuthoringDevice classCode="DEV" determinerCode="INSTANCE">
+                            <manufacturerModelName>*</manufacturerModelName>
+                            <softwareName>*</softwareName>
+                          </assignedAuthoringDevice>
+                        </assignedAuthor>
+                      </author>
                     </observation>
                   </component>
                   <component typeCode="COMP">
