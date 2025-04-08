@@ -709,7 +709,8 @@ group CdaPersonNameCompilationToFhirHumanName(source cda_name : PN, target fhir_
           cda_name_item_prefix.qualifier as qualifier ->
             fhir_humanName_prefix.extension as extension,
             extension.url = 'http://hl7.org/fhir/StructureDefinition/iso21090-EN-qualifier',
-            extension.value = translate(qualifier, '#ELGAEntityNamePartQualifierFHIRNamePartQualifier', 'code');
+            extension.value = translate(qualifier, '#ELGAEntityNamePartQualifierFHIRNamePartQualifier', 'code')
+            "qualifierValue";
         } "CdaNamePrefixQualifierToFhirNameExtension";
       } "CdaNamePrefixToFhirNameGiven";
 
@@ -722,7 +723,7 @@ group CdaPersonNameCompilationToFhirHumanName(source cda_name : PN, target fhir_
           cda_name_item_given.qualifier as qualifier ->
             fhir_humanName_given.extension as extension,
             extension.url = 'http://hl7.org/fhir/StructureDefinition/iso21090-EN-qualifier',
-            extension.value = translate(qualifier, '#ELGAEntityNamePartQualifierFHIRNamePartQualifier', 'code');
+            extension.value = translate(qualifier, '#ELGAEntityNamePartQualifierFHIRNamePartQualifier', 'code')
             "qualifierValue";
         } "CdaNameGivenQualifierToFhirNameExtension";
       } "CdaNameGivenToFhirNameGiven";
@@ -736,7 +737,8 @@ group CdaPersonNameCompilationToFhirHumanName(source cda_name : PN, target fhir_
           cda_name_item_family.qualifier as qualifier ->
             fhir_humanName_family.extension as extension,
             extension.url = 'http://hl7.org/fhir/StructureDefinition/iso21090-EN-qualifier',
-            extension.value = translate(qualifier, '#ELGAEntityNamePartQualifierFHIRNamePartQualifier', 'code');
+            extension.value = translate(qualifier, '#ELGAEntityNamePartQualifierFHIRNamePartQualifier', 'code')
+            "qualifierValue";
         } "CdaNameFamilyQualifierToFhirNameExtension";
       } "CdaNameFamilyToFhirNameGiven";
 
@@ -749,7 +751,8 @@ group CdaPersonNameCompilationToFhirHumanName(source cda_name : PN, target fhir_
           cda_name_item_suffix.qualifier as qualifier ->
             fhir_humanName_suffix.extension as extension,
             extension.url = 'http://hl7.org/fhir/StructureDefinition/iso21090-EN-qualifier',
-            extension.value = translate(qualifier, '#ELGAEntityNamePartQualifierFHIRNamePartQualifier', 'code');
+            extension.value = translate(qualifier, '#ELGAEntityNamePartQualifierFHIRNamePartQualifier', 'code')
+            "qualifierValue";
         } "CdaNameSuffixQualifierToFhirNameExtension";
       } "CdaNameSuffixToFhirNameGiven";
   } "CdaNameItem";
