@@ -1461,8 +1461,7 @@ group CdaVitalprameterToFhirSection( cda_section_component_section, fhir_section
                             then CdaPerformerToFhirObservationPerformer(observation_performer, fhir_observation, fhir_bundle)
                             "CdaObservationPerformerToFhirObservationPerformer";
                         
-                        // ToDo author, informat, participant
-                        
+                        // ToDo author, informat and participant
                         
 
 
