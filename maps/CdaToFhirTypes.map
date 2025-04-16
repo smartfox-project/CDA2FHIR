@@ -537,6 +537,7 @@ uses "http://hl7.org/cda/stds/core/StructureDefinition/IVXB-TS" alias IVXB_TS as
 uses "http://hl7.org/fhir/4.3/StructureDefinition/Quantity" alias Quantity as target
 uses "http://hl7.org/fhir/4.3/StructureDefinition/SimpleQuantity" alias SimpleQuantity as target
 uses "http://hl7.org/fhir/4.3/StructureDefinition/Period" alias Period as target
+uses "http://hl7.org/fhir/4.3/StructureDefinition/date" alias date as target
 
 group Any(source src, target tgt) {
 }
@@ -602,9 +603,10 @@ group TSDateTime(source src : TS, target tgt : dateTime) extends Any <<types>> {
 group IVXB_TSDateTime(source src : IVXB_TS, target tgt : dateTime) extends TSDateTime <<types>> {
 }
 
-group TSDate(source src : TS, target tgt : date) extends TSInstant <<types>> {
+group TSDate(source src : TS, target tgt : date) extends Any <<types>> {
   // guaranteeing that only date will be transformed
-  src.value as v -> tgt.value = truncate(v,10) "TSdate";
+  // src.value as v -> tgt.value = truncate(v,8) "TSdate";
+  src.value as v -> tgt.value = cast(v, 'string');
 }
 
 group IVLTSPeriod(source src : IVL_TS, target tgt : Period) extends Any <<types>> {
