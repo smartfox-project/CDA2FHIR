@@ -112,6 +112,7 @@ conceptmap "OIDtoURI" {
   prefix s = "http://cda.oid"
   prefix t = "http://fhir.system"
 
+  // TODO see how Matchbox AND MaLaC can be supported
   // unmapped for s = provided
   // entries based on https://github.com/hapifhir/org.hl7.fhir.core/blob/b590cb3fedbb0791702c637e76fefdae2cba2f78/org.hl7.fhir.utilities/src/main/java/org/hl7/fhir/utilities/OIDUtils.java#L43
   // lines have been commented out where they're not supposed to be relevant for AT
@@ -282,7 +283,7 @@ conceptmap "OIDtoURI" {
   s:"1.2.40.0.34.5.156" == t:"https://termgit.elga.gv.at/CodeSystem/medikation-ages-wirkstoffe"
   s:"1.2.40.0.34.5.158" == t:"https://termgit.elga.gv.at/CodeSystem/elga-funktionsrollen"
   s:"1.2.40.0.34.5.159" == t:"https://termgit.elga.gv.at/CodeSystem/elga-e-health-anwendungen"
-  s:"1.2.40.0.34.5.160" == t:"https://termgit.elga.gv.at/CodeSystem/elga-fachaerzte"
+  // s:"1.2.40.0.34.5.160" == t:"https://termgit.elga.gv.at/CodeSystem/elga-fachaerzte"
   s:"1.2.40.0.34.5.161" == t:"https://termgit.elga.gv.at/CodeSystem/elga-kontakttypen"
   s:"1.2.40.0.34.5.162" == t:"https://termgit.elga.gv.at/CodeSystem/elga-patienten-identifizierungsmethoden"
   s:"1.2.40.0.34.5.165" == t:"https://termgit.elga.gv.at/CodeSystem/elga-auditeventtypea-arr"
