@@ -1444,7 +1444,7 @@ group CdaLaboratoryObservationToFhirObservation(source cda: ClinicalDocument, so
       fhir_observation.referenceRange as fhir_observation_referenceRange then {
         // observation.referenceRange.observationRange.text
         // TODO how to deal with <reference>-tags
-        cda_referenceRange_observationRange.text -> fhir_observation_referenceRange.text;
+        //cda_referenceRange_observationRange.text -> fhir_observation_referenceRange.text;
         // observation.referenceRange.observationRange.value
         cda_referenceRange_observationRange.value as cda_observationRange_value then {
           // observation.referenceRange.observationRange.value.low
