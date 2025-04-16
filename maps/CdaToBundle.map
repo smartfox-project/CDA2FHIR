@@ -48,27 +48,27 @@ conceptmap "act-status-2-observation-status" {
   s:"aborted" == t:"cancelled"
 }
 
-uses "http://hl7.org/fhir/cda/StructureDefinition/ClinicalDocument" alias ClinicalDocument as source
-uses "http://hl7.org/fhir/cda/StructureDefinition/Author" alias Author as source
-uses "http://hl7.org/fhir/cda/StructureDefinition/AssignedAuthor" alias AssignedAuthor as source
-uses "http://hl7.org/fhir/cda/StructureDefinition/AssignedEntity" alias AssignedEntity as source
-uses "http://hl7.org/fhir/cda/StructureDefinition/AssociatedEntity" alias AssociatedEntity as source
-uses "http://hl7.org/fhir/cda/StructureDefinition/CustodianOrganization" alias CustodianOrganization as source
-uses "http://hl7.org/fhir/cda/StructureDefinition/Section" alias Section as source
-uses "http://hl7.org/fhir/cda/StructureDefinition/PatientRole" alias PatientRole as source
-uses "http://hl7.org/fhir/cda/StructureDefinition/StructuredBody" alias StructuredBody as source
-uses "http://hl7.org/fhir/cda/StructureDefinition/Observation" alias CDAObservation as source
-uses "http://hl7.org/fhir/cda/StructureDefinition/Performer2" alias Performer as source
-uses "http://hl7.org/fhir/StructureDefinition/Bundle" alias Bundle as target
-uses "http://hl7.org/fhir/StructureDefinition/Composition" alias Composition as target
-uses "http://hl7.org/fhir/StructureDefinition/Patient" alias Patient as target
-uses "http://hl7.org/fhir/StructureDefinition/Person" alias Person as target
-uses "http://hl7.org/fhir/StructureDefinition/Practitioner" alias Practitioner as target
-uses "http://hl7.org/fhir/StructureDefinition/PractitionerRole" alias PractitionerRole as target
-uses "http://hl7.org/fhir/StructureDefinition/Organization" alias Organization as target
-uses "http://hl7.org/fhir/StructureDefinition/DiagnosticReport" alias DiagnosticReport as target
-uses "http://hl7.org/fhir/StructureDefinition/ServiceRequest" alias ServiceRequest as target
-uses "http://hl7.org/fhir/StructureDefinition/Observation" alias Observation as target
+uses "http://hl7.org/cda/stds/core/StructureDefinition/ClinicalDocument" alias ClinicalDocument as source
+uses "http://hl7.org/cda/stds/core/StructureDefinition/Author" alias Author as source
+uses "http://hl7.org/cda/stds/core/StructureDefinition/AssignedAuthor" alias AssignedAuthor as source
+uses "http://hl7.org/cda/stds/core/StructureDefinition/AssignedEntity" alias AssignedEntity as source
+uses "http://hl7.org/cda/stds/core/StructureDefinition/AssociatedEntity" alias AssociatedEntity as source
+uses "http://hl7.org/cda/stds/core/StructureDefinition/CustodianOrganization" alias CustodianOrganization as source
+uses "http://hl7.org/cda/stds/core/StructureDefinition/Section" alias Section as source
+uses "http://hl7.org/cda/stds/core/StructureDefinition/PatientRole" alias PatientRole as source
+uses "http://hl7.org/cda/stds/core/StructureDefinition/StructuredBody" alias StructuredBody as source
+uses "http://hl7.org/cda/stds/core/StructureDefinition/Observation" alias CDAObservation as source
+uses "http://hl7.org/cda/stds/core/StructureDefinition/Performer2" alias Performer as source
+uses "http://hl7.org/fhir/4.3/StructureDefinition/Bundle" alias Bundle as target
+uses "http://hl7.org/fhir/4.3/StructureDefinition/Composition" alias Composition as target
+uses "http://hl7.org/fhir/4.3/StructureDefinition/Patient" alias Patient as target
+uses "http://hl7.org/fhir/4.3/StructureDefinition/Person" alias Person as target
+uses "http://hl7.org/fhir/4.3/StructureDefinition/Practitioner" alias Practitioner as target
+uses "http://hl7.org/fhir/4.3/StructureDefinition/PractitionerRole" alias PractitionerRole as target
+uses "http://hl7.org/fhir/4.3/StructureDefinition/Organization" alias Organization as target
+uses "http://hl7.org/fhir/4.3/StructureDefinition/DiagnosticReport" alias DiagnosticReport as target
+uses "http://hl7.org/fhir/4.3/StructureDefinition/ServiceRequest" alias ServiceRequest as target
+uses "http://hl7.org/fhir/4.3/StructureDefinition/Observation" alias Observation as target
 
 imports "http://hl7.at/fhir/HL7ATCoreProfiles/4.0.1/StructureMap/at-cda-to-fhir-types"
 
@@ -208,13 +208,13 @@ group CdaHeaderToFhirComposition(source cda : ClinicalDocument, target fhir_comp
       "CdaMissingCodeTranslationToFhirCompositionType";
   };
   // ClinicalDocument.title
-  cda.title as cda_title -> fhir_composition.title = (cda_title.dataString);
+  cda.title as cda_title -> fhir_composition.title = (cda_title.xmlText);
   // ClinicalDocument.sdtc:statusCode
   // TODO clarify mapping
-  cda.statusCode as cda_statusCode where cda.statusCode.exists() then {
+  cda.sdtcStatusCode as cda_statusCode where cda.sdtcStatusCode.exists() then {
     cda_statusCode.code as cda_code -> fhir_composition.status = translate(cda_code, '#cda-sdtc-statuscode-2-fhir-composition-status' , 'code');
   } "CdaStatusCodeToFhirCompositionStatusMapped";
-  cda where cda.statusCode.exists().not() -> fhir_composition.status = 'final' "CdaStatusCodeToFhirCompositionStatusFixed";
+  cda where cda.sdtcStatusCode.exists().not() -> fhir_composition.status = 'final' "CdaStatusCodeToFhirCompositionStatusFixed";
   // TODO ClinicalDocument.hl7at:terminologyDate
   // cda.terminologyDate ->
   // TODO ClinicalDocument.hl7at:formatCode
@@ -360,8 +360,8 @@ group CdaHeaderToFhirComposition(source cda : ClinicalDocument, target fhir_comp
   // TODO based on analysis of sample reports currently not required
 
   // Participant Angehoerige
-  // ClinicalDocument.participant[hl7:templateId [@root='1.2.40.0.34.6.0.11.1.25']]
-  // TODO extension required
+  // ClinicalDocument.participant[hl7:templateId [@root='1.2.40.0.34.6.0.11.1.25']] or 1.2.40.0.34.11.1.1.5
+  // TODO
 
   // Participant Versicherung
   // ClinicalDocument.participant[hl7:templateId [@root='1.2.40.0.34.6.0.11.1.26']]
@@ -478,10 +478,10 @@ group CdaHeaderToFhirDiagnosticReport(source cda : ClinicalDocument, target fhir
 
   // ClinicalDocument.sdtc:statusCode
   // TODO clarify mapping
-  cda.statusCode as cda_statusCode where cda.statusCode.exists() then {
+  cda.sdtcStatusCode as cda_statusCode where cda.sdtcStatusCode.exists() then {
     cda_statusCode.code as cda_code -> fhir_diagnosticReport.status = translate(cda_code, '#cda-sdtc-statuscode-2-fhir-composition-status' , 'code');
   } "CdaStatusCodeToFhirCompositionStatusMapped";
-  cda where cda.statusCode.exists().not() -> fhir_diagnosticReport.status = 'final' "CdaStatusCodeToFhirCompositionStatusFixed";
+  cda where cda.sdtcStatusCode.exists().not() -> fhir_diagnosticReport.status = 'final' "CdaStatusCodeToFhirCompositionStatusFixed";
   // TODO ClinicalDocument.hl7at:terminologyDate
   // cda.terminologyDate ->
   // TODO ClinicalDocument.hl7at:formatCode
@@ -582,14 +582,14 @@ group CdaPatientRoleToFhirPatient(source cda_patientRole : PatientRole, target f
     // patient.birthTime (only date)
     cda_patient.birthTime -> fhir_patient.birthDate;
     // patient.birthTime (with time if available)
-    cda_patient.birthTime as cda_patient_birthTime where (cda_patient.birthTime.value.length() > 10) -> fhir_patient.birthDate as fhir_patient_birthDate,
+    cda_patient.birthTime as cda_patient_birthTime where (cda_patient.birthTime.value.toString().length() > 10) -> fhir_patient.birthDate as fhir_patient_birthDate,
       fhir_patient_birthDate.extension as extension,
       extension.url = 'http://hl7.org/fhir/StructureDefinition/patient-birthTime',
       extension.value = create('dateTime') as fhir_patient_birthTime_dateTime then TSDateTime(cda_patient_birthTime, fhir_patient_birthTime_dateTime) "CdaPatientBirthTimeToFhirPatientBirthTimeExtension";
     // patient.deceasedInd
-    cda_patient.deceasedInd as cda_patient_deceasedInd where cda_patient.deceasedTime.empty() -> fhir_patient.deceased = create('boolean') as fhir_patient_deceased then BL(cda_patient_deceasedInd, fhir_patient_deceased) "CdaPatientDeceasedIndToFhirPatientDeceasedBoolean";
+    cda_patient.sdtcDeceasedInd as cda_patient_deceasedInd where cda_patient.sdtcDeceasedTime.empty() -> fhir_patient.deceased = create('boolean') as fhir_patient_deceased then BL(cda_patient_deceasedInd, fhir_patient_deceased) "CdaPatientDeceasedIndToFhirPatientDeceasedBoolean";
     // patient.deceasedTime
-    cda_patient.deceasedTime as cda_patient_deceasedTime -> fhir_patient.deceased = create('dateTime') as fhir_patient_deceased then TSDateTime(cda_patient_deceasedTime, fhir_patient_deceased) "CdaPatientDeceasedTimeToFhirPatientDeceasedDateTime";
+    cda_patient.sdtcDeceasedTime as cda_patient_deceasedTime -> fhir_patient.deceased = create('dateTime') as fhir_patient_deceased then TSDateTime(cda_patient_deceasedTime, fhir_patient_deceased) "CdaPatientDeceasedTimeToFhirPatientDeceasedDateTime";
     // patient.maritalStatusCode
     cda_patient.maritalStatusCode -> fhir_patient.maritalStatus;
     // patient.religiousAffiliationCode
@@ -620,7 +620,7 @@ group CdaPatientRoleToFhirPatient(source cda_patientRole : PatientRole, target f
           fhir_bundle_entry.resource = create('Organization') as fhir_contact_organization,
           fhir_contact_organization.id = uuid() as fhir_contact_organization_id,
           // patient.guardian.guardianOrganization.name
-          fhir_contact_organization.name = (cda_organization_name.other),
+          fhir_contact_organization.name = (cda_organization_name.item.xmlText),
           fhir_bundle_entry.fullUrl = append('urn:uuid:', fhir_contact_organization_id),
 
           fhir_patient_contact.organization = create('Reference') as fhir_contact_organization_reference,
@@ -744,13 +744,13 @@ group CdaAuthorToFhirDevice(source cda_author : Author, target fhir_device : Dev
         // author.assignedAuthor.assignedAuthoringDevice.manufacturerModelName
         cda_assignedAuthoringDevice.manufacturerModelName as cda_manufacturerModelName ->
           fhir_device.deviceName as fhir_device_deviceName,
-          fhir_device_deviceName.name = (cda_manufacturerModelName.dataString),
+          fhir_device_deviceName.name = (cda_manufacturerModelName.xmlText),
           fhir_device_deviceName.type = 'model-name';
         // author.assignedAuthor.assignedAuthoringDevice.softwareName
         // TODO not clear if this is the right place to store that information
         cda_assignedAuthoringDevice.softwareName as cda_softwareName ->
           fhir_device.deviceName as fhir_device_deviceName,
-          fhir_device_deviceName.name = (cda_softwareName.dataString),
+          fhir_device_deviceName.name = (cda_softwareName.xmlText),
           fhir_device_deviceName.type = 'other';
       };
       // author.assignedAuthor.representedOrganization
@@ -902,7 +902,7 @@ group CdaSectionToFhirSection(source cda_section: Section, target fhir_section, 
   // section.code
   cda_section.code -> fhir_section.code;
   // section.title
-  cda_section.title as cda_section_title -> fhir_section.title = (cda_section_title.dataString) "test";
+  cda_section.title as cda_section_title -> fhir_section.title = (cda_section_title.xmlText) "test";
   // section.text
   cda_section.text as cda_section_text ->
     fhir_section.text as fhir_section_text,
@@ -1245,6 +1245,8 @@ group CdaBeilagenSectionToFhirDiagnosticReportMedia(source cda_section: Section,
     then {
       cda_section.entry as cda_section_entry then {
         cda_section_entry.observationMedia as cda_observationMedia then {
+          // cda_section.text
+          cda_section.text as cda_section_text -> fhir_diagnosticReport_media.comment = (cda_section_text);
           // cda_observationMedia@ID
           cda_observationMedia.ID as cda_observationMedia_ID ->
             fhir_media.identifier as fhir_media_identifier,
@@ -1259,7 +1261,7 @@ group CdaBeilagenSectionToFhirDiagnosticReportMedia(source cda_section: Section,
               // cda_observationMedia@mediaType
               cda_observationMedia_value.mediaType as cda_mediaType -> fhir_media_content.contentType = cda_mediaType;
               // cda_observationMedia.value
-              cda_observationMedia_value -> fhir_media_content.data = (cda_observationMedia_value.dataBase64Binary) "CdaObservationMediaValueToFhirAttachmentData";
+              cda_observationMedia_value -> fhir_media_content.data = (cda_observationMedia_value.xmlText) "CdaObservationMediaValueToFhirAttachmentData";
           };
         };
       };
@@ -1366,6 +1368,9 @@ group CdaLaboratoryObservationToFhirObservation(source cda: ClinicalDocument, so
     cda_laboratory_observation.value: CD as cda_observation_value -> fhir_observation.value = create('CodeableConcept') as fhir_observation_value then CDCodeableConcept(cda_observation_value, fhir_observation_value);
   } "CdaObservationValueToFhirObservationValueCD";
 
+  // observation.value(xsi:type="ST")
+  cda_laboratory_observation.value: ST as cda_observation_value -> fhir_observation.value = create('string') as fhir_observation_value then STstring(cda_observation_value, fhir_observation_value) "CdaObservationValueToFhirObservationValueST";
+
   // TODO other datatypes
   // // Concept Descriptor
 	// cdaObs.value: CD as obsValueCDA -> observation.value = create('CodeableConcept') as value then CDCodeableConcept(obsValueCDA,value) "observationValueCD";
@@ -1380,8 +1385,6 @@ group CdaLaboratoryObservationToFhirObservation(source cda: ClinicalDocument, so
 	// cdaObs.value: IVL_INT as obsValueCDA -> observation.value = create('Range') as value then IVLINTRange(obsValueCDA,value) "observationValueIVLINT";
 	// // Boolean
 	// cdaObs.value: BL as obsValueCDA -> observation.value = create('boolean') as value then Boolean(obsValueCDA,value) "observationValueBool";
-	// // String
-	// cdaObs.value: ST as obsValueCDA -> observation.value = create('string') as value then STstring(obsValueCDA,value) "observationValueString";
 	// // Coded Value
 	// cdaObs.value: CV as obsValueCDA -> observation.value = create('CodeableConcept') as value then CVCodeableConcept(obsValueCDA,value) "observationValueCV";
 	// // Time Stamp
@@ -1441,7 +1444,7 @@ group CdaLaboratoryObservationToFhirObservation(source cda: ClinicalDocument, so
       fhir_observation.referenceRange as fhir_observation_referenceRange then {
         // observation.referenceRange.observationRange.text
         // TODO how to deal with <reference>-tags
-        cda_referenceRange_observationRange.text -> fhir_observation_referenceRange.text;
+        //cda_referenceRange_observationRange.text -> fhir_observation_referenceRange.text;
         // observation.referenceRange.observationRange.value
         cda_referenceRange_observationRange.value as cda_observationRange_value then {
           // observation.referenceRange.observationRange.value.low
