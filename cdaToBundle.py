@@ -1197,6 +1197,9 @@ def CdaVitalprameterToFhirSection(cda_section_component_section, fhir_section_se
                             else:
                                 fhir_observation.meta = fhir_observation_meta
                             fhir_observation_meta.profile.append(string(value='https://build.fhir.org/observation-vitalsigns.html'))
+                            for id_ in cda_organizer_component_observation.id or []:
+                                fhir_observation.identifier.append(malac.models.fhir.r4.Identifier())
+                                II(id_, fhir_observation.identifier[-1])
                             fhir_observation_category = malac.models.fhir.r4.CodeableConcept()
                             fhir_observation.category.append(fhir_observation_category)
                             fhir_category_coding = malac.models.fhir.r4.Coding()
@@ -1204,11 +1207,16 @@ def CdaVitalprameterToFhirSection(cda_section_component_section, fhir_section_se
                             fhir_category_coding.system = uri(value='http://terminology.hl7.org/CodeSystem/observation-category')
                             fhir_category_coding.code = string(value='vital-signs')
                             if cda_organizer_component_observation.code:
+                                fhir_observation_code = malac.models.fhir.r4.CodeableConcept()
+                                if fhir_observation.code is not None:
+                                    fhir_observation_code = fhir_observation.code
+                                else:
+                                    fhir_observation.code = fhir_observation_code
+                                fhir_observation_code.coding.append(malac.models.fhir.r4.Coding())
+                                CDCoding(cda_organizer_component_observation.code, fhir_observation_code.coding[-1])
+                            if cda_organizer_component_observation.code:
                                 fhir_observation.code = malac.models.fhir.r4.CodeableConcept()
                                 CDCodeableConcept(cda_organizer_component_observation.code, fhir_observation.code)
-                            for id_ in cda_organizer_component_observation.id or []:
-                                fhir_observation.identifier.append(malac.models.fhir.r4.Identifier())
-                                II(id_, fhir_observation.identifier[-1])
                             observation_text = cda_organizer_component_observation.text
                             if observation_text:
                                 fhir_note = malac.models.fhir.r4.Annotation()
@@ -1241,13 +1249,9 @@ def CdaVitalprameterToFhirSection(cda_section_component_section, fhir_section_se
                                 fhir_observation_effective_extenstion.valueCode = fhir_observation_effective_extenstion_code
                                 fhir_observation_effective_extenstion_code.value = 'not-applicable'
                             for observation_value in cda_organizer_component_observation.value or []:
-                                if isinstance(observation_value, malac.models.cda.at_ext.PQ):
-                                    fhir_observation_value = malac.models.fhir.r4.Quantity()
-                                    fhir_observation.valueQuantity = fhir_observation_value
-                                    PQQuantity(observation_value, fhir_observation_value)
-                            for observation_performer in cda_organizer_component_observation.performer:
-                                if fhirpath.single([bool([v2 for v1 in [] for v2 in fhirpath_utils.get(v1,'performer')])]):
-                                    CdaPerformerToFhirObservationPerformer(observation_performer, fhir_observation, fhir_bundle)
+                                fhir_observation_value = malac.models.fhir.r4.Quantity()
+                                fhir_observation.valueQuantity = fhir_observation_value
+                                PQQuantity(observation_value, fhir_observation_value)
                             fhir_observation_subject_reference = malac.models.fhir.r4.Reference()
                             fhir_observation.subject = fhir_observation_subject_reference
                             fhir_patient_id = malac.models.fhir.r4.string()
@@ -1259,21 +1263,121 @@ def CdaVitalprameterToFhirSection(cda_section_component_section, fhir_section_se
                             for observation_performer in cda_organizer_component_observation.performer:
                                 if fhirpath.single([bool([v2 for v1 in [cda_organizer_component_observation] for v2 in fhirpath_utils.get(v1,'performer')])]):
                                     CdaPerformerToFhirObservationPerformer(observation_performer, fhir_observation, fhir_bundle)
-                        cda_organizer_component_observation = cda_organizer_component.observation
-                        if cda_organizer_component_observation:
-                            if fhirpath.single([v1 for v1 in fhirpath_utils.get(cda_organizer_component_observation,'templateId') if fhirpath_utils.equals(fhirpath_utils.get(v1,'root'), '==', ['1.2.40.0.34.6.0.11.3.100']) == [True]]):
-                                cda_organizer_component_observation = cda_organizer_component.observation
-                                if cda_organizer_component_observation:
+                            for observation_author in cda_organizer_component_observation.author or []:
+                                if fhirpath.single([bool([v4 for v3 in [v2 for v1 in [observation_author] for v2 in fhirpath_utils.get(v1,'assignedAuthor')] for v4 in fhirpath_utils.get(v3,'assignedPerson')])]):
                                     fhir_bundle_entry = malac.models.fhir.r4.Bundle_Entry()
                                     fhir_bundle.entry.append(fhir_bundle_entry)
-                                    fhir_observation = malac.models.fhir.r4.Observation()
-                                    fhir_bundle_entry.resource = malac.models.fhir.r4.ResourceContainer(Observation=fhir_observation)
-                                    fhir_observation_id = string(value=str(uuid.uuid4()))
-                                    fhir_observation.id = fhir_observation_id
-                                    fhir_bundle_entry.fullUrl = uri(value=('urn:uuid:' + ('' if fhir_observation_id is None else fhir_observation_id if isinstance(fhir_observation_id, str) else fhir_observation_id.value)))
-                                    fhir_section_entry_reference = malac.models.fhir.r4.Reference()
-                                    fhir_section_section.entry.append(fhir_section_entry_reference)
-                                    fhir_section_entry_reference.reference = string(value=('urn:uuid:' + ('' if fhir_observation_id is None else fhir_observation_id if isinstance(fhir_observation_id, str) else fhir_observation_id.value)))
+                                    fhir_practitionerRole = malac.models.fhir.r4.PractitionerRole()
+                                    fhir_bundle_entry.resource = malac.models.fhir.r4.ResourceContainer(PractitionerRole=fhir_practitionerRole)
+                                    fhir_practitionerRole_id = string(value=str(uuid.uuid4()))
+                                    fhir_practitionerRole.id = fhir_practitionerRole_id
+                                    fhir_bundle_entry.fullUrl = uri(value=('urn:uuid:' + ('' if fhir_practitionerRole_id is None else fhir_practitionerRole_id if isinstance(fhir_practitionerRole_id, str) else fhir_practitionerRole_id.value)))
+                                    fhir_composition_author_reference = malac.models.fhir.r4.Reference()
+                                    fhir_observation.performer.append(fhir_composition_author_reference)
+                                    fhir_composition_author_reference.reference = string(value=('urn:uuid:' + ('' if fhir_practitionerRole_id is None else fhir_practitionerRole_id if isinstance(fhir_practitionerRole_id, str) else fhir_practitionerRole_id.value)))
+                                    fhir_composition_author_reference.type_ = uri(value='PractitionerRole')
+                                    CdaAuthorToFhirPractitionerRole(observation_author, fhir_practitionerRole, fhir_bundle)
+                            for observation_performer in cda_organizer_component_observation.performer:
+                                if fhirpath.single([bool([v2 for v1 in [cda_organizer_component_observation] for v2 in fhirpath_utils.get(v1,'performer')])]):
+                                    CdaPerformerToFhirObservationPerformer(observation_performer, fhir_observation, fhir_bundle)
+                cda_organizer_component_observation = cda_organizer_component.observation
+                if cda_organizer_component_observation:
+                    if fhirpath.single([v1 for v1 in fhirpath_utils.get(cda_organizer_component_observation,'templateId') if fhirpath_utils.equals(fhirpath_utils.get(v1,'root'), '==', ['1.2.40.0.34.6.0.11.3.100']) == [True]]):
+                        cda_organizer_component_observation = cda_organizer_component.observation
+                        if cda_organizer_component_observation:
+                            fhir_bundle_entry = malac.models.fhir.r4.Bundle_Entry()
+                            fhir_bundle.entry.append(fhir_bundle_entry)
+                            fhir_observation = malac.models.fhir.r4.Observation()
+                            fhir_bundle_entry.resource = malac.models.fhir.r4.ResourceContainer(Observation=fhir_observation)
+                            fhir_observation_id = string(value=str(uuid.uuid4()))
+                            fhir_observation.id = fhir_observation_id
+                            fhir_bundle_entry.fullUrl = uri(value=('urn:uuid:' + ('' if fhir_observation_id is None else fhir_observation_id if isinstance(fhir_observation_id, str) else fhir_observation_id.value)))
+                            fhir_section_entry_reference = malac.models.fhir.r4.Reference()
+                            fhir_section_section.entry.append(fhir_section_entry_reference)
+                            fhir_section_entry_reference.reference = string(value=('urn:uuid:' + ('' if fhir_observation_id is None else fhir_observation_id if isinstance(fhir_observation_id, str) else fhir_observation_id.value)))
+                            fhir_section_entry_reference.type_ = uri(value='Observation')
+                            fhir_observation_meta = malac.models.fhir.r4.Meta()
+                            if fhir_observation.meta is not None:
+                                fhir_observation_meta = fhir_observation.meta
+                            else:
+                                fhir_observation.meta = fhir_observation_meta
+                            fhir_observation_meta.profile.append(string(value='https://build.fhir.org/observation-vitalsigns.html'))
+                            fhir_observation_category = malac.models.fhir.r4.CodeableConcept()
+                            fhir_observation.category.append(fhir_observation_category)
+                            fhir_category_coding = malac.models.fhir.r4.Coding()
+                            fhir_observation_category.coding.append(fhir_category_coding)
+                            fhir_category_coding.system = uri(value='http://terminology.hl7.org/CodeSystem/observation-category')
+                            fhir_category_coding.code = string(value='vital-signs')
+                            if cda_organizer_component_observation.code:
+                                fhir_observation_code = malac.models.fhir.r4.CodeableConcept()
+                                if fhir_observation.code is not None:
+                                    fhir_observation_code = fhir_observation.code
+                                else:
+                                    fhir_observation.code = fhir_observation_code
+                                fhir_observation_code.coding.append(malac.models.fhir.r4.Coding())
+                                CDCoding(cda_organizer_component_observation.code, fhir_observation_code.coding[-1])
+                            if cda_organizer_component_observation.code:
+                                fhir_observation.code = malac.models.fhir.r4.CodeableConcept()
+                                CDCodeableConcept(cda_organizer_component_observation.code, fhir_observation.code)
+                            observation_text = cda_organizer_component_observation.text
+                            if observation_text:
+                                fhir_note = malac.models.fhir.r4.Annotation()
+                                fhir_observation.note.append(fhir_note)
+                                fhir_note.text = utils.ed2markdown(malac.models.fhir.r4, observation_text)
+                            organizer_statusCode = cda_organizer_component_observation.statusCode
+                            if organizer_statusCode:
+                                cda_code = organizer_statusCode.code
+                                if cda_code:
+                                    fhir_observation.status = string(value=translate_single('act-status-2-observation-status', (cda_code if isinstance(cda_code, str) else cda_code.value), 'code'))
+                            cda_effectiveTime = cda_organizer_component_observation.effectiveTime
+                            if cda_effectiveTime:
+                                fhir_observation_effective = malac.models.fhir.r4.dateTime()
+                                fhir_observation.effectiveDateTime = fhir_observation_effective
+                                fhir_observation_effective_extenstion = malac.models.fhir.r4.Extension()
+                                fhir_observation_effective.extension.append(fhir_observation_effective_extenstion)
+                                fhir_observation_effective_extenstion.url = 'http://hl7.org/fhir/StructureDefinition/data-absent-reason'
+                                fhir_observation_effective_extenstion_code = malac.models.fhir.r4.code()
+                                fhir_observation_effective_extenstion.valueCode = fhir_observation_effective_extenstion_code
+                                fhir_observation_effective_extenstion_code.value = 'not-applicable'
+                                TSDateTime(cda_effectiveTime, fhir_observation_effective)
+                            if fhirpath.single(fhirpath_utils.bool_not([bool([v2 for v1 in [cda_organizer_component_observation] for v2 in fhirpath_utils.get(v1,'effectiveTime')])])):
+                                fhir_observation_effective = malac.models.fhir.r4.dateTime()
+                                fhir_observation.effectiveDateTime = fhir_observation_effective
+                                fhir_observation_effective.value = '1900-01-01'
+                                fhir_observation_effective_extenstion = malac.models.fhir.r4.Extension()
+                                fhir_observation_effective.extension.append(fhir_observation_effective_extenstion)
+                                fhir_observation_effective_extenstion.url = 'http://hl7.org/fhir/StructureDefinition/data-absent-reason'
+                                fhir_observation_effective_extenstion_code = malac.models.fhir.r4.code()
+                                fhir_observation_effective_extenstion.valueCode = fhir_observation_effective_extenstion_code
+                                fhir_observation_effective_extenstion_code.value = 'not-applicable'
+                            fhir_observation_subject_reference = malac.models.fhir.r4.Reference()
+                            fhir_observation.subject = fhir_observation_subject_reference
+                            fhir_patient_id = malac.models.fhir.r4.string()
+                            if fhir_patient.id is not None:
+                                fhir_patient_id = fhir_patient.id
+                            else:
+                                fhir_patient.id = fhir_patient_id
+                            fhir_observation_subject_reference.reference = string(value=('urn:uuid:' + ('' if fhir_patient_id is None else fhir_patient_id if isinstance(fhir_patient_id, str) else fhir_patient_id.value)))
+                            for observation_performer in cda_organizer_component_observation.performer:
+                                if fhirpath.single([bool([v2 for v1 in [cda_organizer_component_observation] for v2 in fhirpath_utils.get(v1,'performer')])]):
+                                    CdaPerformerToFhirObservationPerformer(observation_performer, fhir_observation, fhir_bundle)
+                            for observation_author in cda_organizer_component_observation.author or []:
+                                if fhirpath.single([bool([v4 for v3 in [v2 for v1 in [observation_author] for v2 in fhirpath_utils.get(v1,'assignedAuthor')] for v4 in fhirpath_utils.get(v3,'assignedPerson')])]):
+                                    fhir_bundle_entry = malac.models.fhir.r4.Bundle_Entry()
+                                    fhir_bundle.entry.append(fhir_bundle_entry)
+                                    fhir_practitionerRole = malac.models.fhir.r4.PractitionerRole()
+                                    fhir_bundle_entry.resource = malac.models.fhir.r4.ResourceContainer(PractitionerRole=fhir_practitionerRole)
+                                    fhir_practitionerRole_id = string(value=str(uuid.uuid4()))
+                                    fhir_practitionerRole.id = fhir_practitionerRole_id
+                                    fhir_bundle_entry.fullUrl = uri(value=('urn:uuid:' + ('' if fhir_practitionerRole_id is None else fhir_practitionerRole_id if isinstance(fhir_practitionerRole_id, str) else fhir_practitionerRole_id.value)))
+                                    fhir_composition_author_reference = malac.models.fhir.r4.Reference()
+                                    fhir_observation.performer.append(fhir_composition_author_reference)
+                                    fhir_composition_author_reference.reference = string(value=('urn:uuid:' + ('' if fhir_practitionerRole_id is None else fhir_practitionerRole_id if isinstance(fhir_practitionerRole_id, str) else fhir_practitionerRole_id.value)))
+                                    fhir_composition_author_reference.type_ = uri(value='PractitionerRole')
+                                    CdaAuthorToFhirPractitionerRole(observation_author, fhir_practitionerRole, fhir_bundle)
+                            for observation_performer in cda_organizer_component_observation.performer:
+                                if fhirpath.single([bool([v2 for v1 in [cda_organizer_component_observation] for v2 in fhirpath_utils.get(v1,'performer')])]):
+                                    CdaPerformerToFhirObservationPerformer(observation_performer, fhir_observation, fhir_bundle)
 
 def CdaMessergebnisseToFhirSection(cda_section_component_section, fhir_section_section, fhir_bundle):
     CdaSectionToFhirSection(cda_section_component_section, fhir_section_section, fhir_bundle)

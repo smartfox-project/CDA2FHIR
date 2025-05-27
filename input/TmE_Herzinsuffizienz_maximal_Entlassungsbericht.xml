@@ -970,23 +970,48 @@ Bestimmte auffallende Beobachtungen wie pathologische Parameter oder ausschlagge
                             </assignedPerson>
                     </assignedEntity>
                     </performer>
+                    <performer>
+                      <assignedEntity>
+                           <id nullFlavor="UNK" />
+                            <assignedPerson>
+                                <name>
+                                    <given>Max</given>
+                                    <family>Marly</family>
+                                </name>
+                            </assignedPerson>
+                    </assignedEntity>
+                    </performer>
                     <infromant>
-                    <relatedEntity classCode="PRS">
-                    <code code="SELF" displayName="self" codeSystem="2.16.840.1.113883.5.111" codeSystemName="HL7 Role Code"/>
-                    </relatedEntity>
+                        <relatedEntity classCode="PRS">
+                        <code code="SELF" displayName="self" codeSystem="2.16.840.1.113883.5.111" codeSystemName="HL7 Role Code"/>
+                        </relatedEntity>
                     </infromant>
+                      <participant typeCode="CALLBCK">
+                        <templateId root="1.2.40.0.34.6.0.11.1.20"/>
+                        <associatedEntity classCode="PROV">
+                        <!--	Die verpflichtende Telefonnummer des fachlichen Ansprechpartners -->
+                        <telecom use="WP" value="tel:+43.215285721"/>
+                        <!-- Name des Fachlichen Ansprechpartners -->
+                        <associatedPerson>
+                            <name>
+                            <prefix>Dr.</prefix>
+                            <given>Daniela</given>
+                            <family>Holzer</family>
+                            </name>
+                        </associatedPerson>
+                        </associatedEntity>
+                    </participant>
                       <author>
-                        <!-- Zeit an dem das Gerät den Messwert übertragen hat -->
-                        <time value="20150822170952+0200"/>
-                        <assignedAuthor>
-                          <id root="1.2.840.10004.1.1.1.0.0.1.0.0.1.2680" extension="0E-ED-AB-EE-DE-AD-BE-09" assigningAuthorityName="EUI-64"/>
-                          <!-- Folgende Angaben müssen gemacht werden, jedoch wird hier wegen der Verlinkung durch das ID Element das Feld einfach mit einem "*" befüllt, 
-                            da Informationen sonst stark redundat (siehe Medizingeräte-Sektion) vorhanden wären. -->
-                          <assignedAuthoringDevice classCode="DEV" determinerCode="INSTANCE">
-                            <manufacturerModelName>*</manufacturerModelName>
-                            <softwareName>*</softwareName>
-                          </assignedAuthoringDevice>
-                        </assignedAuthor>
+                    <assignedAuthor>
+                    <id root="1.2.40.0.34.3.1.1058.1337" extension="999022" assigningAuthorityName="Tirol Kliniken GmbH"/>
+                    <assignedPerson>
+                        <name>
+                        <prefix qualifier="AC">DGKP</prefix>
+                        <given>Veronika</given>
+                        <family>Mattes</family>
+                        </name>
+                    </assignedPerson>
+                    </assignedAuthor>
                       </author>
                     </observation>
                   </component>
@@ -1030,6 +1055,7 @@ Bestimmte auffallende Beobachtungen wie pathologische Parameter oder ausschlagge
                       <templateId root="1.3.6.1.4.1.19376.1.5.3.1.4.13" assigningAuthorityName="IHE PCC"/>
                       <id root="2.25" extension="urn:uuid:E6F45742-BA20-7224-15A0-6D8836E96123" assigningAuthorityName="HerzMobil Tirol"/>
                       <code code="8867-4" displayName="Heart Beat" codeSystem="2.16.840.1.113883.6.1" codeSystemName="LOINC">
+                      <translation code="149530" codeSystem="2.16.840.1.113883.6.24" codeSystemName="LOINC" displayName="MDC_PULS_OXIM_PULS_RATE: Pulse rate"/>
                         <originalText>
                           <reference value="#vitsigType1"/>
                         </originalText>
@@ -1245,8 +1271,7 @@ Bestimmte auffallende Beobachtungen wie pathologische Parameter oder ausschlagge
                 </table>
               </text>
               <!-- Gewicht-Entrys
-						(um die Lesbarkeit des Beispieldokumentes so hoch wie möglich zu halten,
-						wurden nur die ersten zwei der 23 Entrys angeführt) -->
+						(Juat a dummy example for Serienmessung of vital parameter) -->
               <entry typeCode="DRIV">
                 <organizer classCode="CLUSTER" moodCode="EVN">
                   <templateId root="1.2.40.0.34.6.0.11.3.23"/>
@@ -1260,21 +1285,74 @@ Bestimmte auffallende Beobachtungen wie pathologische Parameter oder ausschlagge
                   <effectiveTime value="20151028084529+0200"/>
                   <component>
                     <observation classCode="OBS" moodCode="EVN">
-                      <templateId root="1.2.40.0.34.6.0.11.3.24"/>
-                      <templateId root="2.16.840.1.113883.10.20.1.31" assigningAuthorityName="HL7 CCD"/>
-                      <templateId root="1.3.6.1.4.1.19376.1.5.3.1.4.13.2" assigningAuthorityName="IHE PCC"/>
-                      <templateId root="1.3.6.1.4.1.19376.1.5.3.1.4.13" assigningAuthorityName="IHE PCC"/>
-                      <id root="2.25" extension="urn:uuid:E6F45742-BA20-7224-15A0-6D8836E96123" assigningAuthorityName="HerzMobil Tirol"/>
-                      <code code="3141-9" displayName="Body weight Measured" codeSystem="2.16.840.1.113883.6.1" codeSystemName="LOINC">
-                        <originalText>
-                          <reference value="#vitsigtype4"/>
-                        </originalText>
-                      </code>
-                      <text>
-                        <reference value="#vitsigweight1"/>
-                      </text>
-                      <statusCode code="completed"/>
-                      <value xsi:type="PQ" value="80.6" unit="kg"/>
+                        <templateId root="1.2.40.0.34.6.0.11.3.100"/>
+                        <!-- This templateId indicates conformance to the PHM Metric Observation. -->
+                        <templateId root="2.16.840.1.113883.10.20.36.32" extension="2015-08-17"/>
+                        <!-- This templateId indicates conformance to the PHM Metric Waveform Vital Signs Observation.-->
+                        <templateId root="2.16.840.1.113883.10.20.36.51" extension="2015-11-25"/>
+                        <!-- This templateId indicates conformance to the C-CDA Result Observation.-->
+                        <templateId root="2.16.840.1.113883.10.20.22.4.27" extension="2014-06-09"/>
+                        <id root="FDBD831B-5919-4FFF-9467-76B07022F8E9"/>
+                        <!-- If the data contained samples of different types, the code value(s) indicated here would have to indicate some
+                        type of generic description that would cover all the types. -->
+                        <code code="8867-4" codeSystem="2.16.840.1.113883.6.1" codeSystemName="LOINC" displayName="HEART RATE">
+                         <translation code="149530" codeSystem="2.16.840.1.113883.6.24" codeSystemName="LOINC" displayName="MDC_PULS_OXIM_PULS_RATE: Pulse rate"/>
+                        </code>
+                        <text>
+                            <!-- This reference identifies content in human readable formatted text-->
+                            <reference value="#PulseOx_StreamingPulseRate"/>
+                        </text>
+                        <statusCode code="completed"/>
+                        <effectiveTime>
+                            <low value="20150822170922.86-0400"/>
+                            <high value="20150822170942.86-0400"/>
+                        </effectiveTime>
+                       <value xsi:type="PQ" nullFlavor="NA"/>
+                       <observation classCode="OBSSER" moodCode="EVN">
+                        <templateId root="1.2.40.0.34.6.0.11.3.102"/>
+                        <!-- This templateId indicates conformance to the PHM Measurement Waveform Series Observation.-->
+                        <templateId root="2.16.840.1.113883.10.20.36.37" extension="2015-08-17"/>
+                        <code nullFlavor="NA"/>
+                        <entryRelationship typeCode="COMP">
+                              <observation classCode="OBSCOR" moodCode="EVN">
+                                <!-- This templateId indicates conformance to the PHM Measurement Waveform Observation.-->
+                                <templateId root="2.16.840.1.113883.10.20.36.36" extension="2015-08-17"/>
+                                <!-- This duplication of the code element is a necessary side effect of allowing this template to be
+                            ported into a C-CDA. -->
+                                <code code="8867-4" codeSystem="2.16.840.1.113883.6.1" codeSystemName="LOINC" displayName="HEART RATE">
+                                <!-- The IEEE 11073 10101 reference identifier is MDC_PULS_OXIM_PULS_RATE. -->
+                                <translation code="149530" codeSystem="2.16.840.1.113883.6.24" codeSystemName="MDC" displayName="MDC_PULS_OXIM_PULS_RATE: Pulse rate"/>
+                                </code>
+                                <text>
+                                <!-- This reference identifies content in human readable formatted text-->
+                                <reference value="#PulseOx_PulseRate_data"/>
+                                </text>
+                                <statusCode code="completed"/>
+                                <value type="SLIST_PQ">
+                                <origin value="0" unit="1"/>
+                                <scale value="1" unit="1"/>
+                                <digits>44 42 42 41 40 40 39 38 36 35 34 35 35 34 35 35 36 36 35 36</digits>
+                                </value>
+                            </observation>
+                        </entryRelationship>
+                        <entryRelationship typeCode="COMP">
+                              <observation classCode="OBS" moodCode="EVN">
+                                <!-- This templateId indicates conformance to the PHM Measurement Waveform Sample Period Observation.-->
+                                <templateId root="2.16.840.1.113883.10.20.36.13" extension="2015-08-17"/>
+                                <code code="TIME_ABSOLUTE" codeSystem="2.16.840.1.113883.5.4" codeSystemName="ActCode" displayName="Absolute time"/>
+                                <text>
+                                <!-- This reference identifies content in human readable formatted text-->
+                                <reference value="#PulseOx_PulseRate_Period"/>
+                                </text>
+                                <value xsi:type="GLIST_TS">
+                                <head value="20150822170922.86-0400"/>
+                                <!-- time interval between data points is 1 second -->
+                                <increment value="1.0" unit="s"/>
+                                </value>
+                            </observation>
+                        </entryRelationship>
+                        </observation>
+
                     </observation>
                   </component>
                 </organizer>

@@ -1384,11 +1384,11 @@ group CdaVitalprameterToFhirSection( cda_section_component_section, fhir_section
         cda_section_component_section_entry.organizer as cda_organizer then{
 
             cda_organizer.component as cda_organizer_component then {
+                
                 // checking if we have a Vitalparameter-entry
                 cda_organizer_component.observation as cda_organizer_component_observation where templateId.where(root='1.2.40.0.34.6.0.11.3.24') then {
-                
+        
                     cda_organizer_component.observation as cda_organizer_component_observation -> 
-                
                     fhir_bundle.entry as fhir_bundle_entry,
                     fhir_bundle_entry.resource = create('Observation') as fhir_observation,
                     fhir_observation.id = uuid() as fhir_observation_id,
@@ -1396,30 +1396,41 @@ group CdaVitalprameterToFhirSection( cda_section_component_section, fhir_section
                     fhir_section_section.entry = create('Reference') as fhir_section_entry_reference,
                     fhir_section_entry_reference.reference = append('urn:uuid:', fhir_observation_id),
                     fhir_section_entry_reference.type = 'Observation' then {
-
+                    // here the following vital sign observation can be used: https://hl7.org/fhir/R4/vitalsigns.html
                         cda_organizer_component_observation -> fhir_observation.meta as fhir_observation_meta,
                             fhir_observation_meta.profile = 'https://build.fhir.org/observation-vitalsigns.html'
                             "VitalObservationMETAtoFHIRIMETA";
+                        
+                        cda_organizer_component_observation.id -> fhir_observation.identifier
+                        "VitalObservationIdtoFHIRId";
 
                         cda_organizer_component_observation -> fhir_observation.category as fhir_observation_category,
                             fhir_observation_category.coding as fhir_category_coding,
                             fhir_category_coding.system = 'http://terminology.hl7.org/CodeSystem/observation-category',
                             fhir_category_coding.code = 'vital-signs'
                             "VitalObservationtoFHIR";
+                        // here the fixed value for the code is vital-signs
 
-                        cda_organizer_component_observation.code -> fhir_observation.code;
-                        
-                        cda_organizer_component_observation.id -> fhir_observation.identifier
-                        "VitalObservationIdtoFHIRId";
+                        cda_organizer_component_observation.code -> fhir_observation.code as fhir_observation_code, 
+                            fhir_observation_code.coding as fhir_code_coding
+                            "VitalObservationCodetoFHIR";
+                        // ToDo: remove empty value text 
+
+                        cda_organizer_component_observation.code.translation -> fhir_observation.code.coding as fhir_observation_translation_code
+                            "VitalObservationTranslationtoFHIR";
+                        // ToDo: add system
 
                         cda_organizer_component_observation.text.reference.value as observation_text
                         -> fhir_observation.note = create('Annotation') as fhir_note,
-                            fhir_note.text = observation_text 
+                            fhir_note.text = observation_text
                             "VitalObservationTexttoFHIRNote";
+                        // No better way to include the reference tag from text in CDA
+                        // ToDo clean the string!
 
                         cda_organizer_component_observation.statusCode as organizer_statusCode then {
                             organizer_statusCode.code as cda_code -> fhir_observation.status = translate(cda_code, '#act-status-2-observation-status' , 'code');
-                            } "VitalObservationtoFHIR";
+                            } "VitalObservationStatusCodetoFHIR";
+                        // here we map the code from the cda to the conceptMap since status has as predefined value set which is used
                             
                         cda_organizer_component_observation.effectiveTime as cda_effectiveTime ->
                             fhir_observation.effective = create('dateTime') as fhir_observation_effective,
@@ -1441,57 +1452,149 @@ group CdaVitalprameterToFhirSection( cda_section_component_section, fhir_section
                               "CdaEffectiveTimeExistsNotToFhirObservationEffective";
    
                         //only PQ value possible
-                        cda_organizer_component_observation.value:PQ as observation_value  -> 
-                            fhir_observation.value = create('Quantity') as fhir_observation_value then PQQuantity(observation_value, fhir_observation_value) "VitalObservationVALUEtoFHIRVALUE";
+                        cda_organizer_component_observation.value as observation_value  -> 
+                            fhir_observation.value = create('Quantity') as fhir_observation_value then PQQuantity(observation_value, fhir_observation_value) 
+                            "VitalObservationVALUEtoFHIRVALUE";
                         
-                        cda_organizer_component_observation.performer as observation_performer
-                            where cda_laboratory_observation.performer.exists()
-                            then CdaPerformerToFhirObservationPerformer(observation_performer, fhir_observation, fhir_bundle)
-                            "VitalObservationPerformertoFHIRPerformer";
-
+                        // the subject 
                         cda_organizer_component_observation ->
                             fhir_observation.subject = create('Reference') as fhir_observation_subject_reference,
                             fhir_patient.id as fhir_patient_id,
                             fhir_observation_subject_reference.reference = append('urn:uuid:', fhir_patient_id)
                             "FhirObservationSubject";
                         
-                        // will probably be pseudonyminized
+                        // represented as a performer
                         cda_organizer_component_observation.performer as observation_performer
                             where cda_organizer_component_observation.performer.exists()
                             then CdaPerformerToFhirObservationPerformer(observation_performer, fhir_observation, fhir_bundle)
                             "CdaObservationPerformerToFhirObservationPerformer";
+
+                        // in the mean time the author is also represented as a performer, since there is no other possible way to display a person in the bundle
+                        cda_organizer_component_observation.author as observation_author where $this.assignedAuthor.assignedPerson.exists() ->
+                            fhir_bundle.entry as fhir_bundle_entry,
+                            fhir_bundle_entry.resource = create('PractitionerRole') as fhir_practitionerRole,
+                            fhir_practitionerRole.id = uuid() as fhir_practitionerRole_id,
+                            fhir_bundle_entry.fullUrl = append('urn:uuid:', fhir_practitionerRole_id),
+                            fhir_observation.performer = create('Reference') as fhir_composition_author_reference,
+                            fhir_composition_author_reference.reference = append('urn:uuid:', fhir_practitionerRole_id),
+                            fhir_composition_author_reference.type = 'PractitionerRole' then
+                            CdaAuthorToFhirPractitionerRole(observation_author, fhir_practitionerRole, fhir_bundle);
                         
-                        // ToDo author, informat and participant
-                        
+                        // represented as a author
+                        cda_organizer_component_observation.performer as observation_performer
+                            where cda_organizer_component_observation.performer.exists()
+                            then CdaPerformerToFhirObservationPerformer(observation_performer, fhir_observation, fhir_bundle)
+                            "CdaObservationPerformerToFhirObservationPerformer";
 
-
-
-
-
-
-
+                        // informant can not be mapped with the same meaning... maybe in the notes? 
 
                         
                     };
+                };
+
+                //checking if we have a Serienmessung
+                cda_organizer_component.observation as cda_organizer_component_observation where templateId.where(root='1.2.40.0.34.6.0.11.3.100') then {
+                
+                    cda_organizer_component.observation as cda_organizer_component_observation -> 
+                    fhir_bundle.entry as fhir_bundle_entry,
+                    fhir_bundle_entry.resource = create('Observation') as fhir_observation,
+                    fhir_observation.id = uuid() as fhir_observation_id,
+                    fhir_bundle_entry.fullUrl = append('urn:uuid:', fhir_observation_id),
+                    fhir_section_section.entry = create('Reference') as fhir_section_entry_reference,
+                    fhir_section_entry_reference.reference = append('urn:uuid:', fhir_observation_id),
+                    fhir_section_entry_reference.type = 'Observation' then {
+                    // here the following vital sign observation can be used, also for the Serienmessung-Element. In fact we can reuse a lot from the vitalprameters above: https://hl7.org/fhir/R4/vitalsigns.html
+                        cda_organizer_component_observation -> fhir_observation.meta as fhir_observation_meta,
+                            fhir_observation_meta.profile = 'https://build.fhir.org/observation-vitalsigns.html'
+                            "VitalObservationMETAtoFHIRIMETA";
+                        
+                        cda_organizer_component_observation -> fhir_observation.category as fhir_observation_category,
+                            fhir_observation_category.coding as fhir_category_coding,
+                            fhir_category_coding.system = 'http://terminology.hl7.org/CodeSystem/observation-category',
+                            fhir_category_coding.code = 'vital-signs'
+                            "VitalObservationtoFHIR";
+                        // here the fixed value for the code is vital-signs, also as above
+
+                        cda_organizer_component_observation.code -> fhir_observation.code as fhir_observation_code, 
+                            fhir_observation_code.coding as fhir_code_coding
+                            "VitalObservationCodetoFHIR";
+
+                        cda_organizer_component_observation.code.translation -> fhir_observation.code.coding as fhir_observation_translation_code
+                            "VitalObservationTranslationtoFHIR";
+                        // For the translations a new code element is being created, here further investigation needed for the system value
+
+                        cda_organizer_component_observation.text.reference.value as observation_text
+                        -> fhir_observation.note = create('Annotation') as fhir_note,
+                            fhir_note.text = observation_text
+                            "VitalObservationTexttoFHIRNote";
+                        // No better way to include the reference tag from text in CDA
+                        // ToDo clean the string!
+
+                        cda_organizer_component_observation.statusCode as organizer_statusCode then {
+                            organizer_statusCode.code as cda_code -> fhir_observation.status = translate(cda_code, '#act-status-2-observation-status' , 'code');
+                            } "VitalObservationStatusCodetoFHIR";
+                        // here we map the code from the cda to the conceptMap since status has as predefined value set which is used
+                            
+                        cda_organizer_component_observation.effectiveTime as cda_effectiveTime ->
+                            fhir_observation.effective = create('dateTime') as fhir_observation_effective,
+                            fhir_observation_effective.extension as fhir_observation_effective_extenstion,
+                            fhir_observation_effective_extenstion.url = 'http://hl7.org/fhir/StructureDefinition/data-absent-reason',
+                            fhir_observation_effective_extenstion.value = create('code') as fhir_observation_effective_extenstion_code,
+                            fhir_observation_effective_extenstion_code.value = 'not-applicable'
+                            then TSDateTime(cda_effectiveTime, fhir_observation_effective)
+                            "VitalObservationEffectiveTimetoFHIREffectiveTime";
+
+                        cda_organizer_component_observation
+                            where cda_organizer_component_observation.effectiveTime.exists().not() ->
+                            fhir_observation.effective = create('dateTime') as fhir_observation_effective,
+                            fhir_observation_effective.value = '1900-01-01',
+                            fhir_observation_effective.extension as fhir_observation_effective_extenstion,
+                            fhir_observation_effective_extenstion.url = 'http://hl7.org/fhir/StructureDefinition/data-absent-reason',
+                            fhir_observation_effective_extenstion.value = create('code') as fhir_observation_effective_extenstion_code,
+                            fhir_observation_effective_extenstion_code.value = 'not-applicable'
+                            "CdaEffectiveTimeExistsNotToFhirObservationEffective";
+
+                        // the PQ value for the Serienmessung is always a nullFlavor, therefor we do not mapp it
+                        // cda_organizer_component_observation.value as observation_value  -> 
+                        //     fhir_observation.value = create('Quantity') as fhir_observation_value then PQQuantity(observation_value, fhir_observation_value) 
+                        //     "VitalObservationVALUEtoFHIRVALUE";
+                        
+                        // the subject 
+                        cda_organizer_component_observation ->
+                            fhir_observation.subject = create('Reference') as fhir_observation_subject_reference,
+                            fhir_patient.id as fhir_patient_id,
+                            fhir_observation_subject_reference.reference = append('urn:uuid:', fhir_patient_id)
+                            "FhirObservationSubject";
+                        
+                        // represented as a performer
+                        cda_organizer_component_observation.performer as observation_performer
+                            where cda_organizer_component_observation.performer.exists()
+                            then CdaPerformerToFhirObservationPerformer(observation_performer, fhir_observation, fhir_bundle)
+                            "CdaObservationPerformerToFhirObservationPerformer";
+
+                        // in the mean time the author is also represented as a performer, since there is no other possible way to display a person in the bundle
+                        cda_organizer_component_observation.author as observation_author where $this.assignedAuthor.assignedPerson.exists() ->
+                            fhir_bundle.entry as fhir_bundle_entry,
+                            fhir_bundle_entry.resource = create('PractitionerRole') as fhir_practitionerRole,
+                            fhir_practitionerRole.id = uuid() as fhir_practitionerRole_id,
+                            fhir_bundle_entry.fullUrl = append('urn:uuid:', fhir_practitionerRole_id),
+                            fhir_observation.performer = create('Reference') as fhir_composition_author_reference,
+                            fhir_composition_author_reference.reference = append('urn:uuid:', fhir_practitionerRole_id),
+                            fhir_composition_author_reference.type = 'PractitionerRole' then
+                            CdaAuthorToFhirPractitionerRole(observation_author, fhir_practitionerRole, fhir_bundle);
+                        
+                        // represented as a author
+                        cda_organizer_component_observation.performer as observation_performer
+                            where cda_organizer_component_observation.performer.exists()
+                            then CdaPerformerToFhirObservationPerformer(observation_performer, fhir_observation, fhir_bundle)
+                            "CdaObservationPerformerToFhirObservationPerformer";
+
                     
-                    
-                    //checking if we have a Serienmessung
-                    cda_organizer_component.observation as cda_organizer_component_observation where templateId.where(root='1.2.40.0.34.6.0.11.3.100') then 
-                    {
-                    
-                        cda_organizer_component.observation as cda_organizer_component_observation -> 
-                        fhir_bundle.entry as fhir_bundle_entry,
-                        fhir_bundle_entry.resource = create('Observation') as fhir_observation,
-                        fhir_observation.id = uuid() as fhir_observation_id,
-                        fhir_bundle_entry.fullUrl = append('urn:uuid:', fhir_observation_id),
-                        fhir_section_section.entry = create('Reference') as fhir_section_entry_reference,
-                        fhir_section_entry_reference.reference = append('urn:uuid:', fhir_observation_id)
                     };
                 };
             };
         };
     };
-    
 }
 
 group CdaMessergebnisseToFhirSection(cda_section_component_section, fhir_section_section, fhir_bundle) extends CdaSectionToFhirSection {
