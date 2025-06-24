@@ -1048,6 +1048,9 @@ group CdaSpecimenSectionToFhirSpecimen(source cda_section: Section, target fhir_
           fhir_specimen.id = uuid() as fhir_specimen_id,
           fhir_bundle_entry.fullUrl = append('urn:uuid:', fhir_specimen_id),
 
+          fhir_specimen.meta as fhir_specimen_meta,
+          fhir_specimen_meta.profile = 'http://fhir.ehdsi.eu/laboratory/StructureDefinition/Specimen-lab-myhealtheu',
+
           // create relation from specimen to patient
           fhir_specimen.subject = create('Reference') as fhir_specimen_patient_reference,
           fhir_patient.id as fhir_patient_id,
