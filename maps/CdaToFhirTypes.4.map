@@ -465,11 +465,7 @@ conceptmap "OIDtoURI" {
   s:"2.16.840.1.113883.18.321" == t:"http://terminology.hl7.org/CodeSystem/v2-0497"
   s:"2.16.840.1.113883.18.322" == t:"http://terminology.hl7.org/CodeSystem/v2-0498"
   s:"2.16.840.1.113883.18.355" == t:"http://terminology.hl7.org/CodeSystem/v2-0548"
-
-  // as long as HL7AT Core has not resolved https://github.com/HL7Austria/HL7-AT-FHIR-Core-R4/issues/83 the "wrong" code system will be used in order to have passing validation
-  s:"2.16.840.1.113883.2.16.1.4.1" == t:"http://hl7.at/fhir/HL7ATCoreProfiles/4.0.1/CodeSystem/at-core-cs-religion"
-  // s:"2.16.840.1.113883.2.16.1.4.1" == t:"https://termgit.elga.gv.at/CodeSystem/hl7-at-religionaustria"
-
+  s:"2.16.840.1.113883.2.16.1.4.1" == t:"https://termgit.elga.gv.at/CodeSystem/hl7-at-religionaustria"
   s:"2.16.840.1.113883.2.16.1.4.10" == t:"https://termgit.elga.gv.at/CodeSystem/hl7-at-formatcodes"
   s:"2.16.840.1.113883.2.9.6.2.7" == t:"https://termgit.elga.gv.at/CodeSystem/isco"
   s:"2.16.840.1.113883.3.6905.2" == t:"https://termgit.elga.gv.at/CodeSystem/ehdsi-substance"
