@@ -80,7 +80,7 @@ group CdaToFhirBundle(source cda : ClinicalDocument, target fhir_bundle : Bundle
     fhir_bundle.id = uuid(),
     fhir_bundle.type = 'document',
     fhir_bundle.meta as fhir_bundle_meta,
-    fhir_bundle_meta.profile = 'http://hl7.eu/fhir/laboratory/StructureDefinition/Bundle-eu-lab'
+    fhir_bundle_meta.profile = 'http://fhir.ehdsi.eu/laboratory/StructureDefinition/Bundle-lab-myhealtheu'
     "FhirBundleMetadata";
   // ClinicalDocument.id
   cda.id -> fhir_bundle.identifier "identifier";
@@ -112,7 +112,7 @@ group CdaToFhirBundle(source cda : ClinicalDocument, target fhir_bundle : Bundle
     fhir_serviceRequest.id = uuid() as fhir_serviceRequest_id,
     fhir_bundle_entry_5.fullUrl = append('urn:uuid:', fhir_serviceRequest_id),
     fhir_serviceRequest.meta as fhir_serviceRequest_meta,
-    fhir_serviceRequest_meta.profile = 'http://hl7.eu/fhir/laboratory/StructureDefinition/ServiceRequest-eu-lab',
+    fhir_serviceRequest_meta.profile = 'http://fhir.ehdsi.eu/laboratory/StructureDefinition/ServiceRequest-lab-myhealtheu',
 
     // create relation from Composition to ServiceRequest
     fhir_composition.extension as fhir_composition_extenstion_01,
@@ -187,7 +187,7 @@ group CdaToFhirBundle(source cda : ClinicalDocument, target fhir_bundle : Bundle
 
 group CdaHeaderToFhirComposition(source cda : ClinicalDocument, target fhir_composition : Composition, target fhir_patient: Patient, target fhir_diagnosticReport: DiagnosticReport, target fhir_serviceRequest: ServiceRequest, target fhir_bundle : Bundle) {
   cda -> fhir_composition.meta as fhir_composition_meta,
-    fhir_composition_meta.profile = 'http://hl7.eu/fhir/laboratory/StructureDefinition/Composition-eu-lab'
+    fhir_composition_meta.profile = 'http://fhir.ehdsi.eu/laboratory/StructureDefinition/Composition-lab-myhealtheu'
     "FhirCompositionProfile";
 
   // ClinicalDocument.code
@@ -452,7 +452,7 @@ group CdaHeaderToFhirComposition(source cda : ClinicalDocument, target fhir_comp
 
 group CdaHeaderToFhirDiagnosticReport(source cda : ClinicalDocument, target fhir_diagnosticReport: DiagnosticReport) {
   cda -> fhir_diagnosticReport.meta as fhir_diagnosticReport_meta,
-    fhir_diagnosticReport_meta.profile = 'http://hl7.eu/fhir/laboratory/StructureDefinition/DiagnosticReport-eu-lab'
+    fhir_diagnosticReport_meta.profile = 'http://fhir.ehdsi.eu/laboratory/StructureDefinition/DiagnosticReport-lab-myhealtheu'
     "FhirDiagnosticReportProfile";
 
   // ClinicalDocument.code
@@ -509,7 +509,7 @@ group CdaHeaderToFhirDiagnosticReport(source cda : ClinicalDocument, target fhir
 group CdaPatientRoleToFhirPatient(source cda_patientRole : PatientRole, target fhir_patient : Patient, target fhir_bundle : Bundle) {
   cda_patientRole ->
     fhir_patient.meta as fhir_patient_meta,
-    fhir_patient_meta.profile = 'http://hl7.eu/fhir/laboratory/StructureDefinition/Patient-eu-lab'
+    fhir_patient_meta.profile = 'http://fhir.ehdsi.eu/laboratory/StructureDefinition/Patient-lab-myhealtheu'
     "FhirPatientEuLab";
 
   // TODO check with TC FHIR how profile has to be read - are there additional identifier having no coding allowed apart from PI, SS, or NI?
@@ -1142,7 +1142,7 @@ group CdaLaboratorySpecialtySectionToFhirSection (source cda: ClinicalDocument, 
 
             cda_laboratory_battery_organizer ->
               fhir_observation.meta as fhir_observation_meta,
-              fhir_observation_meta.profile = 'http://hl7.eu/fhir/laboratory/StructureDefinition/Observation-resultslab-eu-lab'
+              fhir_observation_meta.profile = 'http://fhir.ehdsi.eu/laboratory/StructureDefinition/Observation-resultslab-lab-myhealtheu'
               "FhirObservationProfile";
 
             // fhir_observation.category
@@ -1306,7 +1306,7 @@ group CdaObservationToFhirObservation(source cda_observation : CDAObservation, t
 group CdaLaboratoryObservationToFhirObservation(source cda: ClinicalDocument, source cda_laboratory_observation : CDAObservation, target fhir_observation : Observation, target fhir_practitionerRole: PractitionerRole, target fhir_patient: Patient, target fhir_bundle: Bundle) {
   cda_laboratory_observation ->
     fhir_observation.meta as fhir_observation_meta,
-    fhir_observation_meta.profile = 'http://hl7.eu/fhir/laboratory/StructureDefinition/Observation-resultslab-eu-lab'
+    fhir_observation_meta.profile = 'http://fhir.ehdsi.eu/laboratory/StructureDefinition/Observation-resultslab-lab-myhealtheu'
     "FhirObservationProfile";
 
   // observation.id
