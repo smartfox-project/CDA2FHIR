@@ -402,7 +402,7 @@ group CdaHeaderToFhirComposition(source cda : ClinicalDocument, target fhir_comp
         fhir_composition_event.extension as fhir_composition_event_extension,
         fhir_composition_event_extension.url = 'https://fhir.hl7.at/elga/lab/r4/StructureDefinition/at-lab-ext-composition-eventId',
         fhir_composition_event_extension.value = create('oid') as fhir_composition_event_extension_oid,
-        fhir_composition_event_extension_oid.value = serviceEvent_id_root
+        fhir_composition_event_extension_oid.value = append('urn:oid:', serviceEvent_id_root)
         "CdaServiceEventIdToFhirEventIdExtension"
       };
 
