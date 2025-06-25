@@ -396,17 +396,15 @@ group CdaHeaderToFhirComposition(source cda : ClinicalDocument, target fhir_comp
       fhir_composition.event as fhir_composition_event then {
 
       // ClinicalDocument.documentationOf.serviceEvent.id
-      // TODO check https://chat.fhir.org/#narrow/channel/242580-europe/topic/Use.20of.20national.20extensions.20within.20MyHealth.40EU.20and.20EEHRxF
-      //      check if national extensions can be transmitted via MyHealth@EU
-      // TEMPORARILY DISABLED until chat.fhir.org resolves
-      // cda_documentationOf_serviceEvent.id as serviceEvent_id then {
-      //   serviceEvent_id.root as serviceEvent_id_root ->
-      //   fhir_composition_event.extension as fhir_composition_event_extension,
-      //   fhir_composition_event_extension.url = 'https://fhir.hl7.at/elga/lab/r4/StructureDefinition/at-lab-ext-composition-eventId',
-      //   fhir_composition_event_extension.value = create('oid') as fhir_composition_event_extension_oid,
-      //   fhir_composition_event_extension_oid.value = serviceEvent_id_root
-      //   "CdaServiceEventIdToFhirEventIdExtension"
-      // };
+      // TODO Extension has to be specified in AT Lab IG
+      cda_documentationOf_serviceEvent.id as serviceEvent_id then {
+        serviceEvent_id.root as serviceEvent_id_root ->
+        fhir_composition_event.extension as fhir_composition_event_extension,
+        fhir_composition_event_extension.url = 'https://fhir.hl7.at/elga/lab/r4/StructureDefinition/at-lab-ext-composition-eventId',
+        fhir_composition_event_extension.value = create('oid') as fhir_composition_event_extension_oid,
+        fhir_composition_event_extension_oid.value = serviceEvent_id_root
+        "CdaServiceEventIdToFhirEventIdExtension"
+      };
 
       // ClinicalDocument.documentationOf.serviceEvent.code
       cda_documentationOf_serviceEvent.code -> fhir_composition_event.code;
