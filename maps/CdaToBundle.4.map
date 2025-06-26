@@ -404,7 +404,7 @@ group CdaHeaderToFhirComposition(source cda : ClinicalDocument, target fhir_comp
         fhir_composition_event_extension.value = create('oid') as fhir_composition_event_extension_oid,
         fhir_composition_event_extension_oid.value = append('urn:oid:', serviceEvent_id_root)
         "CdaServiceEventIdToFhirEventIdExtension"
-      };
+      } "CdaServiceEventIdToFhirEventId";
 
       // ClinicalDocument.documentationOf.serviceEvent.code
       cda_documentationOf_serviceEvent.code -> fhir_composition_event.code;
