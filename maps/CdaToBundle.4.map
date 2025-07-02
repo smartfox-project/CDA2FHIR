@@ -739,7 +739,14 @@ group CdaAuthorToFhirDevice(source cda_author : Author, target fhir_device : Dev
     // author.assignedAuthor
     cda_author.assignedAuthor as cda_author_assignedAuthor then {
       // author.assignedAuthor.id
-      cda_author_assignedAuthor.id -> fhir_device.identifier;
+      cda_author_assignedAuthor.id where ($this.nullFlavor.exists().not()) -> fhir_device.identifier;
+      cda_author_assignedAuthor.id as cda_author_assignedAuthor_id where ($this.nullFlavor.exists()) then {
+        cda_author_assignedAuthor_id.nullFlavor ->
+          fhir_device.identifier as fhir_device_identifier,
+          fhir_device_identifier.extension as fhir_device_identifier_extension then CdaNullFlavorToFhirNullFlavor(cda_author_assignedAuthor_id, fhir_device_identifier_extension)
+          "CdaAssignedAuthorIdNullFlavorToFhirDataAbsentReason"
+      } "CdaAssignedAuthorIdNullFlavor";
+
       // author.assignedAuthor.code
       // skipped because no value in ValueSet ELGA_AuthorSpeciality suits a device
       // author.assignedAuthor.telecom
