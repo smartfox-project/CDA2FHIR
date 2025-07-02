@@ -661,17 +661,12 @@ group CDCoding(source src : CD, target tgt : Coding) extends CECoding <<types>> 
 
 group CECodeableConcept(source src : CE, target tgt : CodeableConcept) extends Any <<types>> {
   src.originalText -> tgt.text;
-  src -> tgt.coding as coding then CECoding(src, coding) "code";
-  src.translation as translation -> tgt.coding as coding then {
-    translation.code as code -> coding.code = cast(code, 'string');
-
-    // translation.codeSystem as system -> coding.system = translate(system, 'http://hl7.org/fhir/ConceptMap/special-oid2uri', 'uri');
-    src.codeSystem as system -> tgt.system = translate(system, '#OIDtoURI', 'code');
-
-    // TODO for testing purposes (validation with java validator), no displayNames will be mapped
-    //      later the NCPeH will have to translate them
-    // translation.displayName as display -> coding.display = cast(display, 'string');
-  } "translation";
+  src where ($this.nullFlavor.exists().not()) ->
+    tgt.coding as coding,
+    // in order to be able to capture the primary code in case there are translations
+    coding.userSelected = true then CECoding(src, coding) "code";
+  src where ($this.nullFlavor.exists()) -> tgt.extension as tgt_extension then CdaNullFlavorToFhirNullFlavor(src, tgt_extension) "nullFlavor";
+  src.translation as translation -> tgt.coding as coding then CDCoding(translation, coding);
 }
 
 group CSCodeableConcept(source src : CS, target tgt : CodeableConcept) extends CECodeableConcept <<types>> {
