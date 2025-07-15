@@ -1548,8 +1548,12 @@ group CdaAssignedEntityToFhirPractitionerRole(source cda_assignedEntity : Assign
     fhir_practitionerRole_practitioner_reference.type = 'Practitioner' then {
       // assignedEntity.id
       cda_assignedEntity.id -> fhir_practitionerRole.identifier;
+
       // assignedEntity.code - TODO here "external" laboratories (performer) could be identified - best place?
-      cda_assignedEntity.code -> fhir_practitionerRole.code;
+      // TODO in CDA no value set is specified for this element, so mapping is not possible as it could be any code
+      //      in FHIR (MyHealth@EU Lab) however a required binding for this optional element exits
+      // cda_assignedEntity.code -> fhir_practitionerRole.code;
+
       // assignedEntity.addr
       cda_assignedEntity.addr -> fhir_practitioner.address;
       // assignedEntity.telecom
