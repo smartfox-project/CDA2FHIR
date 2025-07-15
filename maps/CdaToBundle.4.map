@@ -748,7 +748,7 @@ group CdaAuthorToFhirDevice(source cda_author : Author, target fhir_device : Dev
         cda_author_assignedAuthor_id.nullFlavor ->
           fhir_device.identifier as fhir_device_identifier,
           fhir_device_identifier.extension as fhir_device_identifier_extension then CdaNullFlavorToFhirNullFlavor(cda_author_assignedAuthor_id, fhir_device_identifier_extension)
-          "CdaAssignedAuthorIdNullFlavorToFhirDataAbsentReason"
+          "CdaAssignedAuthorIdNullFlavorToFhirDataAbsentReason";
       } "CdaAssignedAuthorIdNullFlavor";
 
       // author.assignedAuthor.code
