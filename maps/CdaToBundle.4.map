@@ -1109,7 +1109,7 @@ group CdaSpecimenSectionToFhirSpecimen(source cda_section: Section, target fhir_
                 // procedure.participant.participantRole.playingEntity
                 cda_participantRole.playingEntity as cda_playingEntity then {
                   // procedure.participant.participantRole.id
-                  cda_participantRole.id -> fhir_specimen.accessionIdentifier;
+                  cda_participantRole.id -> fhir_specimen.identifier;
                   // procedure.participant.participantRole.playingEntity.code
                   cda_playingEntity.code -> fhir_specimen.type;
                 };
