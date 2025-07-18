@@ -513,7 +513,6 @@ group CdaPatientRoleToFhirPatient(source cda_patientRole : PatientRole, target f
     fhir_patient_meta.profile = 'http://fhir.ehdsi.eu/laboratory/StructureDefinition/Patient-lab-myhealtheu'
     "FhirPatientEuLab";
 
-  // TODO check with TC FHIR how profile has to be read - are there additional identifier having no coding allowed apart from PI, SS, or NI?
   // patientRole.id[1]
   cda_patientRole.id first as cda_patientRole_id -> fhir_patient.identifier = create('Identifier') as fhir_patient_identifier then {
     // patientRole.id
@@ -534,6 +533,7 @@ group CdaPatientRoleToFhirPatient(source cda_patientRole : PatientRole, target f
     cda_patientRole_id then II(cda_patientRole_id, fhir_patient_identifier) "CdaIdToFhirIdentifier";
 
     // setting identifier.type.coding according to profile for Social Security Number
+    // TODO deal with nullFlavor
     cda_patientRole_id where (cda_patientRole_id.root = '1.2.40.0.10.1.4.3.1') ->
       // according to profile no or this fixed value is required
       fhir_patient_identifier.assigner as assigner,
@@ -547,6 +547,7 @@ group CdaPatientRoleToFhirPatient(source cda_patientRole : PatientRole, target f
       "FhirPatientIdentifierTypeCodingSS";
 
     // setting identifier.type.coding according to profile for National unique individual identifier
+    // TODO check if allowed in case of MyHealth@EU
     cda_patientRole_id where (cda_patientRole_id.root = '1.2.40.0.10.2.1.1.149') ->
       // according to profile no or this fixed value is required
       fhir_patient_identifier.assigner as assigner,
@@ -574,10 +575,12 @@ group CdaPatientRoleToFhirPatient(source cda_patientRole : PatientRole, target f
   cda_patientRole.patient as cda_patient then {
     // patient.name
     cda_patient.name -> fhir_patient.name;
+
     // patient.administrativeGenderCode
     cda_patient.administrativeGenderCode as cda_patient_gender then {
       // patient.administrativeGenderCode.code
       cda_patient_gender.code as cda_patient_gender_code -> fhir_patient.gender = translate(cda_patient_gender_code, '#ELGAAdministrativeGenderFHIRGender', 'code') "CdaPatientGenderCodeToFhirPatientGenderCode";
+      // TODO nullFlavor
       // TODO patient.administrativeGenderCode.translation
     } "CdaPatientGenderToFhirPatientGender";
 
