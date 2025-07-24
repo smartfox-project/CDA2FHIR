@@ -28,15 +28,17 @@ conceptmap "cm-v3-administrative-gender" {
   s:F == t:female
 }
 
-// TODO review mapping
-// TODO deal with nullFlavor
+// nullFlavor will be mapped by FML to "unknown"
 conceptmap "ELGAAdministrativeGenderFHIRGender" {
   prefix s = "https://termgit.elga.gv.at/ValueSet-elga-administrativegender"
   prefix t = "http://hl7.org/fhir/ValueSet/administrative-gender"
 
-  s:"F" == t: "female"
-  s:"M" == t:"male"
-  s:"UN" == t: "other"
+  s:  "F" == t: "female"
+  s:  "M" == t: "male"
+  s: "UN" == t: "other"
+  s:  "D" == t: "other"
+  s:  "I" == t: "other"
+  s:  "O" == t: "other"
 }
 
 conceptmap "act-status-2-observation-status" {
@@ -578,10 +580,32 @@ group CdaPatientRoleToFhirPatient(source cda_patientRole : PatientRole, target f
 
     // patient.administrativeGenderCode
     cda_patient.administrativeGenderCode as cda_patient_gender then {
-      // patient.administrativeGenderCode.code
-      cda_patient_gender.code as cda_patient_gender_code -> fhir_patient.gender = translate(cda_patient_gender_code, '#ELGAAdministrativeGenderFHIRGender', 'code') "CdaPatientGenderCodeToFhirPatientGenderCode";
-      // TODO nullFlavor
-      // TODO patient.administrativeGenderCode.translation
+
+      // patient.administrativeGenderCode[not(@nullFlavor)]
+      cda_patient_gender where (nullFlavor.exists().not()) then {
+        // patient.administrativeGenderCode.code
+        cda_patient_gender.code as cda_patient_gender_code -> fhir_patient.gender = translate(cda_patient_gender_code, '#ELGAAdministrativeGenderFHIRGender', 'code') "CdaPatientGenderCodeToFhirPatientGenderCode";
+
+        // patient.administrativeGenderCode[@codeSystem='1.2.40.0.34.5.224']
+        cda_patient_gender where (codeSystem = '1.2.40.0.34.5.224') ->
+          fhir_patient.gender as fhir_patient_gender,
+          fhir_patient_gender.extension as fhir_patient_gender_extension,
+          fhir_patient_gender_extension.url = 'http://hl7.at/fhir/HL7ATCoreProfiles/4.0.1/StructureDefinition/at-core-ext-gender-administrativeGenderAddition',
+          fhir_patient_gender_extension.value = create('Coding') as fhir_gender_extension_coding then CECoding(cda_patient_gender, fhir_gender_extension_coding)
+          "CdaPatientOtherGenderCodeToFhirPatientOtherGenderCode";
+
+      } "CdaPatientGenderNotNullFlavor";
+
+      // patient.administrativeGenderCode[@nullFlavor='UNK'].code
+      cda_patient_gender where (nullFlavor = 'UNK') -> fhir_patient.gender = 'unknown' "CdaPatientUnkGenderCodeToFhirPatientUnknownGenderCode";
+
+      // patient.administrativeGenderCode.translation
+      cda_patient_gender.translation as cda_patient_gender_translation ->
+        fhir_patient.gender as fhir_patient_gender,
+        fhir_patient_gender.extension as fhir_patient_gender_extension,
+        fhir_patient_gender_extension.url = 'http://hl7.org/fhir/StructureDefinition/alternate-codes',
+        fhir_patient_gender_extension.value = create('CodeableConcept') as fhir_gender_extension_codeableconcept then CDCodeableConcept(cda_patient_gender_translation, fhir_gender_extension_codeableconcept)
+        "CdaPatientGenderTranslationToFhirPatientGenderAlternateCodes";
     } "CdaPatientGenderToFhirPatientGender";
 
     // patient.birthTime (only date)
