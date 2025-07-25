@@ -531,7 +531,7 @@ group CdaPatientRoleToFhirPatient(source cda_patientRole : PatientRole, target f
   } "CdaLocalPatientIdToFhirPatientIdentifier";
 
   // patientRole.id[>1]
-  cda_patientRole.id not_first as cda_patientRole_id -> fhir_patient.identifier = create('Identifier') as fhir_patient_identifier then {
+  cda_patientRole.id not_first as cda_patientRole_id where (nullFlavor.exists().not()) -> fhir_patient.identifier = create('Identifier') as fhir_patient_identifier then {
     // patientRole.id
     cda_patientRole_id then II(cda_patientRole_id, fhir_patient_identifier) "CdaIdToFhirIdentifier";
 
@@ -811,7 +811,7 @@ group CdaAuthorToFhirDevice(source cda_author : Author, target fhir_device : Dev
 
 group CdaEncompassingEncounterToFhirEncounter(source cda_encompassingEncounter : EncompassingEncounter, target fhir_encounter : Encounter, target fhir_bundle : Bundle) {
   // encompassingEncounter.id
-  cda_encompassingEncounter.id -> fhir_encounter.identifier;
+  cda_encompassingEncounter.id where (nullFlavor.exists().not()) -> fhir_encounter.identifier;
   // fhir_encounter.status
   cda_encompassingEncounter -> fhir_encounter.status = 'finished' "FhirEncounterStatus";
   // encompassingEncounter.code
