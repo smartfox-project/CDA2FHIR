@@ -734,8 +734,7 @@ group CdaAuthorToFhirPractitionerRole(source cda_author : Author, target fhir_pr
 
       // ClinicalDocument.author.time
       // TODO extension?
-      // ClinicalDocument.author.time
-      // TODO nullFlavor? http://hl7.org/fhir/R4/extension-data-absent-reason.html
+
       // ClinicalDocument.author.assignedAuthor
       cda_author.assignedAuthor as cda_author_assignedAuthor then {
         // ClinicalDocument.author.assignedAuthor.id
@@ -773,8 +772,7 @@ group CdaAuthorToFhirDevice(source cda_author : Author, target fhir_device : Dev
     cda_author.functionCode -> fhir_device.type;
     // author.time
     // TODO extension?
-    // author.time
-    // TODO nullFlavor?
+
     // author.assignedAuthor
     cda_author.assignedAuthor as cda_author_assignedAuthor then {
       // author.assignedAuthor.id
