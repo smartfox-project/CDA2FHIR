@@ -613,7 +613,7 @@ group CdaPatientRoleToFhirPatient(source cda_patientRole : PatientRole, target f
 
     // patient.birthTime (only date)
     // TODO as long as https://gitlab.com/cdehealth/malac-hd/-/issues/45 has not been resolved birthDate will be mocked
-    cda_patient.birthTime where (nullFlavor.exists().not()) -> fhir_patient.birthDate as fhir_patient_birthDate, fhir_patient_birthDate.value = '2025-06-24' "birthTime";
+    cda_patient.birthTime where (nullFlavor.exists().not()) -> fhir_patient.birthDate as fhir_patient_birthDate, fhir_patient_birthDate.value = '2025-07-28' "birthTime";
     // cda_patient.birthTime -> fhir_patient.birthDate;
     // // patient.birthTime (with time if available)
     // cda_patient.birthTime as cda_patient_birthTime where (cda_patient.birthTime.value.toString().length() > 10) -> fhir_patient.birthDate as fhir_patient_birthDate,
