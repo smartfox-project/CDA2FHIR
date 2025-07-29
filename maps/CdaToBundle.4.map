@@ -4,7 +4,7 @@ map "http://hl7.at/fhir/HL7ATCoreProfiles/4.0.1/StructureMap/at-cda-to-bundle" =
 // Mapping CDA2FHIR
 //
 
-conceptmap "cda-code-2-fhir-category" {
+conceptmap "cda-clinicaldocument-code-2-fhir-composition-type" {
   prefix s = "http://loinc.org"
   prefix t = "http://loinc.org"
 
@@ -197,12 +197,14 @@ group CdaHeaderToFhirComposition(source cda : ClinicalDocument, target fhir_comp
   cda.code as cda_code then {
     cda_code.code as code_code ->
     fhir_composition.category as fhir_composition_category,
-    fhir_composition_category.coding = translate(code_code, '#cda-code-2-fhir-category' , 'Coding') "code";
+    fhir_composition_category.coding = translate(code_code, '#cda-clinicaldocument-code-2-fhir-composition-type' , 'Coding') "code";
   };
 
   // ClinicalDocument.code.translation
   cda.code as cda_code then {
+    // for CDA laboratory report translation is fixed to 11502-2 LOINC
     cda_code.translation -> fhir_composition.type;
+    // in case CDA does not have translation the Composition.type will be explicitly set
     cda_code where cda_code.translation.exists().not() ->
       fhir_composition.type = create('CodeableConcept') as type_coding,
       type_coding.coding = create('Coding') as coding_coding,
@@ -463,12 +465,14 @@ group CdaHeaderToFhirDiagnosticReport(source cda : ClinicalDocument, target fhir
   cda.code as cda_code then {
     cda_code.code as code_code ->
     fhir_diagnosticReport.category as fhir_diagnosticReport_category,
-    fhir_diagnosticReport_category.coding = translate(code_code, '#cda-code-2-fhir-category' , 'Coding') "code";
+    fhir_diagnosticReport_category.coding = translate(code_code, '#cda-clinicaldocument-code-2-fhir-composition-type' , 'Coding') "code";
   };
 
   // ClinicalDocument.code.translation
   cda.code as cda_code then {
+    // for CDA laboratory report translation is fixed to 11502-2 LOINC
     cda_code.translation -> fhir_diagnosticReport.code;
+    // in case CDA does not have translation the DiagnosticReport.code will be explicitly set
     cda_code where cda_code.translation.exists().not() ->
       fhir_diagnosticReport.code = create('CodeableConcept') as code_coding,
       code_coding.coding = create('Coding') as coding_coding,
