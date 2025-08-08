@@ -1594,7 +1594,7 @@ group CdaAssignedEntityToFhirPractitionerRole(source cda_assignedEntity : Assign
     fhir_practitionerRole_practitioner_reference.reference = append('urn:uuid:', fhir_practitioner_id),
     fhir_practitionerRole_practitioner_reference.type = 'Practitioner' then {
       // assignedEntity.id
-      cda_assignedEntity.id -> fhir_practitionerRole.identifier;
+      cda_assignedEntity.id where (nullFlavor.exists().not()) -> fhir_practitioner.identifier;
 
       // assignedEntity.code - TODO here "external" laboratories (performer) could be identified - best place?
       // TODO in CDA no value set is specified for this element, so mapping is not possible as it could be any code
