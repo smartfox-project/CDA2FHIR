@@ -222,12 +222,13 @@ group CdaHeaderToFhirComposition(source cda : ClinicalDocument, target fhir_comp
   };
   // ClinicalDocument.title
   cda.title as cda_title -> fhir_composition.title = (cda_title.xmlText);
+
   // ClinicalDocument.sdtc:statusCode
-  // TODO clarify mapping
   cda.sdtcStatusCode as cda_statusCode where cda.sdtcStatusCode.exists() then {
     cda_statusCode.code as cda_code -> fhir_composition.status = translate(cda_code, '#cda-sdtc-statuscode-2-fhir-composition-status' , 'code');
   } "CdaStatusCodeToFhirCompositionStatusMapped";
   cda where cda.sdtcStatusCode.exists().not() -> fhir_composition.status = 'final' "CdaStatusCodeToFhirCompositionStatusFixed";
+
   // TODO ClinicalDocument.hl7at:terminologyDate
   // cda.terminologyDate ->
   // TODO ClinicalDocument.hl7at:formatCode
@@ -1276,6 +1277,7 @@ group CdaLaboratorySpecialtySectionToFhirSection (source cda: ClinicalDocument, 
                "CdaEffectiveTimeExistsNotToFhirObservationEffective";
 
             // organizer.performer if existent in organizer
+            // TODO pass along performer to contained observations
             cda_laboratory_battery_organizer.performer as cda_laboratory_battery_organizer_performer
                 where cda_laboratory_battery_organizer.performer.exists()
                 then CdaPerformerToFhirObservationPerformer(cda_laboratory_battery_organizer_performer, fhir_observation, fhir_bundle)
@@ -1288,7 +1290,7 @@ group CdaLaboratorySpecialtySectionToFhirSection (source cda: ClinicalDocument, 
                         // ClinicalDocument.documentationOf.serviceEvent
                         cda_documentationOf.serviceEvent as cda_documentationOf_serviceEvent then {
                             cda_documentationOf_serviceEvent.performer as cda_documentationOf_serviceEvent_performer then {
-                                // observation.performer.time - it is assumed that only @value occurs and no interval
+                                // observation.performer.time
                                 cda_documentationOf_serviceEvent_performer.time -> fhir_observation.issued;
                             };
                         };
