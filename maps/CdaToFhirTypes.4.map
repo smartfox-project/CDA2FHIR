@@ -896,8 +896,10 @@ group TELContactPoint(source src : TEL, target tgt : ContactPoint) extends Any <
 }
 
 group PQQuantity(source src : PQ, target tgt : Quantity) extends Any <<types>> {
-  src -> tgt.system = 'http://unitsofmeasure.org' "FhirQuantityIPSSystem";
-  src.unit as unit -> tgt.code = unit;
+  src -> tgt.system = 'http://unitsofmeasure.org' "FhirQuantitySystem";
+  src.unit as unit ->
+    tgt.code = unit,
+    tgt.unit = unit;
   src.value as value -> tgt.value = value;
 }
 
