@@ -5,15 +5,15 @@ map "http://hl7.at/fhir/HL7ATCoreProfiles/4.0.1/StructureMap/at-cda-to-bundle" =
 //
 
 conceptmap "cda-clinicaldocument-code-2-fhir-composition-type" {
-  prefix s = "http://loinc.org"
-  prefix t = "http://loinc.org"
+  prefix s = "https://termgit.elga.gv.at/ValueSet/elga-dokumentenklassen"
+  prefix t = "http://terminology.ehdsi.eu/ValueSet/eHDSILabStudyType"
 
   s:"11502-2" == t:"26436-6"
   s:"18725-2" == t:"18725-2"
 }
 
 conceptmap "cda-sdtc-statuscode-2-fhir-composition-status" {
-  prefix s = "http://hl7.org/fhir/ValueSet/composition-status"
+  prefix s = "http://terminology.hl7.org/ValueSet/v3-ActStatus"
   prefix t = "http://hl7.org/fhir/ValueSet/composition-status"
 
   s:"active" == t:"preliminary"
