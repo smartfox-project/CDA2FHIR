@@ -20,6 +20,14 @@ conceptmap "cda-sdtc-statuscode-2-fhir-composition-status" {
   s:"nullified" == t:"entered-in-error"
 }
 
+conceptmap "cda-sdtc-statuscode-2-fhir-diagnosticreport-status" {
+  prefix s = "http://terminology.hl7.org/ValueSet/v3-ActStatus"
+  prefix t = "http://hl7.org/fhir/ValueSet/diagnostic-report-status"
+
+  s:"active" == t:"preliminary"
+  s:"nullified" == t:"entered-in-error"
+}
+
 conceptmap "cm-v3-administrative-gender" {
   prefix s = "http://terminology.hl7.org/ValueSet/v3-AdministrativeGender"
   prefix t = "http://hl7.org/fhir/ValueSet/administrative-gender"
@@ -487,7 +495,7 @@ group CdaHeaderToFhirDiagnosticReport(source cda : ClinicalDocument, target fhir
   // ClinicalDocument.sdtc:statusCode
   // TODO clarify mapping
   cda.sdtcStatusCode as cda_statusCode where cda.sdtcStatusCode.exists() then {
-    cda_statusCode.code as cda_code -> fhir_diagnosticReport.status = translate(cda_code, '#cda-sdtc-statuscode-2-fhir-composition-status' , 'code');
+    cda_statusCode.code as cda_code -> fhir_diagnosticReport.status = translate(cda_code, '#cda-sdtc-statuscode-2-fhir-diagnosticreport-status' , 'code');
   } "CdaStatusCodeToFhirCompositionStatusMapped";
   cda where cda.sdtcStatusCode.exists().not() -> fhir_diagnosticReport.status = 'final' "CdaStatusCodeToFhirCompositionStatusFixed";
   // TODO ClinicalDocument.hl7at:terminologyDate
