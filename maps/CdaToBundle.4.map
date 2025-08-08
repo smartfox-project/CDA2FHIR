@@ -1602,9 +1602,9 @@ group CdaAssignedEntityToFhirPractitionerRole(source cda_assignedEntity : Assign
       // cda_assignedEntity.code -> fhir_practitionerRole.code;
 
       // assignedEntity.addr
-      cda_assignedEntity.addr -> fhir_practitioner.address;
+      cda_assignedEntity.addr where (nullFlavor.exists().not()) -> fhir_practitioner.address;
       // assignedEntity.telecom
-      cda_assignedEntity.telecom -> fhir_practitioner.telecom;
+      cda_assignedEntity.telecom where (nullFlavor.exists().not()) -> fhir_practitioner.telecom;
       // assignedEntity.assignedPerson
       cda_assignedEntity.assignedPerson as cda_assignedPerson then {
         // assignedEntity.assignedPerson.name
@@ -1639,9 +1639,9 @@ group CdaAssociatedEntityToFhirPractitionerRole(source cda_associatedEntity : As
       // associatedEntity.id
       cda_associatedEntity.id -> fhir_practitionerRole.identifier;
       // associatedEntity.addr
-      cda_associatedEntity.addr -> fhir_practitioner.address;
+      cda_associatedEntity.addr where (nullFlavor.exists().not()) -> fhir_practitioner.address;
       // associatedEntity.telecom
-      cda_associatedEntity.telecom -> fhir_practitioner.telecom;
+      cda_associatedEntity.telecom where (nullFlavor.exists().not()) -> fhir_practitioner.telecom;
       // associatedEntity.associatedPerson
       cda_associatedEntity.associatedPerson as cda_associatedPerson then {
         // associatedEntity.associatedPerson.name
