@@ -1637,7 +1637,7 @@ group CdaAssociatedEntityToFhirPractitionerRole(source cda_associatedEntity : As
     fhir_practitionerRole_practitioner_reference.reference = append('urn:uuid:', fhir_practitioner_id),
     fhir_practitionerRole_practitioner_reference.type = 'Practitioner' then {
       // associatedEntity.id
-      cda_associatedEntity.id -> fhir_practitionerRole.identifier;
+      cda_associatedEntity.id -> fhir_practitioner.identifier;
       // associatedEntity.addr
       cda_associatedEntity.addr where (nullFlavor.exists().not()) -> fhir_practitioner.address;
       // associatedEntity.telecom
