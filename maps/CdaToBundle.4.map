@@ -1268,7 +1268,7 @@ group CdaLaboratorySpecialtySectionToFhirSection (source cda: ClinicalDocument, 
             cda_laboratory_battery_organizer
               where cda_laboratory_battery_organizer.effectiveTime.exists().not() ->
               fhir_observation.effective = create('dateTime') as fhir_observation_effective,
-              fhir_observation_effective.value = '1900-01-01',
+              // fhir_observation_effective.value = '1900-01-01', // TODO
               fhir_observation_effective.extension as fhir_observation_effective_extenstion,
               fhir_observation_effective_extenstion.url = 'http://hl7.org/fhir/StructureDefinition/data-absent-reason',
               fhir_observation_effective_extenstion.value = create('code') as fhir_observation_effective_extenstion_code,
