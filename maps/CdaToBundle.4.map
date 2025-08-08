@@ -1523,18 +1523,10 @@ group CdaLaboratoryObservationToFhirObservation(source cda: ClinicalDocument, so
     "CdaObservationPerformerToFhirObservationPerformer";
   // observation.performer if not existent in observation
   cda_laboratory_observation where cda_laboratory_observation.performer.exists().not() then {
-
-    cda where cda.documentationOf[0].serviceEvent.performer.exists() then {
-        // ClinicalDocument.documentationOf
-        cda.documentationOf first as cda_documentationOf then {
-            // ClinicalDocument.documentationOf.serviceEvent
-            cda_documentationOf.serviceEvent as cda_documentationOf_serviceEvent then {
-                cda_documentationOf_serviceEvent.performer as cda_documentationOf_serviceEvent_performer then {
-                    // observation.performer.time - it is assumed that only @value occurs and no interval
-                    cda_documentationOf_serviceEvent_performer.time  -> fhir_observation.issued "AAA";
-                };
-            };
-        };
+    // ClinicalDocument.legalAuthenticator
+    cda.legalAuthenticator as cda_legalAuthenticator then {
+        // legalAuthenticator.time
+        legalAuthenticator.time where (nullFlavor.exists().not()) -> fhir_observation.issued;
     } "CdaDocumentationOfServiceEventPerformerExists";
     cda ->
         fhir_observation.performer = create('Reference') as fhir_observation_performer_reference,
