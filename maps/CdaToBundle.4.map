@@ -1461,7 +1461,11 @@ group CdaLaboratoryObservationToFhirObservation(source cda: ClinicalDocument, so
   cda_laboratory_observation.value: PQ as cda_observation_value -> fhir_observation.value = create('Quantity') as fhir_observation_value then PQQuantity(cda_observation_value, fhir_observation_value) "CdaObservationValueToFhirObservationValuePQ";
 
   // observation.value(xsi:type="IVL_PQ")
-  cda_laboratory_observation.value: IVL_PQ as cda_observation_value -> fhir_observation.value = create('Range') as fhir_observation_value then IVLPQRange(cda_observation_value, fhir_observation_value) "CdaObservationValueToFhirObservationValueIVLPQ";
+  cda_laboratory_observation.value: IVL_PQ as cda_observation_value then {
+    cda_observation_value where (cda_observation_value.value.exists()) -> fhir_observation.value = create('Quantity') as fhir_observation_value then PQQuantity(cda_observation_value, fhir_observation_value) "CdaObservationValueToFhirObservationValueQuantity";
+
+    cda_observation_value where (cda_observation_value.value.exists().not()) -> fhir_observation.value = create('Range') as fhir_observation_value then IVLPQRange(cda_observation_value, fhir_observation_value) "CdaObservationValueToFhirObservationValueRange";
+  } "CdaObservationValueToFhirObservationValueIVLPQ";
 
   // observation.value(xsi:type="CD")
   cda_laboratory_observation
