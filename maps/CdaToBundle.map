@@ -1414,6 +1414,8 @@ group CdaVitalprameterToFhirSection( cda_section_component_section, fhir_section
                         cda_organizer_component_observation.code -> fhir_observation.code as fhir_observation_code, 
                             fhir_observation_code.coding as fhir_code_coding
                             "VitalObservationCodetoFHIR";
+                        // Here we also have a value set which should be used for the codes (SHALL)
+                        // we could also do a mapping 
                         // ToDo: remove empty value text 
 
                         cda_organizer_component_observation.code.translation -> fhir_observation.code.coding as fhir_observation_translation_code
@@ -1430,7 +1432,8 @@ group CdaVitalprameterToFhirSection( cda_section_component_section, fhir_section
                         cda_organizer_component_observation.statusCode as organizer_statusCode then {
                             organizer_statusCode.code as cda_code -> fhir_observation.status = translate(cda_code, '#act-status-2-observation-status' , 'code');
                             } "VitalObservationStatusCodetoFHIR";
-                        // here we map the code from the cda to the conceptMap since status has as predefined value set which is used
+                        // We have completed in CDA but we must chose from https://hl7.org/fhir/R4/valueset-observation-status.html, so a mapping is requiered 
+                        // completed -> string? 
                             
                         cda_organizer_component_observation.effectiveTime as cda_effectiveTime ->
                             fhir_observation.effective = create('dateTime') as fhir_observation_effective,
@@ -1534,6 +1537,7 @@ group CdaVitalprameterToFhirSection( cda_section_component_section, fhir_section
                             organizer_statusCode.code as cda_code -> fhir_observation.status = translate(cda_code, '#act-status-2-observation-status' , 'code');
                             } "VitalObservationStatusCodetoFHIR";
                         // here we map the code from the cda to the conceptMap since status has as predefined value set which is used
+
                             
                         cda_organizer_component_observation.effectiveTime as cda_effectiveTime ->
                             fhir_observation.effective = create('dateTime') as fhir_observation_effective,
@@ -1556,8 +1560,8 @@ group CdaVitalprameterToFhirSection( cda_section_component_section, fhir_section
 
                         // the PQ value for the Serienmessung is always a nullFlavor, therefor we do not mapp it
                         // cda_organizer_component_observation.value as observation_value  -> 
-                        //     fhir_observation.value = create('Quantity') as fhir_observation_value then PQQuantity(observation_value, fhir_observation_value) 
-                        //     "VitalObservationVALUEtoFHIRVALUE";
+                            // fhir_observation.value = create('Quantity') as fhir_observation_value then PQQuantity(observation_value, fhir_observation_value) 
+                            // "VitalObservationVALUEtoFHIRVALUE";
                         
                         // the subject 
                         cda_organizer_component_observation ->
