@@ -39,10 +39,9 @@ jobs:
           if git diff --cached --quiet; then
             echo "No changes to commit."
           else
+            echo "Changes will be committed automatically"
             git commit -m "Automated: convert FML to Python using MaLaC-HD"
             git push origin HEAD:${{ github.ref }}
+            echo "Invoke automatic transformation of test files"
+            curl -X POST https://gitlab.com/api/v4/projects/53941928/ref/malac_myhealtheu/trigger/pipeline?token=${{ secrets.GITLAB_PIPELINE_TRIGGER }}
           fi
-
-      - name: Invoke pipeline in ELGA GitLab validating test instances
-        run: |
-          curl -X POST https://gitlab.com/api/v4/projects/53941928/ref/malac_myhealtheu/trigger/pipeline?token=${{ secrets.GITLAB_PIPELINE_TRIGGER }}
