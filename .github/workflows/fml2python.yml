@@ -42,3 +42,7 @@ jobs:
             git commit -m "Automated: convert FML to Python using MaLaC-HD"
             git push origin HEAD:${{ github.ref }}
           fi
+
+      - name: Invoke pipeline in ELGA GitLab validating test instances
+        run: |
+          curl https://gitlab.com/api/v4/projects/53941928/ref/malac_myhealtheu/trigger/pipeline?token=${{ GITLAB_PIPELINE_TRIGGER }}
