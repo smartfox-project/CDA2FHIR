@@ -1526,7 +1526,7 @@ group CdaLaboratoryObservationToFhirObservation(source cda: ClinicalDocument, so
     // ClinicalDocument.legalAuthenticator
     cda.legalAuthenticator as cda_legalAuthenticator then {
         // legalAuthenticator.time
-        legalAuthenticator.time where (nullFlavor.exists().not()) -> fhir_observation.issued;
+        cda_legalAuthenticator.time where (nullFlavor.exists().not()) -> fhir_observation.issued;
     } "CdaDocumentationOfServiceEventPerformerExists";
     cda ->
         fhir_observation.performer = create('Reference') as fhir_observation_performer_reference,
