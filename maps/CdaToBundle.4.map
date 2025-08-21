@@ -901,7 +901,7 @@ group CdaBodyToFhirComposition(source cda: ClinicalDocument, source cda_structur
   // **********************************************************************
   // sections not affected by the existence of none/one/multiple specimen
   // **********************************************************************
-  
+
   cda_structuredBody.component as cda_component then {
     // TODO check where these sections should be placed
     // cda_component.section as cda_section where code.where(code='BRIEFT' and codeSystem='1.2.40.0.34.5.40') or // Brieftext
@@ -1239,6 +1239,12 @@ group CdaLaboratorySpecialtySectionToFhirSectionWithSpecimen (source cda: Clinic
   cda_section.entry as cda_section_entry then {
     // section.entry.act
     cda_section_entry.act as cda_act then {
+      // section.entry.act.entryRelationship (Specimen Collection)
+      cda_act.entryRelationship as cda_entryRelationship where $this.procedure.templateId.where(root='1.3.6.1.4.1.19376.1.3.1.2') then {
+        // section.entry.act.entryRelationship.procedure
+        cda_entryRelationship.procedure as cda_procedure then CdaSpecimenCollectionToFhirSpecimen(cda_procedure, fhir_specimen, fhir_patient, fhir_diagnosticReport);
+      };
+
       // // section.entry.act.entryRelationship (Laboratory Observation)
       // cda_act.entryRelationship as cda_entryRelationship where $this.observation.templateId.where(root='1.3.6.1.4.1.19376.1.3.1.6') then {
       //   cda_entryRelationship.observation as cda_laboratory_observation ->
@@ -1289,6 +1295,16 @@ group CdaLaboratorySpecialtySectionToFhirSection (source cda: ClinicalDocument, 
   cda_section.entry as cda_section_entry then {
     // section.entry.act
     cda_section_entry.act as cda_act then {
+      // section.entry.act.entryRelationship (Specimen Collection)
+      cda_act.entryRelationship as cda_entryRelationship where $this.procedure.templateId.where(root='1.3.6.1.4.1.19376.1.3.1.2') then {
+        // section.entry.act.entryRelationship.procedure
+        cda_entryRelationship.procedure as cda_procedure ->
+          // create the specimen to have it as reference for later transformations
+          fhir_bundle.entry as fhir_bundle_entry,
+          fhir_bundle_entry.resource = create('Specimen') as fhir_specimen,
+          fhir_specimen.id = uuid() as fhir_specimen_id,
+          fhir_bundle_entry.fullUrl = append('urn:uuid:', fhir_specimen_id) then CdaSpecimenCollectionToFhirSpecimen(cda_procedure, fhir_specimen, fhir_patient, fhir_diagnosticReport);
+      };
 
       // // section.entry.act.entryRelationship (Laboratory Observation)
       // cda_act.entryRelationship as cda_entryRelationship where $this.observation.templateId.where(root='1.3.6.1.4.1.19376.1.3.1.6') then {
