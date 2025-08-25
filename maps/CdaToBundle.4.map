@@ -926,7 +926,7 @@ group CdaBodyToFhirComposition(source cda: ClinicalDocument, source cda_structur
     fhir_bundle_entry.fullUrl = append('urn:uuid:', fhir_specimen_uuid) then {
     cda_structuredBody.component as cda_component then {
       // Probeninformation (Specimen Section)
-      cda_component.section as cda_section where code.where(code='10' and codeSystem='1.2.40.0.34.5.11') then CdaSpecimenSectionToFhirSpecimenWithSpecimen(cda_section, fhir_patient, fhir_diagnosticReport, fhir_specimen);
+      cda_component.section as cda_section where code.where(code='10' and codeSystem='1.2.40.0.34.5.11') then CdaSpecimenSectionToFhirSpecimenWithSpecimen(cda_section, fhir_patient, fhir_diagnosticReport, fhir_specimen, fhir_bundle);
 
       // Laboratory Specialty Section
       cda_component.section as cda_section where templateId.where(root='1.2.40.0.34.6.0.11.2.102' or root='1.3.6.1.4.1.19376.1.3.3.2.1')
@@ -1104,7 +1104,7 @@ group CdaSectionToFhirSection(source cda_section: Section, target fhir_section, 
   // };
 }
 
-group CdaSpecimenSectionToFhirSpecimenWithSpecimen(source cda_section: Section, target fhir_patient: Patient, target fhir_diagnosticReport: DiagnosticReport, target fhir_specimen: Specimen) {
+group CdaSpecimenSectionToFhirSpecimenWithSpecimen(source cda_section: Section, target fhir_patient: Patient, target fhir_diagnosticReport: DiagnosticReport, target fhir_specimen: Specimen, target fhir_bundle: Bundle) {
   // section.entry (Probeninformation (Specimen Entry))
   cda_section.entry as cda_section_entry then {
     // section.entry.act
@@ -1112,7 +1112,7 @@ group CdaSpecimenSectionToFhirSpecimenWithSpecimen(source cda_section: Section, 
       // section.entry.act.entryRelationship
       cda_act.entryRelationship as cda_entryRelationship then {
         // section.entry.act.entryRelationship.procedure
-        cda_entryRelationship.procedure as cda_procedure then CdaSpecimenCollectionToFhirSpecimen(cda_procedure, fhir_specimen, fhir_patient, fhir_diagnosticReport);
+        cda_entryRelationship.procedure as cda_procedure then CdaSpecimenCollectionToFhirSpecimen(cda_procedure, fhir_specimen, fhir_patient, fhir_diagnosticReport, fhir_bundle);
       };
     };
   };
@@ -1131,13 +1131,13 @@ group CdaSpecimenSectionToFhirSpecimen(source cda_section: Section, target fhir_
           fhir_bundle.entry as fhir_bundle_entry,
           fhir_bundle_entry.resource = create('Specimen') as fhir_specimen,
           fhir_specimen.id = uuid() as fhir_specimen_id,
-          fhir_bundle_entry.fullUrl = append('urn:uuid:', fhir_specimen_id) then CdaSpecimenCollectionToFhirSpecimen(cda_procedure, fhir_specimen, fhir_patient, fhir_diagnosticReport);
+          fhir_bundle_entry.fullUrl = append('urn:uuid:', fhir_specimen_id) then CdaSpecimenCollectionToFhirSpecimen(cda_procedure, fhir_specimen, fhir_patient, fhir_diagnosticReport, fhir_bundle);
       };
     };
   };
 }
 
-group CdaSpecimenCollectionToFhirSpecimen(source cda_procedure: Procedure, target fhir_specimen: Specimen, target fhir_patient: Patient, target fhir_diagnosticReport: DiagnosticReport) {
+group CdaSpecimenCollectionToFhirSpecimen(source cda_procedure: Procedure, target fhir_specimen: Specimen, target fhir_patient: Patient, target fhir_diagnosticReport: DiagnosticReport, target fhir_bundle: Bundle) {
   cda_procedure ->
     fhir_specimen.meta as fhir_specimen_meta,
     fhir_specimen_meta.profile = 'http://fhir.ehdsi.eu/laboratory/StructureDefinition/Specimen-lab-myhealtheu',
@@ -1157,11 +1157,17 @@ group CdaSpecimenCollectionToFhirSpecimen(source cda_procedure: Procedure, targe
     fhir_specimen.collection as fhir_specimen_collection then {
       // Abnahmedatum/-zeit bzw. -zeitintervall des Untersuchungsmaterials
       // procedure.effectiveTime with value
-      cda_procedure.effectiveTime as cda_effectiveTime where $this.value.exists() then {
-        cda_effectiveTime.value as v ->
-          fhir_specimen_collection.collected = v;
-      };
-      // TODO procedure.effectiveTime high / low -> Period
+      // Lab_Allgemeiner_Laborbefund_multiple_Specimen.xml
+      cda_procedure.effectiveTime as cda_effectiveTime where ($this.value.exists()) ->
+        fhir_specimen_collection.collected = create('dateTime') as fhir_specimen_collection_collected then
+        TSDateTime(cda_effectiveTime, fhir_specimen_collection_collected)
+        "CdaSpecimenEffectiveTimeToFhirSpecimenCollectedDateTime";
+      // procedure.effectiveTime with low/high
+      // Lab_Allgemeiner_Laborbefund_multiple_Specimen.xml
+      cda_procedure.effectiveTime as cda_effectiveTime where ($this.low.exists() or $this.high.exists()) ->
+        fhir_specimen_collection.collected = create('Period') as fhir_specimen_collection_collected then
+        IVLTSPeriod(cda_effectiveTime, fhir_specimen_collection_collected)
+        "CdaSpecimenEffectiveTimeToFhirSpecimenCollectedDateTime";
 
       // Entnahmeort
       // procedure.targetSiteCode
@@ -1178,7 +1184,22 @@ group CdaSpecimenCollectionToFhirSpecimen(source cda_procedure: Procedure, targe
 
       // Für die Abnahme verantwortlichen Person/Organisation
       // procedure.performer
-      // TODO has to be modelled with ServiceRequest/Performer
+      cda_procedure.performer as cda_procedure_performer then {
+        // procedure/performer/time
+        // TODO
+
+        // procedure/performer/assignedEntity
+        cda_procedure_performer.assignedEntity as cda_procedure_performer_assignedEntity ->
+          // Create a PractitionerRole
+          fhir_bundle.entry as fhir_bundle_entry,
+          fhir_bundle_entry.resource = create('PractitionerRole') as fhir_practitionerRole,
+          fhir_practitionerRole.id = uuid() as fhir_practitionerRole_id,
+          fhir_bundle_entry.fullUrl = append('urn:uuid:', fhir_practitionerRole_id),
+          fhir_specimen_collection.collector = create('Reference') as fhir_specimen_collection_collector_reference,
+          fhir_specimen_collection_collector_reference.reference = append('urn:uuid:', fhir_practitionerRole_id),
+          fhir_specimen_collection_collector_reference.type = 'PractitionerRole'
+          then CdaAssignedEntityToFhirPractitionerRole(cda_procedure_performer_assignedEntity, fhir_practitionerRole, fhir_bundle);
+      };
 
       // Untersuchungsmaterial
       // procedure.participant
@@ -1201,13 +1222,11 @@ group CdaSpecimenCollectionToFhirSpecimen(source cda_procedure: Procedure, targe
         // procedure.entryRelationship
         cda_entryRelationship.act as cda_act then {
           // Zeitpunkt des Einlangen des Untersuchungsmaterials
-          // act.effectiveTime with value
-          cda_act.effectiveTime as cda_effectiveTime where $this.value.exists() then {
-            cda_effectiveTime.value as v ->
-              fhir_specimen.receivedTime = v;
-          };
-          // TODO act.effectiveTime high / low -> Period
-
+          // act.effectiveTime
+          cda_act.effectiveTime as cda_effectiveTime where $this.value.exists() ->
+            fhir_specimen.receivedTime = create('dateTime') as fhir_specimen_receivedTime then
+            TSDateTime(cda_effectiveTime, fhir_specimen_receivedTime)
+            "CdaSpecimenReceivedTimeToFhirSpecimenReceivedTime";
 
           // TODO CDA level 4 Referenzen müssen noch aufgelöst werden
           // // Anmerkung zur Qualität des Untersuchungsmaterials
@@ -1235,7 +1254,7 @@ group CdaLaboratorySpecialtySectionToFhirSectionWithSpecimen (source cda: Clinic
       // section.entry.act.entryRelationship (Specimen Collection)
       cda_act.entryRelationship as cda_entryRelationship where $this.procedure.templateId.where(root='1.3.6.1.4.1.19376.1.3.1.2') then {
         // section.entry.act.entryRelationship.procedure
-        cda_entryRelationship.procedure as cda_procedure then CdaSpecimenCollectionToFhirSpecimen(cda_procedure, fhir_specimen, fhir_patient, fhir_diagnosticReport);
+        cda_entryRelationship.procedure as cda_procedure then CdaSpecimenCollectionToFhirSpecimen(cda_procedure, fhir_specimen, fhir_patient, fhir_diagnosticReport, fhir_bundle);
       };
 
       // // section.entry.act.entryRelationship (Laboratory Observation)
@@ -1296,7 +1315,7 @@ group CdaLaboratorySpecialtySectionToFhirSection (source cda: ClinicalDocument, 
           fhir_bundle.entry as fhir_bundle_entry,
           fhir_bundle_entry.resource = create('Specimen') as fhir_specimen,
           fhir_specimen.id = uuid() as fhir_specimen_id,
-          fhir_bundle_entry.fullUrl = append('urn:uuid:', fhir_specimen_id) then CdaSpecimenCollectionToFhirSpecimen(cda_procedure, fhir_specimen, fhir_patient, fhir_diagnosticReport);
+          fhir_bundle_entry.fullUrl = append('urn:uuid:', fhir_specimen_id) then CdaSpecimenCollectionToFhirSpecimen(cda_procedure, fhir_specimen, fhir_patient, fhir_diagnosticReport, fhir_bundle);
       };
 
       // // section.entry.act.entryRelationship (Laboratory Observation)
