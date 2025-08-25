@@ -791,7 +791,7 @@ def CdaBodyToFhirComposition(cda, cda_structuredBody, fhir_composition, fhir_pra
             cda_section = cda_component.section
             if cda_section:
                 if fhirpath.single([v1 for v1 in fhirpath_utils.get(cda_section,'code') if (v1.code == '10' and v1.codeSystem == '1.2.40.0.34.5.11')]):
-                    CdaSpecimenSectionToFhirSpecimenWithSpecimen(cda_section, fhir_patient, fhir_diagnosticReport, fhir_specimen)
+                    CdaSpecimenSectionToFhirSpecimenWithSpecimen(cda_section, fhir_patient, fhir_diagnosticReport, fhir_specimen, fhir_bundle)
             cda_section = cda_component.section
             if cda_section:
                 if fhirpath.single([v1 for v1 in fhirpath_utils.get(cda_section,'templateId') if (v1.root == '1.2.40.0.34.6.0.11.2.102' or v1.root == '1.3.6.1.4.1.19376.1.3.3.2.1')]):
@@ -826,7 +826,7 @@ def CdaToPractitionerRole(cda, fhir_practitionerRole, fhir_bundle):
             if fhirpath_utils.get(cda_author,'assignedAuthor','assignedPerson'):
                 CdaAuthorToFhirPractitionerRole(cda_author, fhir_practitionerRole, fhir_bundle)
 
-def CdaSpecimenSectionToFhirSpecimenWithSpecimen(cda_section, fhir_patient, fhir_diagnosticReport, fhir_specimen):
+def CdaSpecimenSectionToFhirSpecimenWithSpecimen(cda_section, fhir_patient, fhir_diagnosticReport, fhir_specimen, fhir_bundle):
     for cda_section_entry in cda_section.entry or []:
         cda_act = cda_section_entry.act
         if cda_act:
@@ -834,7 +834,7 @@ def CdaSpecimenSectionToFhirSpecimenWithSpecimen(cda_section, fhir_patient, fhir
                 for cda_entryRelationship in cda_act.entryRelationship or []:
                     cda_procedure = cda_entryRelationship.procedure
                     if cda_procedure:
-                        CdaSpecimenCollectionToFhirSpecimen(cda_procedure, fhir_specimen, fhir_patient, fhir_diagnosticReport)
+                        CdaSpecimenCollectionToFhirSpecimen(cda_procedure, fhir_specimen, fhir_patient, fhir_diagnosticReport, fhir_bundle)
 
 def CdaSpecimenSectionToFhirSpecimen(cda_section, fhir_patient, fhir_diagnosticReport, fhir_bundle):
     for cda_section_entry in cda_section.entry or []:
@@ -851,9 +851,9 @@ def CdaSpecimenSectionToFhirSpecimen(cda_section, fhir_patient, fhir_diagnosticR
                         fhir_specimen_id = string(value=str(uuid.uuid4()))
                         fhir_specimen.id = fhir_specimen_id
                         fhir_bundle_entry.fullUrl = uri(value=('urn:uuid:' + fhir_specimen_id.value))
-                        CdaSpecimenCollectionToFhirSpecimen(cda_procedure, fhir_specimen, fhir_patient, fhir_diagnosticReport)
+                        CdaSpecimenCollectionToFhirSpecimen(cda_procedure, fhir_specimen, fhir_patient, fhir_diagnosticReport, fhir_bundle)
 
-def CdaSpecimenCollectionToFhirSpecimen(cda_procedure, fhir_specimen, fhir_patient, fhir_diagnosticReport):
+def CdaSpecimenCollectionToFhirSpecimen(cda_procedure, fhir_specimen, fhir_patient, fhir_diagnosticReport, fhir_bundle):
     if fhir_specimen.meta is None:
         fhir_specimen.meta = malac.models.fhir.r4.Meta()
     fhir_specimen_meta = fhir_specimen.meta
@@ -878,9 +878,15 @@ def CdaSpecimenCollectionToFhirSpecimen(cda_procedure, fhir_specimen, fhir_patie
     cda_effectiveTime = cda_procedure.effectiveTime
     if cda_effectiveTime:
         if cda_effectiveTime.value is not None:
-            v = cda_effectiveTime.value
-            if v:
-                fhir_specimen_collection.collectedDateTime = dateTime(value=dateutil.parser.parse(v).isoformat())
+            fhir_specimen_collection_collected = malac.models.fhir.r4.dateTime()
+            fhir_specimen_collection.collectedDateTime = fhir_specimen_collection_collected
+            TSDateTime(cda_effectiveTime, fhir_specimen_collection_collected)
+    cda_effectiveTime = cda_procedure.effectiveTime
+    if cda_effectiveTime:
+        if cda_effectiveTime.low is not None or cda_effectiveTime.high is not None:
+            fhir_specimen_collection_collected = malac.models.fhir.r4.Period()
+            fhir_specimen_collection.collectedPeriod = fhir_specimen_collection_collected
+            IVLTSPeriod(cda_effectiveTime, fhir_specimen_collection_collected)
     for targetSiteCode in cda_procedure.targetSiteCode or []:
         fhir_specimen_collection.bodySite = malac.models.fhir.r4.CodeableConcept()
         CDCodeableConcept(targetSiteCode, fhir_specimen_collection.bodySite)
@@ -891,6 +897,21 @@ def CdaSpecimenCollectionToFhirSpecimen(cda_procedure, fhir_specimen, fhir_patie
     fhir_specimen_collection_bodySite.coding.append(fhir_specimen_collection_bodySite_coding)
     fhir_specimen_collection_bodySite_coding.system = uri(value='http://terminology.hl7.org/CodeSystem/v3-NullFlavor')
     fhir_specimen_collection_bodySite_coding.code = string(value='OTH')
+    for cda_procedure_performer in cda_procedure.performer or []:
+        cda_procedure_performer_assignedEntity = cda_procedure_performer.assignedEntity
+        if cda_procedure_performer_assignedEntity:
+            fhir_bundle_entry = malac.models.fhir.r4.Bundle_Entry()
+            fhir_bundle.entry.append(fhir_bundle_entry)
+            fhir_practitionerRole = malac.models.fhir.r4.PractitionerRole()
+            fhir_bundle_entry.resource = malac.models.fhir.r4.ResourceContainer(PractitionerRole=fhir_practitionerRole)
+            fhir_practitionerRole_id = string(value=str(uuid.uuid4()))
+            fhir_practitionerRole.id = fhir_practitionerRole_id
+            fhir_bundle_entry.fullUrl = uri(value=('urn:uuid:' + fhir_practitionerRole_id.value))
+            fhir_specimen_collection_collector_reference = malac.models.fhir.r4.Reference()
+            fhir_specimen_collection.collector = fhir_specimen_collection_collector_reference
+            fhir_specimen_collection_collector_reference.reference = string(value=('urn:uuid:' + fhir_practitionerRole_id.value))
+            fhir_specimen_collection_collector_reference.type_ = uri(value='PractitionerRole')
+            CdaAssignedEntityToFhirPractitionerRole(cda_procedure_performer_assignedEntity, fhir_practitionerRole, fhir_bundle)
     for cda_participant in cda_procedure.participant or []:
         cda_participantRole = cda_participant.participantRole
         if cda_participantRole:
@@ -908,9 +929,9 @@ def CdaSpecimenCollectionToFhirSpecimen(cda_procedure, fhir_specimen, fhir_patie
             cda_effectiveTime = cda_act.effectiveTime
             if cda_effectiveTime:
                 if cda_effectiveTime.value is not None:
-                    v = cda_effectiveTime.value
-                    if v:
-                        fhir_specimen.receivedTime = dateTime(value=dateutil.parser.parse(v).isoformat())
+                    fhir_specimen_receivedTime = malac.models.fhir.r4.dateTime()
+                    fhir_specimen.receivedTime = fhir_specimen_receivedTime
+                    TSDateTime(cda_effectiveTime, fhir_specimen_receivedTime)
 
 def CdaLaboratorySpecialtySectionToFhirSectionWithSpecimen(cda, cda_section, fhir_section, fhir_practitionerRole, fhir_patient, fhir_diagnosticReport, fhir_bundle, fhir_specimen):
     CdaSectionToFhirSection(cda_section, fhir_section, fhir_bundle)
@@ -921,7 +942,7 @@ def CdaLaboratorySpecialtySectionToFhirSectionWithSpecimen(cda, cda_section, fhi
                 if fhirpath.single([v1 for v1 in fhirpath_utils.get(cda_entryRelationship,'procedure','templateId') if v1.root == '1.3.6.1.4.1.19376.1.3.1.2']):
                     cda_procedure = cda_entryRelationship.procedure
                     if cda_procedure:
-                        CdaSpecimenCollectionToFhirSpecimen(cda_procedure, fhir_specimen, fhir_patient, fhir_diagnosticReport)
+                        CdaSpecimenCollectionToFhirSpecimen(cda_procedure, fhir_specimen, fhir_patient, fhir_diagnosticReport, fhir_bundle)
             for cda_entryRelationship in cda_act.entryRelationship or []:
                 if fhirpath.single([v1 for v1 in fhirpath_utils.get(cda_entryRelationship,'organizer','templateId') if v1.root == '1.3.6.1.4.1.19376.1.3.1.4']):
                     cda_laboratory_battery_organizer = cda_entryRelationship.organizer
@@ -971,7 +992,7 @@ def CdaLaboratorySpecialtySectionToFhirSection(cda, cda_section, fhir_section, f
                         fhir_specimen_id = string(value=str(uuid.uuid4()))
                         fhir_specimen.id = fhir_specimen_id
                         fhir_bundle_entry.fullUrl = uri(value=('urn:uuid:' + fhir_specimen_id.value))
-                        CdaSpecimenCollectionToFhirSpecimen(cda_procedure, fhir_specimen, fhir_patient, fhir_diagnosticReport)
+                        CdaSpecimenCollectionToFhirSpecimen(cda_procedure, fhir_specimen, fhir_patient, fhir_diagnosticReport, fhir_bundle)
             for cda_entryRelationship in cda_act.entryRelationship or []:
                 if fhirpath.single([v1 for v1 in fhirpath_utils.get(cda_entryRelationship,'organizer','templateId') if v1.root == '1.3.6.1.4.1.19376.1.3.1.4']):
                     cda_laboratory_battery_organizer = cda_entryRelationship.organizer
@@ -1568,13 +1589,13 @@ conceptMap_as_7dimension_dict = {}
 conceptMap_as_7dimension_dict["cda-clinicaldocument-code-2-fhir-composition-type"] = {
     "%": {
         "%": {
-            "https://termgit.elga.gv.at/ValueSet/elga-dokumentenklassen": {
-                "http://terminology.ehdsi.eu/ValueSet/eHDSILabStudyType": {
+            "http://loinc.org": {
+                "http://loinc.org": {
                     "11502-2": [
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "https://termgit.elga.gv.at/ValueSet/elga-dokumentenklassen",
+                                "system": "http://loinc.org",
                                 "code": "26436-6"
                             },
                             "source": "cda-clinicaldocument-code-2-fhir-composition-type"
@@ -1584,7 +1605,7 @@ conceptMap_as_7dimension_dict["cda-clinicaldocument-code-2-fhir-composition-type
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "https://termgit.elga.gv.at/ValueSet/elga-dokumentenklassen",
+                                "system": "http://loinc.org",
                                 "code": "18725-2"
                             },
                             "source": "cda-clinicaldocument-code-2-fhir-composition-type"
@@ -1599,13 +1620,13 @@ conceptMap_as_7dimension_dict["cda-clinicaldocument-code-2-fhir-composition-type
 conceptMap_as_7dimension_dict["cda-sdtc-statuscode-2-fhir-composition-status"] = {
     "%": {
         "%": {
-            "http://terminology.hl7.org/ValueSet/v3-ActStatus": {
-                "http://hl7.org/fhir/ValueSet/composition-status": {
+            "http://terminology.hl7.org/CodeSystem/v3-ActStatus": {
+                "http://hl7.org/fhir/composition-status": {
                     "active": [
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://terminology.hl7.org/ValueSet/v3-ActStatus",
+                                "system": "http://terminology.hl7.org/CodeSystem/v3-ActStatus",
                                 "code": "preliminary"
                             },
                             "source": "cda-sdtc-statuscode-2-fhir-composition-status"
@@ -1615,7 +1636,7 @@ conceptMap_as_7dimension_dict["cda-sdtc-statuscode-2-fhir-composition-status"] =
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://terminology.hl7.org/ValueSet/v3-ActStatus",
+                                "system": "http://terminology.hl7.org/CodeSystem/v3-ActStatus",
                                 "code": "entered-in-error"
                             },
                             "source": "cda-sdtc-statuscode-2-fhir-composition-status"
@@ -1630,13 +1651,13 @@ conceptMap_as_7dimension_dict["cda-sdtc-statuscode-2-fhir-composition-status"] =
 conceptMap_as_7dimension_dict["cda-sdtc-statuscode-2-fhir-diagnosticreport-status"] = {
     "%": {
         "%": {
-            "http://terminology.hl7.org/ValueSet/v3-ActStatus": {
-                "http://hl7.org/fhir/ValueSet/diagnostic-report-status": {
+            "http://terminology.hl7.org/CodeSystem/v3-ActStatus": {
+                "http://hl7.org/fhir/diagnostic-report-status": {
                     "active": [
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://terminology.hl7.org/ValueSet/v3-ActStatus",
+                                "system": "http://terminology.hl7.org/CodeSystem/v3-ActStatus",
                                 "code": "preliminary"
                             },
                             "source": "cda-sdtc-statuscode-2-fhir-diagnosticreport-status"
@@ -1646,41 +1667,10 @@ conceptMap_as_7dimension_dict["cda-sdtc-statuscode-2-fhir-diagnosticreport-statu
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://terminology.hl7.org/ValueSet/v3-ActStatus",
+                                "system": "http://terminology.hl7.org/CodeSystem/v3-ActStatus",
                                 "code": "entered-in-error"
                             },
                             "source": "cda-sdtc-statuscode-2-fhir-diagnosticreport-status"
-                        }
-                    ]
-                }
-            }
-        }
-    }
-}
-
-conceptMap_as_7dimension_dict["cm-v3-administrative-gender"] = {
-    "%": {
-        "%": {
-            "http://terminology.hl7.org/ValueSet/v3-AdministrativeGender": {
-                "http://hl7.org/fhir/ValueSet/administrative-gender": {
-                    "M": [
-                        {
-                            "relationship": "equivalent",
-                            "concept": {
-                                "system": "http://terminology.hl7.org/ValueSet/v3-AdministrativeGender",
-                                "code": "male"
-                            },
-                            "source": "cm-v3-administrative-gender"
-                        }
-                    ],
-                    "F": [
-                        {
-                            "relationship": "equivalent",
-                            "concept": {
-                                "system": "http://terminology.hl7.org/ValueSet/v3-AdministrativeGender",
-                                "code": "female"
-                            },
-                            "source": "cm-v3-administrative-gender"
                         }
                     ]
                 }
@@ -1693,7 +1683,7 @@ conceptMap_as_7dimension_dict["ELGAAdministrativeGenderFHIRGender"] = {
     "%": {
         "%": {
             "https://termgit.elga.gv.at/ValueSet-elga-administrativegender": {
-                "http://hl7.org/fhir/ValueSet/administrative-gender": {
+                "http://hl7.org/fhir/administrative-gender": {
                     "F": [
                         {
                             "relationship": "equivalent",
@@ -1763,13 +1753,13 @@ conceptMap_as_7dimension_dict["ELGAAdministrativeGenderFHIRGender"] = {
 conceptMap_as_7dimension_dict["act-status-2-observation-status"] = {
     "%": {
         "%": {
-            "http://terminology.hl7.org/ValueSet/v3-ActStatus": {
-                "http://hl7.org/fhir/ValueSet/observation-status": {
+            "http://terminology.hl7.org/CodeSystem/v3-ActStatus": {
+                "http://hl7.org/fhir/observation-status": {
                     "completed": [
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://terminology.hl7.org/ValueSet/v3-ActStatus",
+                                "system": "http://terminology.hl7.org/CodeSystem/v3-ActStatus",
                                 "code": "final"
                             },
                             "source": "act-status-2-observation-status"
@@ -1779,7 +1769,7 @@ conceptMap_as_7dimension_dict["act-status-2-observation-status"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://terminology.hl7.org/ValueSet/v3-ActStatus",
+                                "system": "http://terminology.hl7.org/CodeSystem/v3-ActStatus",
                                 "code": "preliminary"
                             },
                             "source": "act-status-2-observation-status"
@@ -1789,7 +1779,7 @@ conceptMap_as_7dimension_dict["act-status-2-observation-status"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://terminology.hl7.org/ValueSet/v3-ActStatus",
+                                "system": "http://terminology.hl7.org/CodeSystem/v3-ActStatus",
                                 "code": "cancelled"
                             },
                             "source": "act-status-2-observation-status"
@@ -1801,117 +1791,16 @@ conceptMap_as_7dimension_dict["act-status-2-observation-status"] = {
     }
 }
 
-conceptMap_as_7dimension_dict["addressUse"] = {
-    "%": {
-        "%": {
-            "http://terminology.hl7.org/ValueSet/v3-AddressUse": {
-                "http://hl7.org/fhir/valueset-address-use.html": {
-                    "H": [
-                        {
-                            "relationship": "equivalent",
-                            "concept": {
-                                "system": "http://terminology.hl7.org/ValueSet/v3-AddressUse",
-                                "code": "home"
-                            },
-                            "source": "addressUse"
-                        }
-                    ],
-                    "HP": [
-                        {
-                            "relationship": "equivalent",
-                            "concept": {
-                                "system": "http://terminology.hl7.org/ValueSet/v3-AddressUse",
-                                "code": "home"
-                            },
-                            "source": "addressUse"
-                        }
-                    ],
-                    "HV": [
-                        {
-                            "relationship": "equivalent",
-                            "concept": {
-                                "system": "http://terminology.hl7.org/ValueSet/v3-AddressUse",
-                                "code": "home"
-                            },
-                            "source": "addressUse"
-                        }
-                    ],
-                    "WP": [
-                        {
-                            "relationship": "equivalent",
-                            "concept": {
-                                "system": "http://terminology.hl7.org/ValueSet/v3-AddressUse",
-                                "code": "work"
-                            },
-                            "source": "addressUse"
-                        }
-                    ],
-                    "DIR": [
-                        {
-                            "relationship": "equivalent",
-                            "concept": {
-                                "system": "http://terminology.hl7.org/ValueSet/v3-AddressUse",
-                                "code": "work"
-                            },
-                            "source": "addressUse"
-                        }
-                    ],
-                    "PUB": [
-                        {
-                            "relationship": "equivalent",
-                            "concept": {
-                                "system": "http://terminology.hl7.org/ValueSet/v3-AddressUse",
-                                "code": "work"
-                            },
-                            "source": "addressUse"
-                        }
-                    ],
-                    "TMP": [
-                        {
-                            "relationship": "equivalent",
-                            "concept": {
-                                "system": "http://terminology.hl7.org/ValueSet/v3-AddressUse",
-                                "code": "temp"
-                            },
-                            "source": "addressUse"
-                        }
-                    ],
-                    "OLD": [
-                        {
-                            "relationship": "equivalent",
-                            "concept": {
-                                "system": "http://terminology.hl7.org/ValueSet/v3-AddressUse",
-                                "code": "old"
-                            },
-                            "source": "addressUse"
-                        }
-                    ],
-                    "BAD": [
-                        {
-                            "relationship": "equivalent",
-                            "concept": {
-                                "system": "http://terminology.hl7.org/ValueSet/v3-AddressUse",
-                                "code": "old"
-                            },
-                            "source": "addressUse"
-                        }
-                    ]
-                }
-            }
-        }
-    }
-}
-
 conceptMap_as_7dimension_dict["ELGA2FHIRAddressUse"] = {
     "%": {
         "%": {
-            "https://termgit.elga.gv.at/ValueSet/elga-addressuse": {
-                "http://hl7.org/fhir/ValueSet/address-use": {
+            "http://terminology.hl7.org/CodeSystem/v3-AddressUse": {
+                "http://hl7.org/fhir/address-use": {
                     "H": [
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "https://termgit.elga.gv.at/ValueSet/elga-addressuse",
+                                "system": "http://terminology.hl7.org/CodeSystem/v3-AddressUse",
                                 "code": "home"
                             },
                             "source": "ELGA2FHIRAddressUse"
@@ -1921,7 +1810,7 @@ conceptMap_as_7dimension_dict["ELGA2FHIRAddressUse"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "https://termgit.elga.gv.at/ValueSet/elga-addressuse",
+                                "system": "http://terminology.hl7.org/CodeSystem/v3-AddressUse",
                                 "code": "home"
                             },
                             "source": "ELGA2FHIRAddressUse"
@@ -1931,7 +1820,7 @@ conceptMap_as_7dimension_dict["ELGA2FHIRAddressUse"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "https://termgit.elga.gv.at/ValueSet/elga-addressuse",
+                                "system": "http://terminology.hl7.org/CodeSystem/v3-AddressUse",
                                 "code": "home"
                             },
                             "source": "ELGA2FHIRAddressUse"
@@ -1941,7 +1830,7 @@ conceptMap_as_7dimension_dict["ELGA2FHIRAddressUse"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "https://termgit.elga.gv.at/ValueSet/elga-addressuse",
+                                "system": "http://terminology.hl7.org/CodeSystem/v3-AddressUse",
                                 "code": "work"
                             },
                             "source": "ELGA2FHIRAddressUse"
@@ -1951,7 +1840,7 @@ conceptMap_as_7dimension_dict["ELGA2FHIRAddressUse"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "https://termgit.elga.gv.at/ValueSet/elga-addressuse",
+                                "system": "http://terminology.hl7.org/CodeSystem/v3-AddressUse",
                                 "code": "work"
                             },
                             "source": "ELGA2FHIRAddressUse"
@@ -1961,7 +1850,7 @@ conceptMap_as_7dimension_dict["ELGA2FHIRAddressUse"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "https://termgit.elga.gv.at/ValueSet/elga-addressuse",
+                                "system": "http://terminology.hl7.org/CodeSystem/v3-AddressUse",
                                 "code": "work"
                             },
                             "source": "ELGA2FHIRAddressUse"
@@ -1971,7 +1860,7 @@ conceptMap_as_7dimension_dict["ELGA2FHIRAddressUse"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "https://termgit.elga.gv.at/ValueSet/elga-addressuse",
+                                "system": "http://terminology.hl7.org/CodeSystem/v3-AddressUse",
                                 "code": "temp"
                             },
                             "source": "ELGA2FHIRAddressUse"
@@ -1981,7 +1870,7 @@ conceptMap_as_7dimension_dict["ELGA2FHIRAddressUse"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "https://termgit.elga.gv.at/ValueSet/elga-addressuse",
+                                "system": "http://terminology.hl7.org/CodeSystem/v3-AddressUse",
                                 "code": "home"
                             },
                             "source": "ELGA2FHIRAddressUse"
@@ -1991,7 +1880,7 @@ conceptMap_as_7dimension_dict["ELGA2FHIRAddressUse"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "https://termgit.elga.gv.at/ValueSet/elga-addressuse",
+                                "system": "http://terminology.hl7.org/CodeSystem/v3-AddressUse",
                                 "code": "home"
                             },
                             "source": "ELGA2FHIRAddressUse"
@@ -2006,13 +1895,13 @@ conceptMap_as_7dimension_dict["ELGA2FHIRAddressUse"] = {
 conceptMap_as_7dimension_dict["ELGATelecomAddressUseFHIRContactPointUse"] = {
     "%": {
         "%": {
-            "https://termgit.elga.gv.at/ValueSet-elga-telecomaddressuse": {
-                "http://hl7.org/fhir/ValueSet/contact-point-use": {
+            "http://terminology.hl7.org/CodeSystem/v3-AddressUse": {
+                "http://hl7.org/fhir/contact-point-use": {
                     "H": [
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "https://termgit.elga.gv.at/ValueSet-elga-telecomaddressuse",
+                                "system": "http://terminology.hl7.org/CodeSystem/v3-AddressUse",
                                 "code": "home"
                             },
                             "source": "ELGATelecomAddressUseFHIRContactPointUse"
@@ -2022,7 +1911,7 @@ conceptMap_as_7dimension_dict["ELGATelecomAddressUseFHIRContactPointUse"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "https://termgit.elga.gv.at/ValueSet-elga-telecomaddressuse",
+                                "system": "http://terminology.hl7.org/CodeSystem/v3-AddressUse",
                                 "code": "home"
                             },
                             "source": "ELGATelecomAddressUseFHIRContactPointUse"
@@ -2032,7 +1921,7 @@ conceptMap_as_7dimension_dict["ELGATelecomAddressUseFHIRContactPointUse"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "https://termgit.elga.gv.at/ValueSet-elga-telecomaddressuse",
+                                "system": "http://terminology.hl7.org/CodeSystem/v3-AddressUse",
                                 "code": "home"
                             },
                             "source": "ELGATelecomAddressUseFHIRContactPointUse"
@@ -2042,7 +1931,7 @@ conceptMap_as_7dimension_dict["ELGATelecomAddressUseFHIRContactPointUse"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "https://termgit.elga.gv.at/ValueSet-elga-telecomaddressuse",
+                                "system": "http://terminology.hl7.org/CodeSystem/v3-AddressUse",
                                 "code": "work"
                             },
                             "source": "ELGATelecomAddressUseFHIRContactPointUse"
@@ -2052,7 +1941,7 @@ conceptMap_as_7dimension_dict["ELGATelecomAddressUseFHIRContactPointUse"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "https://termgit.elga.gv.at/ValueSet-elga-telecomaddressuse",
+                                "system": "http://terminology.hl7.org/CodeSystem/v3-AddressUse",
                                 "code": "work"
                             },
                             "source": "ELGATelecomAddressUseFHIRContactPointUse"
@@ -2062,7 +1951,7 @@ conceptMap_as_7dimension_dict["ELGATelecomAddressUseFHIRContactPointUse"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "https://termgit.elga.gv.at/ValueSet-elga-telecomaddressuse",
+                                "system": "http://terminology.hl7.org/CodeSystem/v3-AddressUse",
                                 "code": "home"
                             },
                             "source": "ELGATelecomAddressUseFHIRContactPointUse"
@@ -2072,7 +1961,7 @@ conceptMap_as_7dimension_dict["ELGATelecomAddressUseFHIRContactPointUse"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "https://termgit.elga.gv.at/ValueSet-elga-telecomaddressuse",
+                                "system": "http://terminology.hl7.org/CodeSystem/v3-AddressUse",
                                 "code": "mobile"
                             },
                             "source": "ELGATelecomAddressUseFHIRContactPointUse"
@@ -2082,7 +1971,7 @@ conceptMap_as_7dimension_dict["ELGATelecomAddressUseFHIRContactPointUse"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "https://termgit.elga.gv.at/ValueSet-elga-telecomaddressuse",
+                                "system": "http://terminology.hl7.org/CodeSystem/v3-AddressUse",
                                 "code": "mobile"
                             },
                             "source": "ELGATelecomAddressUseFHIRContactPointUse"
@@ -2092,7 +1981,7 @@ conceptMap_as_7dimension_dict["ELGATelecomAddressUseFHIRContactPointUse"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "https://termgit.elga.gv.at/ValueSet-elga-telecomaddressuse",
+                                "system": "http://terminology.hl7.org/CodeSystem/v3-AddressUse",
                                 "code": "temp"
                             },
                             "source": "ELGATelecomAddressUseFHIRContactPointUse"
@@ -2107,13 +1996,13 @@ conceptMap_as_7dimension_dict["ELGATelecomAddressUseFHIRContactPointUse"] = {
 conceptMap_as_7dimension_dict["ELGAEntityNameUseFHIRNameUse"] = {
     "%": {
         "%": {
-            "https://termgit.elga.gv.at/ValueSet-elga-entitynameuse": {
-                "http://hl7.org/fhir/ValueSet/name-use": {
+            "http://terminology.hl7.org/CodeSystem/v3-EntityNameUse": {
+                "http://hl7.org/fhir/name-use": {
                     "ASGN": [
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "https://termgit.elga.gv.at/ValueSet-elga-entitynameuse",
+                                "system": "http://terminology.hl7.org/CodeSystem/v3-EntityNameUse",
                                 "code": "usual"
                             },
                             "source": "ELGAEntityNameUseFHIRNameUse"
@@ -2123,7 +2012,7 @@ conceptMap_as_7dimension_dict["ELGAEntityNameUseFHIRNameUse"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "https://termgit.elga.gv.at/ValueSet-elga-entitynameuse",
+                                "system": "http://terminology.hl7.org/CodeSystem/v3-EntityNameUse",
                                 "code": "usual"
                             },
                             "source": "ELGAEntityNameUseFHIRNameUse"
@@ -2133,7 +2022,7 @@ conceptMap_as_7dimension_dict["ELGAEntityNameUseFHIRNameUse"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "https://termgit.elga.gv.at/ValueSet-elga-entitynameuse",
+                                "system": "http://terminology.hl7.org/CodeSystem/v3-EntityNameUse",
                                 "code": "anonymous"
                             },
                             "source": "ELGAEntityNameUseFHIRNameUse"
@@ -2143,7 +2032,7 @@ conceptMap_as_7dimension_dict["ELGAEntityNameUseFHIRNameUse"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "https://termgit.elga.gv.at/ValueSet-elga-entitynameuse",
+                                "system": "http://terminology.hl7.org/CodeSystem/v3-EntityNameUse",
                                 "code": "official"
                             },
                             "source": "ELGAEntityNameUseFHIRNameUse"
@@ -2153,7 +2042,7 @@ conceptMap_as_7dimension_dict["ELGAEntityNameUseFHIRNameUse"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "https://termgit.elga.gv.at/ValueSet-elga-entitynameuse",
+                                "system": "http://terminology.hl7.org/CodeSystem/v3-EntityNameUse",
                                 "code": "official"
                             },
                             "source": "ELGAEntityNameUseFHIRNameUse"
@@ -2163,7 +2052,7 @@ conceptMap_as_7dimension_dict["ELGAEntityNameUseFHIRNameUse"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "https://termgit.elga.gv.at/ValueSet-elga-entitynameuse",
+                                "system": "http://terminology.hl7.org/CodeSystem/v3-EntityNameUse",
                                 "code": "anonymous"
                             },
                             "source": "ELGAEntityNameUseFHIRNameUse"
@@ -2173,7 +2062,7 @@ conceptMap_as_7dimension_dict["ELGAEntityNameUseFHIRNameUse"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "https://termgit.elga.gv.at/ValueSet-elga-entitynameuse",
+                                "system": "http://terminology.hl7.org/CodeSystem/v3-EntityNameUse",
                                 "code": "anonymous"
                             },
                             "source": "ELGAEntityNameUseFHIRNameUse"
@@ -2183,7 +2072,7 @@ conceptMap_as_7dimension_dict["ELGAEntityNameUseFHIRNameUse"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "https://termgit.elga.gv.at/ValueSet-elga-entitynameuse",
+                                "system": "http://terminology.hl7.org/CodeSystem/v3-EntityNameUse",
                                 "code": "anonymous"
                             },
                             "source": "ELGAEntityNameUseFHIRNameUse"
@@ -2193,7 +2082,7 @@ conceptMap_as_7dimension_dict["ELGAEntityNameUseFHIRNameUse"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "https://termgit.elga.gv.at/ValueSet-elga-entitynameuse",
+                                "system": "http://terminology.hl7.org/CodeSystem/v3-EntityNameUse",
                                 "code": "temp"
                             },
                             "source": "ELGAEntityNameUseFHIRNameUse"
@@ -2203,7 +2092,7 @@ conceptMap_as_7dimension_dict["ELGAEntityNameUseFHIRNameUse"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "https://termgit.elga.gv.at/ValueSet-elga-entitynameuse",
+                                "system": "http://terminology.hl7.org/CodeSystem/v3-EntityNameUse",
                                 "code": "nickname"
                             },
                             "source": "ELGAEntityNameUseFHIRNameUse"
@@ -2213,7 +2102,7 @@ conceptMap_as_7dimension_dict["ELGAEntityNameUseFHIRNameUse"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "https://termgit.elga.gv.at/ValueSet-elga-entitynameuse",
+                                "system": "http://terminology.hl7.org/CodeSystem/v3-EntityNameUse",
                                 "code": "nickname"
                             },
                             "source": "ELGAEntityNameUseFHIRNameUse"
@@ -2223,7 +2112,7 @@ conceptMap_as_7dimension_dict["ELGAEntityNameUseFHIRNameUse"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "https://termgit.elga.gv.at/ValueSet-elga-entitynameuse",
+                                "system": "http://terminology.hl7.org/CodeSystem/v3-EntityNameUse",
                                 "code": "nickname"
                             },
                             "source": "ELGAEntityNameUseFHIRNameUse"
@@ -2233,7 +2122,7 @@ conceptMap_as_7dimension_dict["ELGAEntityNameUseFHIRNameUse"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "https://termgit.elga.gv.at/ValueSet-elga-entitynameuse",
+                                "system": "http://terminology.hl7.org/CodeSystem/v3-EntityNameUse",
                                 "code": "nickname"
                             },
                             "source": "ELGAEntityNameUseFHIRNameUse"
@@ -2243,7 +2132,7 @@ conceptMap_as_7dimension_dict["ELGAEntityNameUseFHIRNameUse"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "https://termgit.elga.gv.at/ValueSet-elga-entitynameuse",
+                                "system": "http://terminology.hl7.org/CodeSystem/v3-EntityNameUse",
                                 "code": "nickname"
                             },
                             "source": "ELGAEntityNameUseFHIRNameUse"
@@ -2258,13 +2147,13 @@ conceptMap_as_7dimension_dict["ELGAEntityNameUseFHIRNameUse"] = {
 conceptMap_as_7dimension_dict["ELGAEntityNamePartQualifierFHIRNamePartQualifier"] = {
     "%": {
         "%": {
-            "https://termgit.elga.gv.at/ValueSet-elga-entitynamepartqualifier": {
-                "http://hl7.org/fhir/ValueSet/name-part-qualifier": {
+            "http://terminology.hl7.org/CodeSystem/v3-EntityNamePartQualifier": {
+                "http://terminology.hl7.org/CodeSystem/v3-EntityNamePartQualifierR2": {
                     "AC": [
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "https://termgit.elga.gv.at/ValueSet-elga-entitynamepartqualifier",
+                                "system": "http://terminology.hl7.org/CodeSystem/v3-EntityNamePartQualifier",
                                 "code": "AC"
                             },
                             "source": "ELGAEntityNamePartQualifierFHIRNamePartQualifier"
@@ -2274,7 +2163,7 @@ conceptMap_as_7dimension_dict["ELGAEntityNamePartQualifierFHIRNamePartQualifier"
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "https://termgit.elga.gv.at/ValueSet-elga-entitynamepartqualifier",
+                                "system": "http://terminology.hl7.org/CodeSystem/v3-EntityNamePartQualifier",
                                 "code": "AD"
                             },
                             "source": "ELGAEntityNamePartQualifierFHIRNamePartQualifier"
@@ -2284,7 +2173,7 @@ conceptMap_as_7dimension_dict["ELGAEntityNamePartQualifierFHIRNamePartQualifier"
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "https://termgit.elga.gv.at/ValueSet-elga-entitynamepartqualifier",
+                                "system": "http://terminology.hl7.org/CodeSystem/v3-EntityNamePartQualifier",
                                 "code": "BR"
                             },
                             "source": "ELGAEntityNamePartQualifierFHIRNamePartQualifier"
@@ -2294,7 +2183,7 @@ conceptMap_as_7dimension_dict["ELGAEntityNamePartQualifierFHIRNamePartQualifier"
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "https://termgit.elga.gv.at/ValueSet-elga-entitynamepartqualifier",
+                                "system": "http://terminology.hl7.org/CodeSystem/v3-EntityNamePartQualifier",
                                 "code": "CL"
                             },
                             "source": "ELGAEntityNamePartQualifierFHIRNamePartQualifier"
@@ -2304,7 +2193,7 @@ conceptMap_as_7dimension_dict["ELGAEntityNamePartQualifierFHIRNamePartQualifier"
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "https://termgit.elga.gv.at/ValueSet-elga-entitynamepartqualifier",
+                                "system": "http://terminology.hl7.org/CodeSystem/v3-EntityNamePartQualifier",
                                 "code": "IN"
                             },
                             "source": "ELGAEntityNamePartQualifierFHIRNamePartQualifier"
@@ -2314,7 +2203,7 @@ conceptMap_as_7dimension_dict["ELGAEntityNamePartQualifierFHIRNamePartQualifier"
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "https://termgit.elga.gv.at/ValueSet-elga-entitynamepartqualifier",
+                                "system": "http://terminology.hl7.org/CodeSystem/v3-EntityNamePartQualifier",
                                 "code": "LS"
                             },
                             "source": "ELGAEntityNamePartQualifierFHIRNamePartQualifier"
@@ -2324,7 +2213,7 @@ conceptMap_as_7dimension_dict["ELGAEntityNamePartQualifierFHIRNamePartQualifier"
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "https://termgit.elga.gv.at/ValueSet-elga-entitynamepartqualifier",
+                                "system": "http://terminology.hl7.org/CodeSystem/v3-EntityNamePartQualifier",
                                 "code": "NB"
                             },
                             "source": "ELGAEntityNamePartQualifierFHIRNamePartQualifier"
@@ -2334,7 +2223,7 @@ conceptMap_as_7dimension_dict["ELGAEntityNamePartQualifierFHIRNamePartQualifier"
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "https://termgit.elga.gv.at/ValueSet-elga-entitynamepartqualifier",
+                                "system": "http://terminology.hl7.org/CodeSystem/v3-EntityNamePartQualifier",
                                 "code": "PR"
                             },
                             "source": "ELGAEntityNamePartQualifierFHIRNamePartQualifier"
@@ -2344,7 +2233,7 @@ conceptMap_as_7dimension_dict["ELGAEntityNamePartQualifierFHIRNamePartQualifier"
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "https://termgit.elga.gv.at/ValueSet-elga-entitynamepartqualifier",
+                                "system": "http://terminology.hl7.org/CodeSystem/v3-EntityNamePartQualifier",
                                 "code": "SP"
                             },
                             "source": "ELGAEntityNamePartQualifierFHIRNamePartQualifier"
@@ -2354,7 +2243,7 @@ conceptMap_as_7dimension_dict["ELGAEntityNamePartQualifierFHIRNamePartQualifier"
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "https://termgit.elga.gv.at/ValueSet-elga-entitynamepartqualifier",
+                                "system": "http://terminology.hl7.org/CodeSystem/v3-EntityNamePartQualifier",
                                 "code": "VV"
                             },
                             "source": "ELGAEntityNamePartQualifierFHIRNamePartQualifier"
