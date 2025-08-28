@@ -932,7 +932,7 @@ group CdaBodyToFhirComposition(source cda: ClinicalDocument, source cda_structur
       cda_component.section as cda_section where templateId.where(root='1.2.40.0.34.6.0.11.2.102' or root='1.3.6.1.4.1.19376.1.3.3.2.1')
         -> fhir_composition.section as fhir_section then CdaLaboratorySpecialtySectionToFhirSectionWithSpecimen(cda, cda_section, fhir_section, fhir_practitionerRole, fhir_patient, fhir_diagnosticReport, fhir_bundle, fhir_specimen);
     };
-  };
+  } "CdaSectionsToFhirSectionsWithOneSpecimen";
 
   // in case where none or more than one Specimen has been documented wihtin the lab report
   cda where (cda.descendants().where(root='1.3.6.1.4.1.19376.1.3.1.2').count() = 0 or cda.descendants().where(root='1.3.6.1.4.1.19376.1.3.1.2').count() > 1) then {
@@ -944,7 +944,7 @@ group CdaBodyToFhirComposition(source cda: ClinicalDocument, source cda_structur
       cda_component.section as cda_section where templateId.where(root='1.2.40.0.34.6.0.11.2.102' or root='1.3.6.1.4.1.19376.1.3.3.2.1')
         -> fhir_composition.section as fhir_section then CdaLaboratorySpecialtySectionToFhirSection(cda, cda_section, fhir_section, fhir_practitionerRole, fhir_patient, fhir_diagnosticReport, fhir_bundle);
     };
-  };
+  } "CdaSectionsToFhirSectionsWithNoneOrMultipleSpecimen";
 }
 
 group CdaToPractitionerRole(source cda: ClinicalDocument, target fhir_practitionerRole: PractitionerRole, target fhir_bundle: Bundle) {
@@ -1243,7 +1243,7 @@ group CdaSpecimenCollectionToFhirSpecimen(source cda_procedure: Procedure, targe
           // };
         };
       };
-  };
+  } "CdaSpecimenCollectionToFhirSpecimen";
 }
 
 group CdaLaboratorySpecialtySectionToFhirSectionWithSpecimen (source cda: ClinicalDocument, source cda_section: Section, target fhir_section, target fhir_practitionerRole: PractitionerRole, target fhir_patient: Patient, target fhir_diagnosticReport: DiagnosticReport, target fhir_bundle: Bundle, target fhir_specimen: Specimen) extends CdaSectionToFhirSection {
@@ -1281,7 +1281,9 @@ group CdaLaboratorySpecialtySectionToFhirSectionWithSpecimen (source cda: Clinic
           fhir_section.entry = create('Reference') as fhir_section_entry_reference,
           fhir_section_entry_reference.reference = append('urn:uuid:', fhir_observation_id),
           fhir_section_entry_reference.type = 'Observation' then {
-            cda_laboratory_battery_organizer then CdaOrganizerToFhirObservationWithSpecimen(cda, cda_laboratory_battery_organizer, fhir_observation, fhir_patient, fhir_practitionerRole, fhir_specimen);
+            cda_laboratory_battery_organizer then
+              CdaOrganizerToFhirObservationWithSpecimen(cda, cda_laboratory_battery_organizer, fhir_observation, fhir_patient, fhir_practitionerRole, fhir_specimen)
+              "CdaOrganizerToFhirObservationWithSpecimen";
 
             // organizer.component (Laboratory Observation)
             cda_laboratory_battery_organizer.component as cda_component where $this.observation.templateId.where(root='1.3.6.1.4.1.19376.1.3.1.6') then {
@@ -1342,7 +1344,9 @@ group CdaLaboratorySpecialtySectionToFhirSection (source cda: ClinicalDocument, 
           fhir_section.entry = create('Reference') as fhir_section_entry_reference,
           fhir_section_entry_reference.reference = append('urn:uuid:', fhir_observation_id),
           fhir_section_entry_reference.type = 'Observation' then {
-            cda_laboratory_battery_organizer then CdaOrganizerToFhirObservation(cda, cda_laboratory_battery_organizer, fhir_observation, fhir_patient, fhir_practitionerRole);
+            cda_laboratory_battery_organizer then
+              CdaOrganizerToFhirObservation(cda, cda_laboratory_battery_organizer, fhir_observation, fhir_patient, fhir_practitionerRole)
+              "CdaOrganizerToFhirObservation";
 
             // organizer.component (Laboratory Observation)
             cda_laboratory_battery_organizer.component as cda_component where $this.observation.templateId.where(root='1.3.6.1.4.1.19376.1.3.1.6') then {
