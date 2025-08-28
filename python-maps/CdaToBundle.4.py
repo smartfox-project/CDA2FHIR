@@ -771,10 +771,10 @@ def CdaBodyToFhirComposition(cda, cda_structuredBody, fhir_composition, fhir_pra
     for cda_component in cda_structuredBody.component or []:
         cda_section = cda_component.section
         if cda_section:
-            if fhirpath.single([v1 for v1 in fhirpath_utils.get(cda_section,'code') if (v1.code == '20' and v1.codeSystem == '1.2.40.0.34.5.11')]):
+            if fhirpath.single(fhirpath_utils.bool_or([v1 for v1 in fhirpath_utils.get(cda_section,'code') if (v1.code == 'BRIEFT' and v1.codeSystem == '1.2.40.0.34.5.40')], fhirpath_utils.bool_and([v2 for v2 in fhirpath_utils.get(cda_section,'code') if (v2.code == '46239-0' and v2.codeSystem == '2.16.840.1.113883.6.1')], fhirpath_utils.bool_or([v3 for v3 in fhirpath_utils.get(cda_section,'templateId') if v3.root == '1.2.40.0.34.6.0.11.2.114'], [v4 for v4 in fhirpath_utils.get(cda_section,'templateId') if v4.root == '1.2.40.0.34.11.4.2.4'])), fhirpath_utils.bool_and([v5 for v5 in fhirpath_utils.get(cda_section,'code') if (v5.code == '10164-2' and v5.codeSystem == '2.16.840.1.113883.6.1')], [v6 for v6 in fhirpath_utils.get(cda_section,'templateId') if v6.root == '1.2.40.0.34.6.0.11.2.111']), fhirpath_utils.bool_and([v7 for v7 in fhirpath_utils.get(cda_section,'code') if (v7.code == '400999005' and v7.codeSystem == '2.16.840.1.113883.6.96')], [v8 for v8 in fhirpath_utils.get(cda_section,'templateId') if v8.root == '1.2.40.0.34.6.0.11.2.112']), [v9 for v9 in fhirpath_utils.get(cda_section,'code') if (v9.code == '20' and v9.codeSystem == '1.2.40.0.34.5.11')], fhirpath_utils.bool_and([v10 for v10 in fhirpath_utils.get(cda_section,'code') if (v10.code == 'ABBEM' and v10.codeSystem == '1.2.40.0.34.5.40')], [v11 for v11 in fhirpath_utils.get(cda_section,'templateId') if v11.root == '1.2.40.0.34.6.0.11.2.70']))):
                 fhir_section = malac.models.fhir.r4.Composition_Section()
                 fhir_composition.section.append(fhir_section)
-                CdaBefundbewertungSectionToFhirSection(cda_section, fhir_section, fhir_bundle)
+                CdaAnnotationSectionToFhirSection(cda_section, fhir_section, fhir_bundle)
         cda_section = cda_component.section
         if cda_section:
             if fhirpath.single([v1 for v1 in fhirpath_utils.get(cda_section,'code') if (v1.code == 'BEIL' and v1.codeSystem == '1.2.40.0.34.5.40')]):
@@ -825,6 +825,16 @@ def CdaToPractitionerRole(cda, fhir_practitionerRole, fhir_bundle):
         for cda_author in cda.author:
             if fhirpath_utils.get(cda_author,'assignedAuthor','assignedPerson'):
                 CdaAuthorToFhirPractitionerRole(cda_author, fhir_practitionerRole, fhir_bundle)
+
+def CdaAnnotationSectionToFhirSection(cda_section, fhir_section, fhir_bundle):
+    CdaSectionToFhirSection(cda_section, fhir_section, fhir_bundle)
+    if fhir_section.code is None:
+        fhir_section.code = malac.models.fhir.r4.CodeableConcept()
+    fhir_section_code = fhir_section.code
+    fhir_section_coding = malac.models.fhir.r4.Coding()
+    fhir_section_code.coding.append(fhir_section_coding)
+    fhir_section_coding.code = string(value='48767-8')
+    fhir_section_coding.system = uri(value='http://loinc.org')
 
 def CdaSpecimenSectionToFhirSpecimenWithSpecimen(cda_section, fhir_patient, fhir_diagnosticReport, fhir_specimen, fhir_bundle):
     for cda_section_entry in cda_section.entry or []:
@@ -1043,9 +1053,6 @@ def CdaBeilagenSectionToFhirDiagnosticReportMedia(cda_section, fhir_diagnosticRe
     for cda_section_entry in cda_section.entry or []:
         cda_observationMedia = cda_section_entry.observationMedia
         if cda_observationMedia:
-            cda_section_text = cda_section.text
-            if cda_section_text:
-                fhir_diagnosticReport_media.comment = string(value=str(cda_section_text))
             cda_observationMedia_ID = cda_observationMedia.ID
             if cda_observationMedia_ID:
                 fhir_media_identifier = malac.models.fhir.r4.Identifier()
@@ -1061,16 +1068,6 @@ def CdaBeilagenSectionToFhirDiagnosticReportMedia(cda_section, fhir_diagnosticRe
                 if cda_mediaType:
                     fhir_media_content.contentType = string(value=cda_mediaType)
                 fhir_media_content.data = base64Binary(value=fhirpath.single(fhirpath_utils.get(cda_observationMedia_value,'valueOf_',strip=True)))
-
-def CdaBefundbewertungSectionToFhirSection(cda_section, fhir_section, fhir_bundle):
-    CdaSectionToFhirSection(cda_section, fhir_section, fhir_bundle)
-    if fhir_section.code is None:
-        fhir_section.code = malac.models.fhir.r4.CodeableConcept()
-    fhir_section_code = fhir_section.code
-    fhir_section_coding = malac.models.fhir.r4.Coding()
-    fhir_section_code.coding.append(fhir_section_coding)
-    fhir_section_coding.code = string(value='48767-8')
-    fhir_section_coding.system = uri(value='http://loinc.org')
 
 def CdaOrganizerToFhirObservation(cda, cda_organizer, fhir_observation, fhir_patient, fhir_practitionerRole):
     if fhir_observation.meta is None:
