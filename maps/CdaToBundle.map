@@ -885,20 +885,20 @@ group CdaBodyToFhirComposition(source cda: ClinicalDocument, source cda_structur
     cda_component.section as cda_section where code.where(code='703852005' and codeSystem='2.16.840.1.113883.6.96') // Auszüge aus erhobenen Daten - uncodiert
     -> fhir_composition.section as fhir_section then  CdaAuszugErhobeneDatenSectionToFhir(cda_section, fhir_section, fhir_bundle);
 
+    //Verwendete Geräte
+    cda_component.section as cda_section where templateId.where(root='1.2.40.0.34.6.0.11.2.82')
+       -> fhir_composition.section as fhir_section then CdaUsedDeviceToFhirSection(cda, cda_section, fhir_section, fhir_practitionerRole, fhir_patient, fhir_diagnosticReport, fhir_bundle);
+
 
     //Diagnosis
     cda_component.section as cda_section where templateId.where(root='1.2.40.0.34.6.0.11.2.96')
        -> fhir_composition.section as fhir_section then CdaDiagnosisToFhirSection(cda, cda_section, fhir_section, fhir_practitionerRole, fhir_patient, fhir_diagnosticReport, fhir_bundle);
 
-    // ToDo add the observation for the diagnosis
 
     //Erhobene Daten
     cda_component.section as cda_section where templateId.where(root='1.2.40.0.34.6.0.11.2.81')
         -> fhir_composition.section as fhir_section then CdaErhobeneDatenToFhirSection(cda, cda_section, fhir_section, fhir_practitionerRole, fhir_patient, fhir_diagnosticReport, fhir_bundle);
  
-     // ToDo add the observation for the diagnosis
-
-    
   };
 }
 
@@ -1334,10 +1334,10 @@ group CdaZusammenfassungBehandlungSectionToFhir(source cda_section: Section, tar
 
 // section to map text of Auszüge aus erhobenen Daten
 group CdaAuszugErhobeneDatenSectionToFhir(source cda_section: Section, target fhir_section, target fhir_bundle: Bundle) extends CdaSectionToFhirSection {
-    cda_section.component as cda_section_component then {
-      cda_section_component.section as cda_section_component_section where templateId.where(root='1.2.40.0.34.6.0.11.2.92') // Einträge
-        -> fhir_section.section as fhir_section_section
-        then CdaEintraegeToFhirSection(cda_section_component_section, fhir_section_section, fhir_bundle);
+  cda_section.component as cda_section_component then {
+    cda_section_component.section as cda_section_component_section where templateId.where(root='1.2.40.0.34.6.0.11.2.92') // Einträge
+      -> fhir_section.section as fhir_section_section
+      then CdaEintraegeToFhirSection(cda_section_component_section, fhir_section_section, fhir_bundle);
   };
 }
 
@@ -1345,11 +1345,105 @@ group CdaEintraegeToFhirSection(cda_section_component_section, fhir_section_sect
     // Here the entries are needed to be defined
 }
 
+group CdaUsedDeviceToFhirSection(source cda: ClinicalDocument, source cda_section: Section, target fhir_section, target fhir_practitionerRole: PractitionerRole, target fhir_patient: Patient, target fhir_diagnosticReport: DiagnosticReport, target fhir_bundle: Bundle) extends CdaSectionToFhirSection {
+// creating a Device after https://fhir.hl7.at/r4-ELGA-AustrianPatientSummary-main/StructureDefinition-at-aps-device.html
+  cda_section.entry as cda_section_entry then {
+    cda_section_entry.organizer as cda_organizer where $this.templateId.where(root='1.2.40.0.34.6.0.11.3.73') then {
+      cda_organizer.component as cda_component then {
+        cda_component.observation as cda_component_observation where $this.templateId.where(root='1.2.40.0.34.6.0.11.3.82') then {
+          cda_component.observation as cda_device_observation ->
+            fhir_bundle.entry as fhir_bundle_entry,
+            fhir_bundle_entry.resource = create('Device') as fhir_device,
+            fhir_device.id = uuid() as fhir_device_id,
+            fhir_bundle_entry.fullUrl = append('urn:uuid:', fhir_device_id), 
+            fhir_section.entry = create('Reference') as fhir_section_entry_reference,
+            fhir_section_entry_reference.reference = append('urn:uuid:', fhir_device_id),
+            fhir_section_entry_reference.type = 'Device' then {
+              // meta data
+              cda_device_observation ->
+                fhir_device.meta as fhir_device_meta,
+                fhir_device_meta.profile = 'https://fhir.hl7.at/r4-ELGA-AustrianPatientSummary-main/StructureDefinition-at-aps-device.html'//offizielle APS Struktur, auf EU wechseln?
+                "FhirDeviceProfile";
+            };
+            
+          // adding the serial number
+          cda_device_observation.value as cda_serialNumber ->
+            fhir_device.serialNumber;
+        };
+      };
+      cda_organizer.participant as cda_participant then {
+        cda_participant.participantRole as cda_participantRole where $this.templateId.where(root='1.2.40.0.34.6.0.11.9.43') then {
+          // adding Manufacturere and Name of this
+          cda_participantRole.playingDevice as cda_playingDevice then {
+            cda_playingDevice.manufacturerModelName as cda_device_name -> fhir_device.manufacturer
+          };
+        };
+      };
+    };
+  };
+}
+
+
 
 
 group CdaDiagnosisToFhirSection(source cda: ClinicalDocument, source cda_section: Section, target fhir_section, target fhir_practitionerRole: PractitionerRole, target fhir_patient: Patient, target fhir_diagnosticReport: DiagnosticReport, target fhir_bundle: Bundle) extends CdaSectionToFhirSection {
-// Here the entries are needed to be defined
-  }
+// creating a Condition after https://fhir.hl7.at/r4-ELGA-AustrianPatientSummary-main/StructureDefinition-at-aps-condition.html
+  cda_section.entry as cda_section_entry then {
+    cda_section_entry.act as cda_act then {
+      cda_act.entryRelationship as cda_entryRelationship where $this.observation.templateId.where(root='1.2.40.0.34.6.0.11.3.6') then {
+        cda_entryRelationship.observation as cda_diagnosis_condition ->
+          fhir_bundle.entry as fhir_bundle_entry, 
+          fhir_bundle_entry.resource = create('Condition') as fhir_condition, 
+          fhir_condition.id = uuid() as fhir_condition_id, 
+          fhir_bundle_entry.fullUrl = append('urn:uuid:', fhir_condition_id),
+          fhir_section.entry = create('Reference') as fhir_section_entry_reference,
+          fhir_section_entry_reference.reference = append('urn:uuid:', fhir_condition_id),
+          fhir_section_entry_reference.type = 'Condition' then {
+
+            // meta data
+            cda_diagnosis_condition ->
+              fhir_condition.meta as fhir_condition_meta,
+              fhir_condition_meta.profile = 'https://fhir.hl7.at/elga/aps/r4/StructureDefinition/at-aps-condition'//offizielle APS Struktur, auf EU wechseln?
+              "FhirConditionProfile";
+
+            // category 
+            cda_diagnosis_condition -> fhir_condition.category as fhir_category,
+              fhir_category.coding as fhir_category_coding,
+              fhir_category_coding.system = 'http://terminology.hl7.org/CodeSystem/condition-category',
+              fhir_category_coding.code = 'problem-list-item'
+              "FhirConditionCategoryCoding";
+
+            // reference to subject/patient
+            cda_diagnosis_condition ->
+              fhir_condition.subject = create('Reference') as fhir_condition_subject_reference,
+              fhir_patient.id as fhir_patient_id,
+              fhir_condition_subject_reference.reference = append('urn:uuid:', fhir_patient_id)
+              "FhirConditionSubject";
+
+            //mapping the code of diagnosis
+            cda_diagnosis_condition.value -> fhir_condition.code; // text value is still empty
+
+            //mapping the status of the Diagnosis
+            cda_diagnosis_condition -> fhir_condition.clinicalStatus as fhir_clinicalStatus,
+              fhir_clinicalStatus.coding as fhir_clinicalStatus_coding,
+              fhir_clinicalStatus_coding.system = 'http://terminology.hl7.org/CodeSystem/condition-clinical',
+              fhir_clinicalStatus_coding.code = 'active' // immer completed, mapping zu active?
+                "FhirConditionClinicalStatus";
+                
+            //adding the time of diagnosis via an extention
+            cda_diagnosis_condition.effectiveTime as cda_effectiveTime ->
+              fhir_condition.effective = create('dateTime') as fhir_condition_effective,
+              fhir_condition.extension as fhir_condition_effective_extenstion,
+              fhir_condition_effective_extenstion.url = 'http://hl7.org/fhir/StructureDefinition/data-absent-reason',
+              fhir_condition_effective_extenstion.value = create('code') as fhir_condition_effective_extenstion_code,
+              fhir_condition_effective_extenstion_code.value = 'not-applicable'
+              then TSDateTime(cda_effectiveTime, fhir_condition_effective)
+              "CdaEffectiveTimeToFhirConditionEffective";
+        };
+      };
+    };
+  };
+}
 
 
 group CdaErhobeneDatenToFhirSection(source cda: ClinicalDocument, source cda_section: Section, target fhir_section, target fhir_practitionerRole: PractitionerRole, target fhir_patient: Patient, target fhir_diagnosticReport: DiagnosticReport, target fhir_bundle: Bundle) extends CdaSectionToFhirSection{
@@ -1376,6 +1470,8 @@ group CdaErhobeneDatenToFhirSection(source cda: ClinicalDocument, source cda_sec
     
 };
 }
+
+
 
 group CdaVitalprameterToFhirSection( cda_section_component_section, fhir_section_section, fhir_bundle, fhir_patient, cda_section, fhir_section) extends CdaSectionToFhirSection {
 //going down on level for the observation
