@@ -1272,9 +1272,6 @@ def CdaVitalprameterToFhirSection(cda_section_component_section, fhir_section_se
                                     fhir_observation_code = fhir_observation.code
                                     fhir_observation_code.coding.append(malac.models.fhir.r4.Coding())
                                     CDCoding(cda_organizer_component_observation.code, fhir_observation_code.coding[-1])
-                                if cda_organizer_component_observation.code:
-                                    fhir_observation.code = malac.models.fhir.r4.CodeableConcept()
-                                    CDCodeableConcept(cda_organizer_component_observation.code, fhir_observation.code)
                                 observation_text = cda_organizer_component_observation.text
                                 if observation_text:
                                     fhir_note = malac.models.fhir.r4.Annotation()
@@ -6385,6 +6382,9 @@ def CECoding(src, tgt):
     system = src.codeSystem
     if system:
         tgt.system = string(value=translate_single('OIDtoURI', (system if isinstance(system, str) else system.value), 'code'))
+    display = src.displayName
+    if display:
+        tgt.display = string(value=str(display))
 
 def CDCoding(src, tgt):
     CECoding(src, tgt)

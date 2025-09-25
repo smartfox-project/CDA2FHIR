@@ -1512,6 +1512,14 @@ group CdaVitalprameterToFhirSection( cda_section_component_section, fhir_section
                             "VitalObservationtoFHIR";
                         // here the fixed value for the code is vital-signs
 
+
+                        // cda_organizer_component_observation.code -> fhir_observation.code as fhir_observation_code, 
+                        //     fhir_observation_code.coding as fhir_code_coding,
+                        //     fhir_code_coding.system = 'nix',
+                        //     fhir_code_coding.code = 'PI',
+                        //     fhir_code_coding.display = 'Patient internal identifier'
+                        //     "FhirPatientIdentifierTypeCodingPI";
+
                         cda_organizer_component_observation.code -> fhir_observation.code as fhir_observation_code, 
                             fhir_observation_code.coding as fhir_code_coding
                             "VitalObservationCodetoFHIR";
@@ -1519,8 +1527,9 @@ group CdaVitalprameterToFhirSection( cda_section_component_section, fhir_section
                         // we could also do a mapping 
                         // ToDo: remove empty value text 
 
-                        cda_organizer_component_observation.code.translation -> fhir_observation.code.coding as fhir_observation_translation_code
-                            "VitalObservationTranslationtoFHIR";
+
+                        // cda_organizer_component_observation.code.translation -> fhir_observation.code.coding as fhir_observation_translation_code
+                        //     "VitalObservationTranslationtoFHIR";
                         // ToDo: add system
 
                         cda_organizer_component_observation.text.reference.value as observation_text
