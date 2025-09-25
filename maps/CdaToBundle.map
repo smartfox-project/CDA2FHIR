@@ -1421,7 +1421,7 @@ group CdaDiagnosisToFhirSection(source cda: ClinicalDocument, source cda_section
               "FhirConditionSubject";
 
             //mapping the code of diagnosis
-            cda_diagnosis_condition.value -> fhir_condition.code; // text value is still empty
+            cda_diagnosis_condition.value: CD as cda_condition_value -> fhir_condition.code; // text value is still empty
 
             //mapping the status of the Diagnosis
             cda_diagnosis_condition -> fhir_condition.clinicalStatus as fhir_clinicalStatus,
@@ -1431,14 +1431,7 @@ group CdaDiagnosisToFhirSection(source cda: ClinicalDocument, source cda_section
                 "FhirConditionClinicalStatus";
                 
             //adding the time of diagnosis via an extention
-            cda_diagnosis_condition.effectiveTime as cda_effectiveTime ->
-              fhir_condition.effective = create('dateTime') as fhir_condition_effective,
-              fhir_condition.extension as fhir_condition_effective_extenstion,
-              fhir_condition_effective_extenstion.url = 'http://hl7.org/fhir/StructureDefinition/data-absent-reason',
-              fhir_condition_effective_extenstion.value = create('code') as fhir_condition_effective_extenstion_code,
-              fhir_condition_effective_extenstion_code.value = 'not-applicable'
-              then TSDateTime(cda_effectiveTime, fhir_condition_effective)
-              "CdaEffectiveTimeToFhirConditionEffective";
+            cda_diagnosis_condition.effectiveTime -> fhir_condition.onsetPeriod;
         };
       };
     };
@@ -1477,7 +1470,19 @@ group CdaVitalprameterToFhirSection( cda_section_component_section, fhir_section
 //going down on level for the observation
     cda_section_component_section.entry as cda_section_component_section_entry then {
         // section.entry.act
-        cda_section_component_section_entry.organizer as cda_organizer then{
+        cda_section_component_section_entry.organizer as cda_organizer where templateId.where(root='1.2.40.0.34.6.0.11.3.23') then{
+            cda_section_component_section_entry.organizer as cda_organizer ->
+                fhir_bundle.entry as fhir_bundle_entry,
+                fhir_bundle_entry.resource = create('Observation') as fhir_observation;
+            
+            cda_organizer.effectiveTime as cda_effectiveTime ->
+              fhir_observation.effective = create('dateTime') as fhir_observation_effective,
+              fhir_observation_effective.extension as fhir_observation_effective_extenstion,
+              fhir_observation_effective_extenstion.url = 'http://hl7.org/fhir/StructureDefinition/data-absent-reason',
+              fhir_observation_effective_extenstion.value = create('code') as fhir_observation_effective_extenstion_code,
+              fhir_observation_effective_extenstion_code.value = 'not-applicable'
+                then TSDateTime(cda_effectiveTime, fhir_observation_effective)
+                "VitalObservationEffectiveTimetoFHIREffectiveTime";
 
             cda_organizer.component as cda_organizer_component then {
                 
@@ -1485,8 +1490,8 @@ group CdaVitalprameterToFhirSection( cda_section_component_section, fhir_section
                 cda_organizer_component.observation as cda_organizer_component_observation where templateId.where(root='1.2.40.0.34.6.0.11.3.24') then {
         
                     cda_organizer_component.observation as cda_organizer_component_observation -> 
-                    fhir_bundle.entry as fhir_bundle_entry,
-                    fhir_bundle_entry.resource = create('Observation') as fhir_observation,
+                    // fhir_bundle.entry as fhir_bundle_entry,
+                    // fhir_bundle_entry.resource = create('Observation') as fhir_observation,
                     fhir_observation.id = uuid() as fhir_observation_id,
                     fhir_bundle_entry.fullUrl = append('urn:uuid:', fhir_observation_id),
                     fhir_section_section.entry = create('Reference') as fhir_section_entry_reference,
@@ -1531,24 +1536,6 @@ group CdaVitalprameterToFhirSection( cda_section_component_section, fhir_section
                         // We have completed in CDA but we must chose from https://hl7.org/fhir/R4/valueset-observation-status.html, so a mapping is requiered 
                         // completed -> string? 
                             
-                        cda_organizer_component_observation.effectiveTime as cda_effectiveTime ->
-                            fhir_observation.effective = create('dateTime') as fhir_observation_effective,
-                            fhir_observation_effective.extension as fhir_observation_effective_extenstion,
-                            fhir_observation_effective_extenstion.url = 'http://hl7.org/fhir/StructureDefinition/data-absent-reason',
-                            fhir_observation_effective_extenstion.value = create('code') as fhir_observation_effective_extenstion_code,
-                            fhir_observation_effective_extenstion_code.value = 'not-applicable'
-                             then TSDateTime(cda_effectiveTime, fhir_observation_effective)
-                             "VitalObservationEffectiveTimetoFHIREffectiveTime";
-
-                        cda_organizer_component_observation
-                             where cda_organizer_component_observation.effectiveTime.exists().not() ->
-                             fhir_observation.effective = create('dateTime') as fhir_observation_effective,
-                             fhir_observation_effective.value = '1900-01-01',
-                             fhir_observation_effective.extension as fhir_observation_effective_extenstion,
-                             fhir_observation_effective_extenstion.url = 'http://hl7.org/fhir/StructureDefinition/data-absent-reason',
-                             fhir_observation_effective_extenstion.value = create('code') as fhir_observation_effective_extenstion_code,
-                             fhir_observation_effective_extenstion_code.value = 'not-applicable'
-                              "CdaEffectiveTimeExistsNotToFhirObservationEffective";
    
                         //only PQ value possible
                         cda_organizer_component_observation.value as observation_value  -> 
