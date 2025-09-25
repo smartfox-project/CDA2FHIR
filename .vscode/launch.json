@@ -11,6 +11,19 @@
             "program": "cdaToBundle.py",
             "console": "integratedTerminal",
             "args": "-s .\\input\\TmE_Herzinsuffizienz_maximal_Entlassungsbericht.xml -t .\\test\\testing_bundle_tme2.4.fhir.xml"
+        },
+        {
+            "name": "Python: Direct Map Call",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "cdaToBundle.py",
+            "console": "integratedTerminal",
+            "args": [
+                "-s",
+                ".\\input\\TME_HI.xml",
+                "-t",
+                ".\\test\\TME_HI.4.fhir.xml",
+            ]
         }
     ]
 }
