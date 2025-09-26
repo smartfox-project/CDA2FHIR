@@ -1222,12 +1222,12 @@ def CdaLaboratoryObservationToFhirObservation(cda, cda_laboratory_observation, f
         fhir_observation_effective_extenstion.valueCode = fhir_observation_effective_extenstion_code
         fhir_observation_effective_extenstion_code.value = 'unknown'
     for cda_observation_value in cda_laboratory_observation.value or []:
-        if isinstance(cda_observation_value, malac.models.cda.at_ext.PQ):
+        if type(cda_observation_value) is malac.models.cda.at_ext.PQ:
             fhir_observation_value = malac.models.fhir.r4.Quantity()
             fhir_observation.valueQuantity = fhir_observation_value
             PQQuantity(cda_observation_value, fhir_observation_value)
     for cda_observation_value in cda_laboratory_observation.value or []:
-        if isinstance(cda_observation_value, malac.models.cda.at_ext.IVL_PQ):
+        if type(cda_observation_value) is malac.models.cda.at_ext.IVL_PQ:
             if cda_observation_value.value is not None:
                 fhir_observation_value = malac.models.fhir.r4.Quantity()
                 fhir_observation.valueQuantity = fhir_observation_value
@@ -1238,12 +1238,12 @@ def CdaLaboratoryObservationToFhirObservation(cda, cda_laboratory_observation, f
                 IVLPQRange(cda_observation_value, fhir_observation_value)
     if not [v1 for v1 in fhirpath_utils.get(cda_laboratory_observation,'value') if fhirpath_utils.bool_and(fhirpath_utils.equals(fhirpath_utils.get(v1,'code'), '==', ['255599008']), fhirpath_utils.equals(fhirpath_utils.get(v1,'codeSystem'), '==', ['2.16.840.1.113883.6.96'])) == [True]]:
         for cda_observation_value in cda_laboratory_observation.value or []:
-            if isinstance(cda_observation_value, malac.models.cda.at_ext.CD):
+            if type(cda_observation_value) is malac.models.cda.at_ext.CD:
                 fhir_observation_value = malac.models.fhir.r4.CodeableConcept()
                 fhir_observation.valueCodeableConcept = fhir_observation_value
                 CDCodeableConcept(cda_observation_value, fhir_observation_value)
     for cda_observation_value in cda_laboratory_observation.value or []:
-        if isinstance(cda_observation_value, malac.models.cda.at_ext.ST):
+        if type(cda_observation_value) is malac.models.cda.at_ext.ST:
             fhir_observation_value = malac.models.fhir.r4.string()
             fhir_observation.valueString = fhir_observation_value
             STstring(cda_observation_value, fhir_observation_value)
@@ -1623,7 +1623,7 @@ conceptMap_as_7dimension_dict["cda-sdtc-statuscode-2-fhir-composition-status"] =
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://terminology.hl7.org/CodeSystem/v3-ActStatus",
+                                "system": "http://hl7.org/fhir/composition-status",
                                 "code": "preliminary"
                             },
                             "source": "cda-sdtc-statuscode-2-fhir-composition-status"
@@ -1633,7 +1633,7 @@ conceptMap_as_7dimension_dict["cda-sdtc-statuscode-2-fhir-composition-status"] =
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://terminology.hl7.org/CodeSystem/v3-ActStatus",
+                                "system": "http://hl7.org/fhir/composition-status",
                                 "code": "entered-in-error"
                             },
                             "source": "cda-sdtc-statuscode-2-fhir-composition-status"
@@ -1654,7 +1654,7 @@ conceptMap_as_7dimension_dict["cda-sdtc-statuscode-2-fhir-diagnosticreport-statu
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://terminology.hl7.org/CodeSystem/v3-ActStatus",
+                                "system": "http://hl7.org/fhir/diagnostic-report-status",
                                 "code": "preliminary"
                             },
                             "source": "cda-sdtc-statuscode-2-fhir-diagnosticreport-status"
@@ -1664,7 +1664,7 @@ conceptMap_as_7dimension_dict["cda-sdtc-statuscode-2-fhir-diagnosticreport-statu
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://terminology.hl7.org/CodeSystem/v3-ActStatus",
+                                "system": "http://hl7.org/fhir/diagnostic-report-status",
                                 "code": "entered-in-error"
                             },
                             "source": "cda-sdtc-statuscode-2-fhir-diagnosticreport-status"
@@ -1685,7 +1685,7 @@ conceptMap_as_7dimension_dict["ELGAAdministrativeGenderFHIRGender"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "https://termgit.elga.gv.at/ValueSet-elga-administrativegender",
+                                "system": "http://hl7.org/fhir/administrative-gender",
                                 "code": "female"
                             },
                             "source": "ELGAAdministrativeGenderFHIRGender"
@@ -1695,7 +1695,7 @@ conceptMap_as_7dimension_dict["ELGAAdministrativeGenderFHIRGender"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "https://termgit.elga.gv.at/ValueSet-elga-administrativegender",
+                                "system": "http://hl7.org/fhir/administrative-gender",
                                 "code": "male"
                             },
                             "source": "ELGAAdministrativeGenderFHIRGender"
@@ -1705,7 +1705,7 @@ conceptMap_as_7dimension_dict["ELGAAdministrativeGenderFHIRGender"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "https://termgit.elga.gv.at/ValueSet-elga-administrativegender",
+                                "system": "http://hl7.org/fhir/administrative-gender",
                                 "code": "other"
                             },
                             "source": "ELGAAdministrativeGenderFHIRGender"
@@ -1715,7 +1715,7 @@ conceptMap_as_7dimension_dict["ELGAAdministrativeGenderFHIRGender"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "https://termgit.elga.gv.at/ValueSet-elga-administrativegender",
+                                "system": "http://hl7.org/fhir/administrative-gender",
                                 "code": "other"
                             },
                             "source": "ELGAAdministrativeGenderFHIRGender"
@@ -1725,7 +1725,7 @@ conceptMap_as_7dimension_dict["ELGAAdministrativeGenderFHIRGender"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "https://termgit.elga.gv.at/ValueSet-elga-administrativegender",
+                                "system": "http://hl7.org/fhir/administrative-gender",
                                 "code": "other"
                             },
                             "source": "ELGAAdministrativeGenderFHIRGender"
@@ -1735,7 +1735,7 @@ conceptMap_as_7dimension_dict["ELGAAdministrativeGenderFHIRGender"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "https://termgit.elga.gv.at/ValueSet-elga-administrativegender",
+                                "system": "http://hl7.org/fhir/administrative-gender",
                                 "code": "other"
                             },
                             "source": "ELGAAdministrativeGenderFHIRGender"
@@ -1756,7 +1756,7 @@ conceptMap_as_7dimension_dict["act-status-2-observation-status"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://terminology.hl7.org/CodeSystem/v3-ActStatus",
+                                "system": "http://hl7.org/fhir/observation-status",
                                 "code": "final"
                             },
                             "source": "act-status-2-observation-status"
@@ -1766,7 +1766,7 @@ conceptMap_as_7dimension_dict["act-status-2-observation-status"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://terminology.hl7.org/CodeSystem/v3-ActStatus",
+                                "system": "http://hl7.org/fhir/observation-status",
                                 "code": "preliminary"
                             },
                             "source": "act-status-2-observation-status"
@@ -1776,7 +1776,7 @@ conceptMap_as_7dimension_dict["act-status-2-observation-status"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://terminology.hl7.org/CodeSystem/v3-ActStatus",
+                                "system": "http://hl7.org/fhir/observation-status",
                                 "code": "cancelled"
                             },
                             "source": "act-status-2-observation-status"
@@ -1797,7 +1797,7 @@ conceptMap_as_7dimension_dict["ELGA2FHIRAddressUse"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://terminology.hl7.org/CodeSystem/v3-AddressUse",
+                                "system": "http://hl7.org/fhir/address-use",
                                 "code": "home"
                             },
                             "source": "ELGA2FHIRAddressUse"
@@ -1807,7 +1807,7 @@ conceptMap_as_7dimension_dict["ELGA2FHIRAddressUse"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://terminology.hl7.org/CodeSystem/v3-AddressUse",
+                                "system": "http://hl7.org/fhir/address-use",
                                 "code": "home"
                             },
                             "source": "ELGA2FHIRAddressUse"
@@ -1817,7 +1817,7 @@ conceptMap_as_7dimension_dict["ELGA2FHIRAddressUse"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://terminology.hl7.org/CodeSystem/v3-AddressUse",
+                                "system": "http://hl7.org/fhir/address-use",
                                 "code": "home"
                             },
                             "source": "ELGA2FHIRAddressUse"
@@ -1827,7 +1827,7 @@ conceptMap_as_7dimension_dict["ELGA2FHIRAddressUse"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://terminology.hl7.org/CodeSystem/v3-AddressUse",
+                                "system": "http://hl7.org/fhir/address-use",
                                 "code": "work"
                             },
                             "source": "ELGA2FHIRAddressUse"
@@ -1837,7 +1837,7 @@ conceptMap_as_7dimension_dict["ELGA2FHIRAddressUse"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://terminology.hl7.org/CodeSystem/v3-AddressUse",
+                                "system": "http://hl7.org/fhir/address-use",
                                 "code": "work"
                             },
                             "source": "ELGA2FHIRAddressUse"
@@ -1847,7 +1847,7 @@ conceptMap_as_7dimension_dict["ELGA2FHIRAddressUse"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://terminology.hl7.org/CodeSystem/v3-AddressUse",
+                                "system": "http://hl7.org/fhir/address-use",
                                 "code": "work"
                             },
                             "source": "ELGA2FHIRAddressUse"
@@ -1857,7 +1857,7 @@ conceptMap_as_7dimension_dict["ELGA2FHIRAddressUse"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://terminology.hl7.org/CodeSystem/v3-AddressUse",
+                                "system": "http://hl7.org/fhir/address-use",
                                 "code": "temp"
                             },
                             "source": "ELGA2FHIRAddressUse"
@@ -1867,7 +1867,7 @@ conceptMap_as_7dimension_dict["ELGA2FHIRAddressUse"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://terminology.hl7.org/CodeSystem/v3-AddressUse",
+                                "system": "http://hl7.org/fhir/address-use",
                                 "code": "home"
                             },
                             "source": "ELGA2FHIRAddressUse"
@@ -1877,7 +1877,7 @@ conceptMap_as_7dimension_dict["ELGA2FHIRAddressUse"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://terminology.hl7.org/CodeSystem/v3-AddressUse",
+                                "system": "http://hl7.org/fhir/address-use",
                                 "code": "home"
                             },
                             "source": "ELGA2FHIRAddressUse"
@@ -1898,7 +1898,7 @@ conceptMap_as_7dimension_dict["ELGATelecomAddressUseFHIRContactPointUse"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://terminology.hl7.org/CodeSystem/v3-AddressUse",
+                                "system": "http://hl7.org/fhir/contact-point-use",
                                 "code": "home"
                             },
                             "source": "ELGATelecomAddressUseFHIRContactPointUse"
@@ -1908,7 +1908,7 @@ conceptMap_as_7dimension_dict["ELGATelecomAddressUseFHIRContactPointUse"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://terminology.hl7.org/CodeSystem/v3-AddressUse",
+                                "system": "http://hl7.org/fhir/contact-point-use",
                                 "code": "home"
                             },
                             "source": "ELGATelecomAddressUseFHIRContactPointUse"
@@ -1918,7 +1918,7 @@ conceptMap_as_7dimension_dict["ELGATelecomAddressUseFHIRContactPointUse"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://terminology.hl7.org/CodeSystem/v3-AddressUse",
+                                "system": "http://hl7.org/fhir/contact-point-use",
                                 "code": "home"
                             },
                             "source": "ELGATelecomAddressUseFHIRContactPointUse"
@@ -1928,7 +1928,7 @@ conceptMap_as_7dimension_dict["ELGATelecomAddressUseFHIRContactPointUse"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://terminology.hl7.org/CodeSystem/v3-AddressUse",
+                                "system": "http://hl7.org/fhir/contact-point-use",
                                 "code": "work"
                             },
                             "source": "ELGATelecomAddressUseFHIRContactPointUse"
@@ -1938,7 +1938,7 @@ conceptMap_as_7dimension_dict["ELGATelecomAddressUseFHIRContactPointUse"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://terminology.hl7.org/CodeSystem/v3-AddressUse",
+                                "system": "http://hl7.org/fhir/contact-point-use",
                                 "code": "work"
                             },
                             "source": "ELGATelecomAddressUseFHIRContactPointUse"
@@ -1948,7 +1948,7 @@ conceptMap_as_7dimension_dict["ELGATelecomAddressUseFHIRContactPointUse"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://terminology.hl7.org/CodeSystem/v3-AddressUse",
+                                "system": "http://hl7.org/fhir/contact-point-use",
                                 "code": "home"
                             },
                             "source": "ELGATelecomAddressUseFHIRContactPointUse"
@@ -1958,7 +1958,7 @@ conceptMap_as_7dimension_dict["ELGATelecomAddressUseFHIRContactPointUse"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://terminology.hl7.org/CodeSystem/v3-AddressUse",
+                                "system": "http://hl7.org/fhir/contact-point-use",
                                 "code": "mobile"
                             },
                             "source": "ELGATelecomAddressUseFHIRContactPointUse"
@@ -1968,7 +1968,7 @@ conceptMap_as_7dimension_dict["ELGATelecomAddressUseFHIRContactPointUse"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://terminology.hl7.org/CodeSystem/v3-AddressUse",
+                                "system": "http://hl7.org/fhir/contact-point-use",
                                 "code": "mobile"
                             },
                             "source": "ELGATelecomAddressUseFHIRContactPointUse"
@@ -1978,7 +1978,7 @@ conceptMap_as_7dimension_dict["ELGATelecomAddressUseFHIRContactPointUse"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://terminology.hl7.org/CodeSystem/v3-AddressUse",
+                                "system": "http://hl7.org/fhir/contact-point-use",
                                 "code": "temp"
                             },
                             "source": "ELGATelecomAddressUseFHIRContactPointUse"
@@ -1999,7 +1999,7 @@ conceptMap_as_7dimension_dict["ELGAEntityNameUseFHIRNameUse"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://terminology.hl7.org/CodeSystem/v3-EntityNameUse",
+                                "system": "http://hl7.org/fhir/name-use",
                                 "code": "usual"
                             },
                             "source": "ELGAEntityNameUseFHIRNameUse"
@@ -2009,7 +2009,7 @@ conceptMap_as_7dimension_dict["ELGAEntityNameUseFHIRNameUse"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://terminology.hl7.org/CodeSystem/v3-EntityNameUse",
+                                "system": "http://hl7.org/fhir/name-use",
                                 "code": "usual"
                             },
                             "source": "ELGAEntityNameUseFHIRNameUse"
@@ -2019,7 +2019,7 @@ conceptMap_as_7dimension_dict["ELGAEntityNameUseFHIRNameUse"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://terminology.hl7.org/CodeSystem/v3-EntityNameUse",
+                                "system": "http://hl7.org/fhir/name-use",
                                 "code": "anonymous"
                             },
                             "source": "ELGAEntityNameUseFHIRNameUse"
@@ -2029,7 +2029,7 @@ conceptMap_as_7dimension_dict["ELGAEntityNameUseFHIRNameUse"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://terminology.hl7.org/CodeSystem/v3-EntityNameUse",
+                                "system": "http://hl7.org/fhir/name-use",
                                 "code": "official"
                             },
                             "source": "ELGAEntityNameUseFHIRNameUse"
@@ -2039,7 +2039,7 @@ conceptMap_as_7dimension_dict["ELGAEntityNameUseFHIRNameUse"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://terminology.hl7.org/CodeSystem/v3-EntityNameUse",
+                                "system": "http://hl7.org/fhir/name-use",
                                 "code": "official"
                             },
                             "source": "ELGAEntityNameUseFHIRNameUse"
@@ -2049,7 +2049,7 @@ conceptMap_as_7dimension_dict["ELGAEntityNameUseFHIRNameUse"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://terminology.hl7.org/CodeSystem/v3-EntityNameUse",
+                                "system": "http://hl7.org/fhir/name-use",
                                 "code": "anonymous"
                             },
                             "source": "ELGAEntityNameUseFHIRNameUse"
@@ -2059,7 +2059,7 @@ conceptMap_as_7dimension_dict["ELGAEntityNameUseFHIRNameUse"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://terminology.hl7.org/CodeSystem/v3-EntityNameUse",
+                                "system": "http://hl7.org/fhir/name-use",
                                 "code": "anonymous"
                             },
                             "source": "ELGAEntityNameUseFHIRNameUse"
@@ -2069,7 +2069,7 @@ conceptMap_as_7dimension_dict["ELGAEntityNameUseFHIRNameUse"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://terminology.hl7.org/CodeSystem/v3-EntityNameUse",
+                                "system": "http://hl7.org/fhir/name-use",
                                 "code": "anonymous"
                             },
                             "source": "ELGAEntityNameUseFHIRNameUse"
@@ -2079,7 +2079,7 @@ conceptMap_as_7dimension_dict["ELGAEntityNameUseFHIRNameUse"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://terminology.hl7.org/CodeSystem/v3-EntityNameUse",
+                                "system": "http://hl7.org/fhir/name-use",
                                 "code": "temp"
                             },
                             "source": "ELGAEntityNameUseFHIRNameUse"
@@ -2089,7 +2089,7 @@ conceptMap_as_7dimension_dict["ELGAEntityNameUseFHIRNameUse"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://terminology.hl7.org/CodeSystem/v3-EntityNameUse",
+                                "system": "http://hl7.org/fhir/name-use",
                                 "code": "nickname"
                             },
                             "source": "ELGAEntityNameUseFHIRNameUse"
@@ -2099,7 +2099,7 @@ conceptMap_as_7dimension_dict["ELGAEntityNameUseFHIRNameUse"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://terminology.hl7.org/CodeSystem/v3-EntityNameUse",
+                                "system": "http://hl7.org/fhir/name-use",
                                 "code": "nickname"
                             },
                             "source": "ELGAEntityNameUseFHIRNameUse"
@@ -2109,7 +2109,7 @@ conceptMap_as_7dimension_dict["ELGAEntityNameUseFHIRNameUse"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://terminology.hl7.org/CodeSystem/v3-EntityNameUse",
+                                "system": "http://hl7.org/fhir/name-use",
                                 "code": "nickname"
                             },
                             "source": "ELGAEntityNameUseFHIRNameUse"
@@ -2119,7 +2119,7 @@ conceptMap_as_7dimension_dict["ELGAEntityNameUseFHIRNameUse"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://terminology.hl7.org/CodeSystem/v3-EntityNameUse",
+                                "system": "http://hl7.org/fhir/name-use",
                                 "code": "nickname"
                             },
                             "source": "ELGAEntityNameUseFHIRNameUse"
@@ -2129,7 +2129,7 @@ conceptMap_as_7dimension_dict["ELGAEntityNameUseFHIRNameUse"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://terminology.hl7.org/CodeSystem/v3-EntityNameUse",
+                                "system": "http://hl7.org/fhir/name-use",
                                 "code": "nickname"
                             },
                             "source": "ELGAEntityNameUseFHIRNameUse"
@@ -2150,7 +2150,7 @@ conceptMap_as_7dimension_dict["ELGAEntityNamePartQualifierFHIRNamePartQualifier"
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://terminology.hl7.org/CodeSystem/v3-EntityNamePartQualifier",
+                                "system": "http://terminology.hl7.org/CodeSystem/v3-EntityNamePartQualifierR2",
                                 "code": "AC"
                             },
                             "source": "ELGAEntityNamePartQualifierFHIRNamePartQualifier"
@@ -2160,7 +2160,7 @@ conceptMap_as_7dimension_dict["ELGAEntityNamePartQualifierFHIRNamePartQualifier"
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://terminology.hl7.org/CodeSystem/v3-EntityNamePartQualifier",
+                                "system": "http://terminology.hl7.org/CodeSystem/v3-EntityNamePartQualifierR2",
                                 "code": "AD"
                             },
                             "source": "ELGAEntityNamePartQualifierFHIRNamePartQualifier"
@@ -2170,7 +2170,7 @@ conceptMap_as_7dimension_dict["ELGAEntityNamePartQualifierFHIRNamePartQualifier"
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://terminology.hl7.org/CodeSystem/v3-EntityNamePartQualifier",
+                                "system": "http://terminology.hl7.org/CodeSystem/v3-EntityNamePartQualifierR2",
                                 "code": "BR"
                             },
                             "source": "ELGAEntityNamePartQualifierFHIRNamePartQualifier"
@@ -2180,7 +2180,7 @@ conceptMap_as_7dimension_dict["ELGAEntityNamePartQualifierFHIRNamePartQualifier"
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://terminology.hl7.org/CodeSystem/v3-EntityNamePartQualifier",
+                                "system": "http://terminology.hl7.org/CodeSystem/v3-EntityNamePartQualifierR2",
                                 "code": "CL"
                             },
                             "source": "ELGAEntityNamePartQualifierFHIRNamePartQualifier"
@@ -2190,7 +2190,7 @@ conceptMap_as_7dimension_dict["ELGAEntityNamePartQualifierFHIRNamePartQualifier"
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://terminology.hl7.org/CodeSystem/v3-EntityNamePartQualifier",
+                                "system": "http://terminology.hl7.org/CodeSystem/v3-EntityNamePartQualifierR2",
                                 "code": "IN"
                             },
                             "source": "ELGAEntityNamePartQualifierFHIRNamePartQualifier"
@@ -2200,7 +2200,7 @@ conceptMap_as_7dimension_dict["ELGAEntityNamePartQualifierFHIRNamePartQualifier"
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://terminology.hl7.org/CodeSystem/v3-EntityNamePartQualifier",
+                                "system": "http://terminology.hl7.org/CodeSystem/v3-EntityNamePartQualifierR2",
                                 "code": "LS"
                             },
                             "source": "ELGAEntityNamePartQualifierFHIRNamePartQualifier"
@@ -2210,7 +2210,7 @@ conceptMap_as_7dimension_dict["ELGAEntityNamePartQualifierFHIRNamePartQualifier"
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://terminology.hl7.org/CodeSystem/v3-EntityNamePartQualifier",
+                                "system": "http://terminology.hl7.org/CodeSystem/v3-EntityNamePartQualifierR2",
                                 "code": "NB"
                             },
                             "source": "ELGAEntityNamePartQualifierFHIRNamePartQualifier"
@@ -2220,7 +2220,7 @@ conceptMap_as_7dimension_dict["ELGAEntityNamePartQualifierFHIRNamePartQualifier"
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://terminology.hl7.org/CodeSystem/v3-EntityNamePartQualifier",
+                                "system": "http://terminology.hl7.org/CodeSystem/v3-EntityNamePartQualifierR2",
                                 "code": "PR"
                             },
                             "source": "ELGAEntityNamePartQualifierFHIRNamePartQualifier"
@@ -2230,7 +2230,7 @@ conceptMap_as_7dimension_dict["ELGAEntityNamePartQualifierFHIRNamePartQualifier"
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://terminology.hl7.org/CodeSystem/v3-EntityNamePartQualifier",
+                                "system": "http://terminology.hl7.org/CodeSystem/v3-EntityNamePartQualifierR2",
                                 "code": "SP"
                             },
                             "source": "ELGAEntityNamePartQualifierFHIRNamePartQualifier"
@@ -2240,7 +2240,7 @@ conceptMap_as_7dimension_dict["ELGAEntityNamePartQualifierFHIRNamePartQualifier"
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://terminology.hl7.org/CodeSystem/v3-EntityNamePartQualifier",
+                                "system": "http://terminology.hl7.org/CodeSystem/v3-EntityNamePartQualifierR2",
                                 "code": "VV"
                             },
                             "source": "ELGAEntityNamePartQualifierFHIRNamePartQualifier"
@@ -2261,7 +2261,7 @@ conceptMap_as_7dimension_dict["OIDtoURI"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://cda.oid",
+                                "system": "http://fhir.system",
                                 "code": "http://snomed.info/sct"
                             },
                             "source": "OIDtoURI"
@@ -2271,7 +2271,7 @@ conceptMap_as_7dimension_dict["OIDtoURI"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://cda.oid",
+                                "system": "http://fhir.system",
                                 "code": "http://loinc.org"
                             },
                             "source": "OIDtoURI"
@@ -2281,7 +2281,7 @@ conceptMap_as_7dimension_dict["OIDtoURI"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://cda.oid",
+                                "system": "http://fhir.system",
                                 "code": "http://unitsofmeasure.org"
                             },
                             "source": "OIDtoURI"
@@ -2291,7 +2291,7 @@ conceptMap_as_7dimension_dict["OIDtoURI"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://cda.oid",
+                                "system": "http://fhir.system",
                                 "code": "http://hl7.org/fhir/sid/icd-10"
                             },
                             "source": "OIDtoURI"
@@ -2301,7 +2301,7 @@ conceptMap_as_7dimension_dict["OIDtoURI"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://cda.oid",
+                                "system": "http://fhir.system",
                                 "code": "http://www.whocc.no/atc"
                             },
                             "source": "OIDtoURI"
@@ -2311,7 +2311,7 @@ conceptMap_as_7dimension_dict["OIDtoURI"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://cda.oid",
+                                "system": "http://fhir.system",
                                 "code": "urn:oid:2.16.840.1.113883.2.16.1.4.9"
                             },
                             "source": "OIDtoURI"
@@ -2321,7 +2321,7 @@ conceptMap_as_7dimension_dict["OIDtoURI"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://cda.oid",
+                                "system": "http://fhir.system",
                                 "code": "http://terminology.hl7.org/CodeSystem/v3-ObservationInterpretation"
                             },
                             "source": "OIDtoURI"
@@ -2331,7 +2331,7 @@ conceptMap_as_7dimension_dict["OIDtoURI"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://cda.oid",
+                                "system": "http://fhir.system",
                                 "code": "https://termgit.elga.gv.at/CodeSystem/ehdsi-edqm-auszug"
                             },
                             "source": "OIDtoURI"
@@ -2341,7 +2341,7 @@ conceptMap_as_7dimension_dict["OIDtoURI"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://cda.oid",
+                                "system": "http://fhir.system",
                                 "code": "https://termgit.elga.gv.at/CodeSystem/iso-3166-alpha-2-code"
                             },
                             "source": "OIDtoURI"
@@ -2351,7 +2351,7 @@ conceptMap_as_7dimension_dict["OIDtoURI"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://cda.oid",
+                                "system": "http://fhir.system",
                                 "code": "https://termgit.elga.gv.at/CodeSystem/iso-3166-1-alpha-3"
                             },
                             "source": "OIDtoURI"
@@ -2361,7 +2361,7 @@ conceptMap_as_7dimension_dict["OIDtoURI"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://cda.oid",
+                                "system": "http://fhir.system",
                                 "code": "https://termgit.elga.gv.at/CodeSystem/geschlechtercodes-iso-iec-5218"
                             },
                             "source": "OIDtoURI"
@@ -2371,7 +2371,7 @@ conceptMap_as_7dimension_dict["OIDtoURI"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://cda.oid",
+                                "system": "http://fhir.system",
                                 "code": "https://termgit.elga.gv.at/CodeSystem/iso-639-2"
                             },
                             "source": "OIDtoURI"
@@ -2381,7 +2381,7 @@ conceptMap_as_7dimension_dict["OIDtoURI"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://cda.oid",
+                                "system": "http://fhir.system",
                                 "code": "https://termgit.elga.gv.at/CodeSystem/atc-deutsch-wido"
                             },
                             "source": "OIDtoURI"
@@ -2391,7 +2391,7 @@ conceptMap_as_7dimension_dict["OIDtoURI"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://cda.oid",
+                                "system": "http://fhir.system",
                                 "code": "https://termgit.elga.gv.at/CodeSystem/elga-medikationmengenartalternativ"
                             },
                             "source": "OIDtoURI"
@@ -2401,7 +2401,7 @@ conceptMap_as_7dimension_dict["OIDtoURI"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://cda.oid",
+                                "system": "http://fhir.system",
                                 "code": "https://termgit.elga.gv.at/CodeSystem/medikationrezeptart"
                             },
                             "source": "OIDtoURI"
@@ -2411,7 +2411,7 @@ conceptMap_as_7dimension_dict["OIDtoURI"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://cda.oid",
+                                "system": "http://fhir.system",
                                 "code": "https://termgit.elga.gv.at/CodeSystem/medikationartanwendung"
                             },
                             "source": "OIDtoURI"
@@ -2421,7 +2421,7 @@ conceptMap_as_7dimension_dict["OIDtoURI"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://cda.oid",
+                                "system": "http://fhir.system",
                                 "code": "https://termgit.elga.gv.at/CodeSystem/medikationdarreichungsform"
                             },
                             "source": "OIDtoURI"
@@ -2431,7 +2431,7 @@ conceptMap_as_7dimension_dict["OIDtoURI"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://cda.oid",
+                                "system": "http://fhir.system",
                                 "code": "https://termgit.elga.gv.at/CodeSystem/medikationtherapieart"
                             },
                             "source": "OIDtoURI"
@@ -2441,7 +2441,7 @@ conceptMap_as_7dimension_dict["OIDtoURI"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://cda.oid",
+                                "system": "http://fhir.system",
                                 "code": "https://termgit.elga.gv.at/CodeSystem/medikationrezeptpflichtstatus"
                             },
                             "source": "OIDtoURI"
@@ -2451,7 +2451,7 @@ conceptMap_as_7dimension_dict["OIDtoURI"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://cda.oid",
+                                "system": "http://fhir.system",
                                 "code": "https://termgit.elga.gv.at/ValueSet/elga-languagecode"
                             },
                             "source": "OIDtoURI"
@@ -2461,7 +2461,7 @@ conceptMap_as_7dimension_dict["OIDtoURI"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://cda.oid",
+                                "system": "http://fhir.system",
                                 "code": "https://termgit.elga.gv.at/ValueSet/elga-maritalstatus"
                             },
                             "source": "OIDtoURI"
@@ -2471,7 +2471,7 @@ conceptMap_as_7dimension_dict["OIDtoURI"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://cda.oid",
+                                "system": "http://fhir.system",
                                 "code": "https://termgit.elga.gv.at/ValueSet/elga-observationinterpretation"
                             },
                             "source": "OIDtoURI"
@@ -2481,7 +2481,7 @@ conceptMap_as_7dimension_dict["OIDtoURI"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://cda.oid",
+                                "system": "http://fhir.system",
                                 "code": "https://termgit.elga.gv.at/ValueSet/langid-at"
                             },
                             "source": "OIDtoURI"
@@ -2491,7 +2491,7 @@ conceptMap_as_7dimension_dict["OIDtoURI"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://cda.oid",
+                                "system": "http://fhir.system",
                                 "code": "https://termgit.elga.gv.at/ValueSet/elga-participationfunctioncode"
                             },
                             "source": "OIDtoURI"
@@ -2501,7 +2501,7 @@ conceptMap_as_7dimension_dict["OIDtoURI"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://cda.oid",
+                                "system": "http://fhir.system",
                                 "code": "https://termgit.elga.gv.at/ValueSet/elga-auditeventid"
                             },
                             "source": "OIDtoURI"
@@ -2511,7 +2511,7 @@ conceptMap_as_7dimension_dict["OIDtoURI"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://cda.oid",
+                                "system": "http://fhir.system",
                                 "code": "https://termgit.elga.gv.at/ValueSet/elga-auditeventtype"
                             },
                             "source": "OIDtoURI"
@@ -2521,7 +2521,7 @@ conceptMap_as_7dimension_dict["OIDtoURI"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://cda.oid",
+                                "system": "http://fhir.system",
                                 "code": "https://termgit.elga.gv.at/ValueSet/elga-auditsourcetype"
                             },
                             "source": "OIDtoURI"
@@ -2531,7 +2531,7 @@ conceptMap_as_7dimension_dict["OIDtoURI"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://cda.oid",
+                                "system": "http://fhir.system",
                                 "code": "https://termgit.elga.gv.at/ValueSet/elga-auditroleid"
                             },
                             "source": "OIDtoURI"
@@ -2541,7 +2541,7 @@ conceptMap_as_7dimension_dict["OIDtoURI"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://cda.oid",
+                                "system": "http://fhir.system",
                                 "code": "https://termgit.elga.gv.at/ValueSet/elga-auditparticipantobjecttype"
                             },
                             "source": "OIDtoURI"
@@ -2551,7 +2551,7 @@ conceptMap_as_7dimension_dict["OIDtoURI"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://cda.oid",
+                                "system": "http://fhir.system",
                                 "code": "https://termgit.elga.gv.at/ValueSet/elga-auditparticipantobjecttyperole"
                             },
                             "source": "OIDtoURI"
@@ -2561,7 +2561,7 @@ conceptMap_as_7dimension_dict["OIDtoURI"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://cda.oid",
+                                "system": "http://fhir.system",
                                 "code": "https://termgit.elga.gv.at/ValueSet/elga-auditparticipantobjectidtype"
                             },
                             "source": "OIDtoURI"
@@ -2571,7 +2571,7 @@ conceptMap_as_7dimension_dict["OIDtoURI"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://cda.oid",
+                                "system": "http://fhir.system",
                                 "code": "https://termgit.elga.gv.at/ValueSet/dicom-sopclasses"
                             },
                             "source": "OIDtoURI"
@@ -2581,7 +2581,7 @@ conceptMap_as_7dimension_dict["OIDtoURI"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://cda.oid",
+                                "system": "http://fhir.system",
                                 "code": "https://termgit.elga.gv.at/ValueSet/elga-medikationabgabeart"
                             },
                             "source": "OIDtoURI"
@@ -2591,7 +2591,7 @@ conceptMap_as_7dimension_dict["OIDtoURI"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://cda.oid",
+                                "system": "http://fhir.system",
                                 "code": "https://termgit.elga.gv.at/ValueSet/elga-addressuse"
                             },
                             "source": "OIDtoURI"
@@ -2601,7 +2601,7 @@ conceptMap_as_7dimension_dict["OIDtoURI"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://cda.oid",
+                                "system": "http://fhir.system",
                                 "code": "https://termgit.elga.gv.at/ValueSet/elga-actcode-abginfo"
                             },
                             "source": "OIDtoURI"
@@ -2611,7 +2611,7 @@ conceptMap_as_7dimension_dict["OIDtoURI"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://cda.oid",
+                                "system": "http://fhir.system",
                                 "code": "https://termgit.elga.gv.at/ValueSet/elga-actcode-patinfo"
                             },
                             "source": "OIDtoURI"
@@ -2621,7 +2621,7 @@ conceptMap_as_7dimension_dict["OIDtoURI"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://cda.oid",
+                                "system": "http://fhir.system",
                                 "code": "https://termgit.elga.gv.at/ValueSet/elga-wirkstoffe-ages"
                             },
                             "source": "OIDtoURI"
@@ -2631,7 +2631,7 @@ conceptMap_as_7dimension_dict["OIDtoURI"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://cda.oid",
+                                "system": "http://fhir.system",
                                 "code": "https://termgit.elga.gv.at/ValueSet/elga-sectionspflegesitber"
                             },
                             "source": "OIDtoURI"
@@ -2641,7 +2641,7 @@ conceptMap_as_7dimension_dict["OIDtoURI"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://cda.oid",
+                                "system": "http://fhir.system",
                                 "code": "https://termgit.elga.gv.at/ValueSet/elga-auditeventtype-a-arr"
                             },
                             "source": "OIDtoURI"
@@ -2651,7 +2651,7 @@ conceptMap_as_7dimension_dict["OIDtoURI"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://cda.oid",
+                                "system": "http://fhir.system",
                                 "code": "https://termgit.elga.gv.at/ValueSet/elga-dosisparameter"
                             },
                             "source": "OIDtoURI"
@@ -2661,7 +2661,7 @@ conceptMap_as_7dimension_dict["OIDtoURI"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://cda.oid",
+                                "system": "http://fhir.system",
                                 "code": "https://termgit.elga.gv.at/ValueSet/elga-problemstatuscode"
                             },
                             "source": "OIDtoURI"
@@ -2671,7 +2671,7 @@ conceptMap_as_7dimension_dict["OIDtoURI"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://cda.oid",
+                                "system": "http://fhir.system",
                                 "code": "https://termgit.elga.gv.at/ValueSet/elga-diagnosesicherheit"
                             },
                             "source": "OIDtoURI"
@@ -2681,7 +2681,7 @@ conceptMap_as_7dimension_dict["OIDtoURI"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://cda.oid",
+                                "system": "http://fhir.system",
                                 "code": "https://termgit.elga.gv.at/ValueSet/elga-problemkataloge"
                             },
                             "source": "OIDtoURI"
@@ -2691,7 +2691,7 @@ conceptMap_as_7dimension_dict["OIDtoURI"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://cda.oid",
+                                "system": "http://fhir.system",
                                 "code": "https://termgit.elga.gv.at/ValueSet/elga-personalrelationship"
                             },
                             "source": "OIDtoURI"
@@ -2701,7 +2701,7 @@ conceptMap_as_7dimension_dict["OIDtoURI"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://cda.oid",
+                                "system": "http://fhir.system",
                                 "code": "https://termgit.elga.gv.at/ValueSet/elga-kulturerregernachweis"
                             },
                             "source": "OIDtoURI"
@@ -2711,7 +2711,7 @@ conceptMap_as_7dimension_dict["OIDtoURI"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://cda.oid",
+                                "system": "http://fhir.system",
                                 "code": "https://termgit.elga.gv.at/ValueSet/elga-laendercodes"
                             },
                             "source": "OIDtoURI"
@@ -2721,7 +2721,7 @@ conceptMap_as_7dimension_dict["OIDtoURI"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://cda.oid",
+                                "system": "http://fhir.system",
                                 "code": "https://termgit.elga.gv.at/ValueSet/elga-humanlanguage"
                             },
                             "source": "OIDtoURI"
@@ -2731,7 +2731,7 @@ conceptMap_as_7dimension_dict["OIDtoURI"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://cda.oid",
+                                "system": "http://fhir.system",
                                 "code": "https://termgit.elga.gv.at/ValueSet/elga-proficiencylevelcode"
                             },
                             "source": "OIDtoURI"
@@ -2741,7 +2741,7 @@ conceptMap_as_7dimension_dict["OIDtoURI"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://cda.oid",
+                                "system": "http://fhir.system",
                                 "code": "https://termgit.elga.gv.at/ValueSet/elga-languageabilitymode"
                             },
                             "source": "OIDtoURI"
@@ -2751,7 +2751,7 @@ conceptMap_as_7dimension_dict["OIDtoURI"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://cda.oid",
+                                "system": "http://fhir.system",
                                 "code": "https://termgit.elga.gv.at/ValueSet/elga-seitenlokalisation"
                             },
                             "source": "OIDtoURI"
@@ -2761,7 +2761,7 @@ conceptMap_as_7dimension_dict["OIDtoURI"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://cda.oid",
+                                "system": "http://fhir.system",
                                 "code": "https://termgit.elga.gv.at/ValueSet/elga-allergyorintolerancetype"
                             },
                             "source": "OIDtoURI"
@@ -2771,7 +2771,7 @@ conceptMap_as_7dimension_dict["OIDtoURI"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://cda.oid",
+                                "system": "http://fhir.system",
                                 "code": "https://termgit.elga.gv.at/ValueSet/elga-absentorunknownallergies"
                             },
                             "source": "OIDtoURI"
@@ -2781,7 +2781,7 @@ conceptMap_as_7dimension_dict["OIDtoURI"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://cda.oid",
+                                "system": "http://fhir.system",
                                 "code": "https://termgit.elga.gv.at/ValueSet/elga-absentorunknownproblems"
                             },
                             "source": "OIDtoURI"
@@ -2791,7 +2791,7 @@ conceptMap_as_7dimension_dict["OIDtoURI"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://cda.oid",
+                                "system": "http://fhir.system",
                                 "code": "https://termgit.elga.gv.at/ValueSet/elga-religiousaffiliation"
                             },
                             "source": "OIDtoURI"
@@ -2801,7 +2801,7 @@ conceptMap_as_7dimension_dict["OIDtoURI"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://cda.oid",
+                                "system": "http://fhir.system",
                                 "code": "https://termgit.elga.gv.at/ValueSet/elga-allergyorintoleranceagent"
                             },
                             "source": "OIDtoURI"
@@ -2811,7 +2811,7 @@ conceptMap_as_7dimension_dict["OIDtoURI"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://cda.oid",
+                                "system": "http://fhir.system",
                                 "code": "https://termgit.elga.gv.at/ValueSet/elga-allergyreaction"
                             },
                             "source": "OIDtoURI"
@@ -2821,7 +2821,7 @@ conceptMap_as_7dimension_dict["OIDtoURI"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://cda.oid",
+                                "system": "http://fhir.system",
                                 "code": "https://termgit.elga.gv.at/ValueSet/elga-criticalityobservationvalue"
                             },
                             "source": "OIDtoURI"
@@ -2831,7 +2831,7 @@ conceptMap_as_7dimension_dict["OIDtoURI"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://cda.oid",
+                                "system": "http://fhir.system",
                                 "code": "https://termgit.elga.gv.at/ValueSet/elga-allergystatuscode"
                             },
                             "source": "OIDtoURI"
@@ -2841,7 +2841,7 @@ conceptMap_as_7dimension_dict["OIDtoURI"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://cda.oid",
+                                "system": "http://fhir.system",
                                 "code": "https://termgit.elga.gv.at/ValueSet/elga-conditionverificationstatus"
                             },
                             "source": "OIDtoURI"
@@ -2851,7 +2851,7 @@ conceptMap_as_7dimension_dict["OIDtoURI"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://cda.oid",
+                                "system": "http://fhir.system",
                                 "code": "https://termgit.elga.gv.at/ValueSet/elga-nachweisergebnis"
                             },
                             "source": "OIDtoURI"
@@ -2861,7 +2861,7 @@ conceptMap_as_7dimension_dict["OIDtoURI"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://cda.oid",
+                                "system": "http://fhir.system",
                                 "code": "https://termgit.elga.gv.at/ValueSet/elga-probenmaterial"
                             },
                             "source": "OIDtoURI"
@@ -2871,7 +2871,7 @@ conceptMap_as_7dimension_dict["OIDtoURI"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://cda.oid",
+                                "system": "http://fhir.system",
                                 "code": "https://termgit.elga.gv.at/ValueSet/elga-mikroorganismen"
                             },
                             "source": "OIDtoURI"
@@ -2881,7 +2881,7 @@ conceptMap_as_7dimension_dict["OIDtoURI"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://cda.oid",
+                                "system": "http://fhir.system",
                                 "code": "https://termgit.elga.gv.at/ValueSet/elga-problemseverity"
                             },
                             "source": "OIDtoURI"
@@ -2891,7 +2891,7 @@ conceptMap_as_7dimension_dict["OIDtoURI"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://cda.oid",
+                                "system": "http://fhir.system",
                                 "code": "https://termgit.elga.gv.at/ValueSet/elga-roleclass"
                             },
                             "source": "OIDtoURI"
@@ -2901,7 +2901,7 @@ conceptMap_as_7dimension_dict["OIDtoURI"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://cda.oid",
+                                "system": "http://fhir.system",
                                 "code": "https://termgit.elga.gv.at/ValueSet/elga-absentorunknownmedication"
                             },
                             "source": "OIDtoURI"
@@ -2911,7 +2911,7 @@ conceptMap_as_7dimension_dict["OIDtoURI"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://cda.oid",
+                                "system": "http://fhir.system",
                                 "code": "https://termgit.elga.gv.at/ValueSet/elga-absentorunknowndevices"
                             },
                             "source": "OIDtoURI"
@@ -2921,7 +2921,7 @@ conceptMap_as_7dimension_dict["OIDtoURI"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://cda.oid",
+                                "system": "http://fhir.system",
                                 "code": "https://termgit.elga.gv.at/ValueSet/elga-absentorunknownprocedures"
                             },
                             "source": "OIDtoURI"
@@ -2931,7 +2931,7 @@ conceptMap_as_7dimension_dict["OIDtoURI"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://cda.oid",
+                                "system": "http://fhir.system",
                                 "code": "https://termgit.elga.gv.at/ValueSet/elga-conditionstatuscode"
                             },
                             "source": "OIDtoURI"
@@ -2941,7 +2941,7 @@ conceptMap_as_7dimension_dict["OIDtoURI"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://cda.oid",
+                                "system": "http://fhir.system",
                                 "code": "https://termgit.elga.gv.at/ValueSet/elga-nullflavor"
                             },
                             "source": "OIDtoURI"
@@ -2951,7 +2951,7 @@ conceptMap_as_7dimension_dict["OIDtoURI"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://cda.oid",
+                                "system": "http://fhir.system",
                                 "code": "https://termgit.elga.gv.at/ValueSet/elga-expecteddeliverydatemethod"
                             },
                             "source": "OIDtoURI"
@@ -2961,7 +2961,7 @@ conceptMap_as_7dimension_dict["OIDtoURI"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://cda.oid",
+                                "system": "http://fhir.system",
                                 "code": "https://termgit.elga.gv.at/ValueSet/elga-pregnanciessummary"
                             },
                             "source": "OIDtoURI"
@@ -2971,7 +2971,7 @@ conceptMap_as_7dimension_dict["OIDtoURI"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://cda.oid",
+                                "system": "http://fhir.system",
                                 "code": "https://termgit.elga.gv.at/ValueSet/elga-currentsmokingstatus"
                             },
                             "source": "OIDtoURI"
@@ -2981,7 +2981,7 @@ conceptMap_as_7dimension_dict["OIDtoURI"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://cda.oid",
+                                "system": "http://fhir.system",
                                 "code": "https://termgit.elga.gv.at/ValueSet/elga-typeofproblem"
                             },
                             "source": "OIDtoURI"
@@ -2991,7 +2991,7 @@ conceptMap_as_7dimension_dict["OIDtoURI"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://cda.oid",
+                                "system": "http://fhir.system",
                                 "code": "https://termgit.elga.gv.at/ValueSet/elga-allergietyp"
                             },
                             "source": "OIDtoURI"
@@ -3001,7 +3001,7 @@ conceptMap_as_7dimension_dict["OIDtoURI"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://cda.oid",
+                                "system": "http://fhir.system",
                                 "code": "https://termgit.elga.gv.at/ValueSet/atcdabbr-noinformationqualifier"
                             },
                             "source": "OIDtoURI"
@@ -3011,7 +3011,7 @@ conceptMap_as_7dimension_dict["OIDtoURI"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://cda.oid",
+                                "system": "http://fhir.system",
                                 "code": "https://termgit.elga.gv.at/ValueSet/atcdabbr-lateralityqualifiercode"
                             },
                             "source": "OIDtoURI"
@@ -3021,7 +3021,7 @@ conceptMap_as_7dimension_dict["OIDtoURI"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://cda.oid",
+                                "system": "http://fhir.system",
                                 "code": "https://termgit.elga.gv.at/ValueSet/elga-serviceeventslabor"
                             },
                             "source": "OIDtoURI"
@@ -3031,7 +3031,7 @@ conceptMap_as_7dimension_dict["OIDtoURI"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://cda.oid",
+                                "system": "http://fhir.system",
                                 "code": "https://termgit.elga.gv.at/ValueSet/elga-urlscheme"
                             },
                             "source": "OIDtoURI"
@@ -3041,7 +3041,7 @@ conceptMap_as_7dimension_dict["OIDtoURI"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://cda.oid",
+                                "system": "http://fhir.system",
                                 "code": "https://termgit.elga.gv.at/ValueSet/elga-rollen"
                             },
                             "source": "OIDtoURI"
@@ -3051,7 +3051,7 @@ conceptMap_as_7dimension_dict["OIDtoURI"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://cda.oid",
+                                "system": "http://fhir.system",
                                 "code": "https://termgit.elga.gv.at/ValueSet/elga-entitynameuse"
                             },
                             "source": "OIDtoURI"
@@ -3061,7 +3061,7 @@ conceptMap_as_7dimension_dict["OIDtoURI"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://cda.oid",
+                                "system": "http://fhir.system",
                                 "code": "https://termgit.elga.gv.at/ValueSet/elga-informationrecipienttype"
                             },
                             "source": "OIDtoURI"
@@ -3071,7 +3071,7 @@ conceptMap_as_7dimension_dict["OIDtoURI"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://cda.oid",
+                                "system": "http://fhir.system",
                                 "code": "https://termgit.elga.gv.at/ValueSet/elga-realmcode"
                             },
                             "source": "OIDtoURI"
@@ -3081,7 +3081,7 @@ conceptMap_as_7dimension_dict["OIDtoURI"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://cda.oid",
+                                "system": "http://fhir.system",
                                 "code": "https://termgit.elga.gv.at/ValueSet/elga-medikationtherapieart"
                             },
                             "source": "OIDtoURI"
@@ -3091,7 +3091,7 @@ conceptMap_as_7dimension_dict["OIDtoURI"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://cda.oid",
+                                "system": "http://fhir.system",
                                 "code": "https://termgit.elga.gv.at/ValueSet/elga-medikationmengenart"
                             },
                             "source": "OIDtoURI"
@@ -3101,7 +3101,7 @@ conceptMap_as_7dimension_dict["OIDtoURI"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://cda.oid",
+                                "system": "http://fhir.system",
                                 "code": "https://termgit.elga.gv.at/ValueSet/elga-noinformation"
                             },
                             "source": "OIDtoURI"
@@ -3111,7 +3111,7 @@ conceptMap_as_7dimension_dict["OIDtoURI"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://cda.oid",
+                                "system": "http://fhir.system",
                                 "code": "https://termgit.elga.gv.at/ValueSet/elga-vitalparameterarten"
                             },
                             "source": "OIDtoURI"
@@ -3121,7 +3121,7 @@ conceptMap_as_7dimension_dict["OIDtoURI"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://cda.oid",
+                                "system": "http://fhir.system",
                                 "code": "https://termgit.elga.gv.at/ValueSet/elga-problemarten"
                             },
                             "source": "OIDtoURI"
@@ -3131,7 +3131,7 @@ conceptMap_as_7dimension_dict["OIDtoURI"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://cda.oid",
+                                "system": "http://fhir.system",
                                 "code": "https://termgit.elga.gv.at/ValueSet/elga-telecomaddressuse"
                             },
                             "source": "OIDtoURI"
@@ -3141,7 +3141,7 @@ conceptMap_as_7dimension_dict["OIDtoURI"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://cda.oid",
+                                "system": "http://fhir.system",
                                 "code": "https://termgit.elga.gv.at/ValueSet/elga-sectionsserviceevents"
                             },
                             "source": "OIDtoURI"
@@ -3151,7 +3151,7 @@ conceptMap_as_7dimension_dict["OIDtoURI"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://cda.oid",
+                                "system": "http://fhir.system",
                                 "code": "https://termgit.elga.gv.at/ValueSet/elga-dokumentenklassen"
                             },
                             "source": "OIDtoURI"
@@ -3161,7 +3161,7 @@ conceptMap_as_7dimension_dict["OIDtoURI"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://cda.oid",
+                                "system": "http://fhir.system",
                                 "code": "https://termgit.elga.gv.at/ValueSet/elga-administrativegender"
                             },
                             "source": "OIDtoURI"
@@ -3171,7 +3171,7 @@ conceptMap_as_7dimension_dict["OIDtoURI"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://cda.oid",
+                                "system": "http://fhir.system",
                                 "code": "https://termgit.elga.gv.at/ValueSet/elga-medientyp"
                             },
                             "source": "OIDtoURI"
@@ -3181,7 +3181,7 @@ conceptMap_as_7dimension_dict["OIDtoURI"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://cda.oid",
+                                "system": "http://fhir.system",
                                 "code": "https://termgit.elga.gv.at/ValueSet/elga-serviceeventperformer"
                             },
                             "source": "OIDtoURI"
@@ -3191,7 +3191,7 @@ conceptMap_as_7dimension_dict["OIDtoURI"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://cda.oid",
+                                "system": "http://fhir.system",
                                 "code": "https://termgit.elga.gv.at/ValueSet/elga-laborparameter"
                             },
                             "source": "OIDtoURI"
@@ -3201,7 +3201,7 @@ conceptMap_as_7dimension_dict["OIDtoURI"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://cda.oid",
+                                "system": "http://fhir.system",
                                 "code": "https://termgit.elga.gv.at/ValueSet/elga-specimentype"
                             },
                             "source": "OIDtoURI"
@@ -3211,7 +3211,7 @@ conceptMap_as_7dimension_dict["OIDtoURI"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://cda.oid",
+                                "system": "http://fhir.system",
                                 "code": "https://termgit.elga.gv.at/ValueSet/elga-laborstruktur"
                             },
                             "source": "OIDtoURI"
@@ -3221,7 +3221,7 @@ conceptMap_as_7dimension_dict["OIDtoURI"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://cda.oid",
+                                "system": "http://fhir.system",
                                 "code": "https://termgit.elga.gv.at/ValueSet/elga-sectionsentlassungaerztl"
                             },
                             "source": "OIDtoURI"
@@ -3231,7 +3231,7 @@ conceptMap_as_7dimension_dict["OIDtoURI"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://cda.oid",
+                                "system": "http://fhir.system",
                                 "code": "https://termgit.elga.gv.at/ValueSet/elga-sectionsentlassungpflege"
                             },
                             "source": "OIDtoURI"
@@ -3241,7 +3241,7 @@ conceptMap_as_7dimension_dict["OIDtoURI"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://cda.oid",
+                                "system": "http://fhir.system",
                                 "code": "https://termgit.elga.gv.at/ValueSet/elga-actencountercode"
                             },
                             "source": "OIDtoURI"
@@ -3251,7 +3251,7 @@ conceptMap_as_7dimension_dict["OIDtoURI"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://cda.oid",
+                                "system": "http://fhir.system",
                                 "code": "https://termgit.elga.gv.at/ValueSet/elga-sectionsradiologie"
                             },
                             "source": "OIDtoURI"
@@ -3261,7 +3261,7 @@ conceptMap_as_7dimension_dict["OIDtoURI"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://cda.oid",
+                                "system": "http://fhir.system",
                                 "code": "https://termgit.elga.gv.at/ValueSet/elga-humanactsite"
                             },
                             "source": "OIDtoURI"
@@ -3271,7 +3271,7 @@ conceptMap_as_7dimension_dict["OIDtoURI"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://cda.oid",
+                                "system": "http://fhir.system",
                                 "code": "https://termgit.elga.gv.at/ValueSet/elga-entlassungsmanagementa"
                             },
                             "source": "OIDtoURI"
@@ -3281,7 +3281,7 @@ conceptMap_as_7dimension_dict["OIDtoURI"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://cda.oid",
+                                "system": "http://fhir.system",
                                 "code": "https://termgit.elga.gv.at/ValueSet/elga-mammogramassessment"
                             },
                             "source": "OIDtoURI"
@@ -3291,7 +3291,7 @@ conceptMap_as_7dimension_dict["OIDtoURI"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://cda.oid",
+                                "system": "http://fhir.system",
                                 "code": "https://termgit.elga.gv.at/ValueSet/elga-serviceeventsentlassbr"
                             },
                             "source": "OIDtoURI"
@@ -3301,7 +3301,7 @@ conceptMap_as_7dimension_dict["OIDtoURI"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://cda.oid",
+                                "system": "http://fhir.system",
                                 "code": "https://termgit.elga.gv.at/ValueSet/elga-significantpathogens"
                             },
                             "source": "OIDtoURI"
@@ -3311,7 +3311,7 @@ conceptMap_as_7dimension_dict["OIDtoURI"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://cda.oid",
+                                "system": "http://fhir.system",
                                 "code": "https://termgit.elga.gv.at/ValueSet/elga-einnahmezeitpunkte"
                             },
                             "source": "OIDtoURI"
@@ -3321,7 +3321,7 @@ conceptMap_as_7dimension_dict["OIDtoURI"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://cda.oid",
+                                "system": "http://fhir.system",
                                 "code": "https://termgit.elga.gv.at/ValueSet/elga-authorspeciality"
                             },
                             "source": "OIDtoURI"
@@ -3331,7 +3331,7 @@ conceptMap_as_7dimension_dict["OIDtoURI"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://cda.oid",
+                                "system": "http://fhir.system",
                                 "code": "https://termgit.elga.gv.at/ValueSet/elga-formatcodezusatz"
                             },
                             "source": "OIDtoURI"
@@ -3341,7 +3341,7 @@ conceptMap_as_7dimension_dict["OIDtoURI"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://cda.oid",
+                                "system": "http://fhir.system",
                                 "code": "https://termgit.elga.gv.at/ValueSet/elga-formatcode"
                             },
                             "source": "OIDtoURI"
@@ -3351,7 +3351,7 @@ conceptMap_as_7dimension_dict["OIDtoURI"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://cda.oid",
+                                "system": "http://fhir.system",
                                 "code": "https://termgit.elga.gv.at/ValueSet/appc-modalitaet"
                             },
                             "source": "OIDtoURI"
@@ -3361,7 +3361,7 @@ conceptMap_as_7dimension_dict["OIDtoURI"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://cda.oid",
+                                "system": "http://fhir.system",
                                 "code": "https://termgit.elga.gv.at/ValueSet/appc-lateralitaet"
                             },
                             "source": "OIDtoURI"
@@ -3371,7 +3371,7 @@ conceptMap_as_7dimension_dict["OIDtoURI"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://cda.oid",
+                                "system": "http://fhir.system",
                                 "code": "https://termgit.elga.gv.at/ValueSet/appc-prozeduren"
                             },
                             "source": "OIDtoURI"
@@ -3381,7 +3381,7 @@ conceptMap_as_7dimension_dict["OIDtoURI"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://cda.oid",
+                                "system": "http://fhir.system",
                                 "code": "https://termgit.elga.gv.at/ValueSet/appc-anatomie"
                             },
                             "source": "OIDtoURI"
@@ -3391,7 +3391,7 @@ conceptMap_as_7dimension_dict["OIDtoURI"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://cda.oid",
+                                "system": "http://fhir.system",
                                 "code": "https://termgit.elga.gv.at/ValueSet/elga-medikationartanwendung"
                             },
                             "source": "OIDtoURI"
@@ -3401,7 +3401,7 @@ conceptMap_as_7dimension_dict["OIDtoURI"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://cda.oid",
+                                "system": "http://fhir.system",
                                 "code": "https://termgit.elga.gv.at/ValueSet/elga-medikationmengenartalternativ"
                             },
                             "source": "OIDtoURI"
@@ -3411,7 +3411,7 @@ conceptMap_as_7dimension_dict["OIDtoURI"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://cda.oid",
+                                "system": "http://fhir.system",
                                 "code": "https://termgit.elga.gv.at/ValueSet/elga-medikationrezeptart"
                             },
                             "source": "OIDtoURI"
@@ -3421,7 +3421,7 @@ conceptMap_as_7dimension_dict["OIDtoURI"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://cda.oid",
+                                "system": "http://fhir.system",
                                 "code": "https://termgit.elga.gv.at/ValueSet/elga-medikationfrequenz"
                             },
                             "source": "OIDtoURI"
@@ -3431,7 +3431,7 @@ conceptMap_as_7dimension_dict["OIDtoURI"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://cda.oid",
+                                "system": "http://fhir.system",
                                 "code": "https://termgit.elga.gv.at/ValueSet/elga-confidentiality"
                             },
                             "source": "OIDtoURI"
@@ -3441,7 +3441,7 @@ conceptMap_as_7dimension_dict["OIDtoURI"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://cda.oid",
+                                "system": "http://fhir.system",
                                 "code": "https://termgit.elga.gv.at/ValueSet/elga-medikationdarreichungsform"
                             },
                             "source": "OIDtoURI"
@@ -3451,7 +3451,7 @@ conceptMap_as_7dimension_dict["OIDtoURI"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://cda.oid",
+                                "system": "http://fhir.system",
                                 "code": "https://termgit.elga.gv.at/ValueSet/elga-medikationpharmazeutischeempfehlungstatus"
                             },
                             "source": "OIDtoURI"
@@ -3461,7 +3461,7 @@ conceptMap_as_7dimension_dict["OIDtoURI"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://cda.oid",
+                                "system": "http://fhir.system",
                                 "code": "https://termgit.elga.gv.at/ValueSet/elga-healthcarefacilitytypecode"
                             },
                             "source": "OIDtoURI"
@@ -3471,7 +3471,7 @@ conceptMap_as_7dimension_dict["OIDtoURI"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://cda.oid",
+                                "system": "http://fhir.system",
                                 "code": "https://termgit.elga.gv.at/ValueSet/elga-medikationrezeptpflichtstatus"
                             },
                             "source": "OIDtoURI"
@@ -3481,7 +3481,7 @@ conceptMap_as_7dimension_dict["OIDtoURI"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://cda.oid",
+                                "system": "http://fhir.system",
                                 "code": "https://termgit.elga.gv.at/ValueSet/elga-practicesetting"
                             },
                             "source": "OIDtoURI"
@@ -3491,7 +3491,7 @@ conceptMap_as_7dimension_dict["OIDtoURI"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://cda.oid",
+                                "system": "http://fhir.system",
                                 "code": "https://termgit.elga.gv.at/ValueSet/hl7-at-xds-dokumentenklassen"
                             },
                             "source": "OIDtoURI"
@@ -3501,7 +3501,7 @@ conceptMap_as_7dimension_dict["OIDtoURI"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://cda.oid",
+                                "system": "http://fhir.system",
                                 "code": "https://termgit.elga.gv.at/ValueSet/elga-insuredassocentity"
                             },
                             "source": "OIDtoURI"
@@ -3511,7 +3511,7 @@ conceptMap_as_7dimension_dict["OIDtoURI"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://cda.oid",
+                                "system": "http://fhir.system",
                                 "code": "https://termgit.elga.gv.at/ValueSet/ems-anti-hcv-immunoassay"
                             },
                             "source": "OIDtoURI"
@@ -3521,7 +3521,7 @@ conceptMap_as_7dimension_dict["OIDtoURI"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://cda.oid",
+                                "system": "http://fhir.system",
                                 "code": "https://termgit.elga.gv.at/ValueSet/ems-anti-hcv-immunoblot-assay"
                             },
                             "source": "OIDtoURI"
@@ -3531,7 +3531,7 @@ conceptMap_as_7dimension_dict["OIDtoURI"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://cda.oid",
+                                "system": "http://fhir.system",
                                 "code": "https://termgit.elga.gv.at/ValueSet/ems-hcv-core-ag-assay"
                             },
                             "source": "OIDtoURI"
@@ -3541,7 +3541,7 @@ conceptMap_as_7dimension_dict["OIDtoURI"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://cda.oid",
+                                "system": "http://fhir.system",
                                 "code": "https://termgit.elga.gv.at/ValueSet/ems-hbv-status"
                             },
                             "source": "OIDtoURI"
@@ -3551,7 +3551,7 @@ conceptMap_as_7dimension_dict["OIDtoURI"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://cda.oid",
+                                "system": "http://fhir.system",
                                 "code": "https://termgit.elga.gv.at/CodeSystem/oeaek-berechtigungen"
                             },
                             "source": "OIDtoURI"
@@ -3561,7 +3561,7 @@ conceptMap_as_7dimension_dict["OIDtoURI"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://cda.oid",
+                                "system": "http://fhir.system",
                                 "code": "https://termgit.elga.gv.at/CodeSystem/oeaek-fachrichtung"
                             },
                             "source": "OIDtoURI"
@@ -3571,7 +3571,7 @@ conceptMap_as_7dimension_dict["OIDtoURI"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://cda.oid",
+                                "system": "http://fhir.system",
                                 "code": "https://termgit.elga.gv.at/CodeSystem/oeaek-additivfach"
                             },
                             "source": "OIDtoURI"
@@ -3581,7 +3581,7 @@ conceptMap_as_7dimension_dict["OIDtoURI"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://cda.oid",
+                                "system": "http://fhir.system",
                                 "code": "https://termgit.elga.gv.at/CodeSystem/oeaek-spezialdiplom"
                             },
                             "source": "OIDtoURI"
@@ -3591,7 +3591,7 @@ conceptMap_as_7dimension_dict["OIDtoURI"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://cda.oid",
+                                "system": "http://fhir.system",
                                 "code": "https://termgit.elga.gv.at/CodeSystem/oeaek-zertifikate"
                             },
                             "source": "OIDtoURI"
@@ -3601,7 +3601,7 @@ conceptMap_as_7dimension_dict["OIDtoURI"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://cda.oid",
+                                "system": "http://fhir.system",
                                 "code": "https://termgit.elga.gv.at/CodeSystem/oeaek-spezialisierung"
                             },
                             "source": "OIDtoURI"
@@ -3611,7 +3611,7 @@ conceptMap_as_7dimension_dict["OIDtoURI"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://cda.oid",
+                                "system": "http://fhir.system",
                                 "code": "https://termgit.elga.gv.at/CodeSystem/asp-liste"
                             },
                             "source": "OIDtoURI"
@@ -3621,7 +3621,7 @@ conceptMap_as_7dimension_dict["OIDtoURI"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://cda.oid",
+                                "system": "http://fhir.system",
                                 "code": "https://termgit.elga.gv.at/CodeSystem/eimpf-impfstoffe"
                             },
                             "source": "OIDtoURI"
@@ -3631,7 +3631,7 @@ conceptMap_as_7dimension_dict["OIDtoURI"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://cda.oid",
+                                "system": "http://fhir.system",
                                 "code": "https://termgit.elga.gv.at/CodeSystem/ems-parameter"
                             },
                             "source": "OIDtoURI"
@@ -3641,7 +3641,7 @@ conceptMap_as_7dimension_dict["OIDtoURI"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://cda.oid",
+                                "system": "http://fhir.system",
                                 "code": "https://termgit.elga.gv.at/CodeSystem/ems-methoden"
                             },
                             "source": "OIDtoURI"
@@ -3651,7 +3651,7 @@ conceptMap_as_7dimension_dict["OIDtoURI"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://cda.oid",
+                                "system": "http://fhir.system",
                                 "code": "https://termgit.elga.gv.at/CodeSystem/elga-actcode"
                             },
                             "source": "OIDtoURI"
@@ -3661,7 +3661,7 @@ conceptMap_as_7dimension_dict["OIDtoURI"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://cda.oid",
+                                "system": "http://fhir.system",
                                 "code": "https://termgit.elga.gv.at/CodeSystem/rast-klassen"
                             },
                             "source": "OIDtoURI"
@@ -3671,7 +3671,7 @@ conceptMap_as_7dimension_dict["OIDtoURI"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://cda.oid",
+                                "system": "http://fhir.system",
                                 "code": "https://termgit.elga.gv.at/CodeSystem/ems-krankheitsmerkmale"
                             },
                             "source": "OIDtoURI"
@@ -3681,7 +3681,7 @@ conceptMap_as_7dimension_dict["OIDtoURI"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://cda.oid",
+                                "system": "http://fhir.system",
                                 "code": "https://termgit.elga.gv.at/CodeSystem/ems-hcv-rna"
                             },
                             "source": "OIDtoURI"
@@ -3691,7 +3691,7 @@ conceptMap_as_7dimension_dict["OIDtoURI"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://cda.oid",
+                                "system": "http://fhir.system",
                                 "code": "https://termgit.elga.gv.at/CodeSystem/ems-klinischemanifestation"
                             },
                             "source": "OIDtoURI"
@@ -3701,7 +3701,7 @@ conceptMap_as_7dimension_dict["OIDtoURI"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://cda.oid",
+                                "system": "http://fhir.system",
                                 "code": "https://termgit.elga.gv.at/CodeSystem/elga-laborparameterergaenzung"
                             },
                             "source": "OIDtoURI"
@@ -3711,7 +3711,7 @@ conceptMap_as_7dimension_dict["OIDtoURI"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://cda.oid",
+                                "system": "http://fhir.system",
                                 "code": "https://termgit.elga.gv.at/CodeSystem/ems-wurdekrankheitimportiert"
                             },
                             "source": "OIDtoURI"
@@ -3721,7 +3721,7 @@ conceptMap_as_7dimension_dict["OIDtoURI"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://cda.oid",
+                                "system": "http://fhir.system",
                                 "code": "https://termgit.elga.gv.at/CodeSystem/elga-practicesetting"
                             },
                             "source": "OIDtoURI"
@@ -3731,7 +3731,7 @@ conceptMap_as_7dimension_dict["OIDtoURI"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://cda.oid",
+                                "system": "http://fhir.system",
                                 "code": "https://termgit.elga.gv.at/CodeSystem/elga-auditeventid"
                             },
                             "source": "OIDtoURI"
@@ -3741,7 +3741,7 @@ conceptMap_as_7dimension_dict["OIDtoURI"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://cda.oid",
+                                "system": "http://fhir.system",
                                 "code": "https://termgit.elga.gv.at/CodeSystem/elga-auditeventtype"
                             },
                             "source": "OIDtoURI"
@@ -3751,7 +3751,7 @@ conceptMap_as_7dimension_dict["OIDtoURI"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://cda.oid",
+                                "system": "http://fhir.system",
                                 "code": "https://termgit.elga.gv.at/CodeSystem/elga-auditsourcetype"
                             },
                             "source": "OIDtoURI"
@@ -3761,7 +3761,7 @@ conceptMap_as_7dimension_dict["OIDtoURI"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://cda.oid",
+                                "system": "http://fhir.system",
                                 "code": "https://termgit.elga.gv.at/CodeSystem/elga-auditparticipantobjecttype"
                             },
                             "source": "OIDtoURI"
@@ -3771,7 +3771,7 @@ conceptMap_as_7dimension_dict["OIDtoURI"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://cda.oid",
+                                "system": "http://fhir.system",
                                 "code": "https://termgit.elga.gv.at/CodeSystem/elga-auditparticipantobjecttyperole"
                             },
                             "source": "OIDtoURI"
@@ -3781,7 +3781,7 @@ conceptMap_as_7dimension_dict["OIDtoURI"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://cda.oid",
+                                "system": "http://fhir.system",
                                 "code": "https://termgit.elga.gv.at/CodeSystem/elga-auditparticipantobjectidtype"
                             },
                             "source": "OIDtoURI"
@@ -3791,7 +3791,7 @@ conceptMap_as_7dimension_dict["OIDtoURI"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://cda.oid",
+                                "system": "http://fhir.system",
                                 "code": "https://termgit.elga.gv.at/CodeSystem/medikation-ages-wirkstoffe"
                             },
                             "source": "OIDtoURI"
@@ -3801,7 +3801,7 @@ conceptMap_as_7dimension_dict["OIDtoURI"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://cda.oid",
+                                "system": "http://fhir.system",
                                 "code": "https://termgit.elga.gv.at/CodeSystem/elga-funktionsrollen"
                             },
                             "source": "OIDtoURI"
@@ -3811,7 +3811,7 @@ conceptMap_as_7dimension_dict["OIDtoURI"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://cda.oid",
+                                "system": "http://fhir.system",
                                 "code": "https://termgit.elga.gv.at/CodeSystem/elga-e-health-anwendungen"
                             },
                             "source": "OIDtoURI"
@@ -3821,7 +3821,7 @@ conceptMap_as_7dimension_dict["OIDtoURI"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://cda.oid",
+                                "system": "http://fhir.system",
                                 "code": "https://termgit.elga.gv.at/CodeSystem/elga-fachaerzte"
                             },
                             "source": "OIDtoURI"
@@ -3831,7 +3831,7 @@ conceptMap_as_7dimension_dict["OIDtoURI"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://cda.oid",
+                                "system": "http://fhir.system",
                                 "code": "https://termgit.elga.gv.at/CodeSystem/elga-kontakttypen"
                             },
                             "source": "OIDtoURI"
@@ -3841,7 +3841,7 @@ conceptMap_as_7dimension_dict["OIDtoURI"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://cda.oid",
+                                "system": "http://fhir.system",
                                 "code": "https://termgit.elga.gv.at/CodeSystem/elga-patienten-identifizierungsmethoden"
                             },
                             "source": "OIDtoURI"
@@ -3851,7 +3851,7 @@ conceptMap_as_7dimension_dict["OIDtoURI"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://cda.oid",
+                                "system": "http://fhir.system",
                                 "code": "https://termgit.elga.gv.at/CodeSystem/elga-auditeventtypea-arr"
                             },
                             "source": "OIDtoURI"
@@ -3861,7 +3861,7 @@ conceptMap_as_7dimension_dict["OIDtoURI"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://cda.oid",
+                                "system": "http://fhir.system",
                                 "code": "https://termgit.elga.gv.at/CodeSystem/icd-10-bmg-2017"
                             },
                             "source": "OIDtoURI"
@@ -3871,7 +3871,7 @@ conceptMap_as_7dimension_dict["OIDtoURI"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://cda.oid",
+                                "system": "http://fhir.system",
                                 "code": "https://termgit.elga.gv.at/CodeSystem/elga-specimentype-ergaenzung"
                             },
                             "source": "OIDtoURI"
@@ -3881,7 +3881,7 @@ conceptMap_as_7dimension_dict["OIDtoURI"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://cda.oid",
+                                "system": "http://fhir.system",
                                 "code": "https://termgit.elga.gv.at/CodeSystem/icpc2"
                             },
                             "source": "OIDtoURI"
@@ -3891,7 +3891,7 @@ conceptMap_as_7dimension_dict["OIDtoURI"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://cda.oid",
+                                "system": "http://fhir.system",
                                 "code": "https://termgit.elga.gv.at/CodeSystem/elga-ergaenzungsliste"
                             },
                             "source": "OIDtoURI"
@@ -3901,7 +3901,7 @@ conceptMap_as_7dimension_dict["OIDtoURI"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://cda.oid",
+                                "system": "http://fhir.system",
                                 "code": "https://termgit.elga.gv.at/CodeSystem/elga-allergietyp"
                             },
                             "source": "OIDtoURI"
@@ -3911,7 +3911,7 @@ conceptMap_as_7dimension_dict["OIDtoURI"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://cda.oid",
+                                "system": "http://fhir.system",
                                 "code": "https://termgit.elga.gv.at/CodeSystem/eimpf-ergaenzung"
                             },
                             "source": "OIDtoURI"
@@ -3921,7 +3921,7 @@ conceptMap_as_7dimension_dict["OIDtoURI"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://cda.oid",
+                                "system": "http://fhir.system",
                                 "code": "https://termgit.elga.gv.at/CodeSystem/icd-10-bmg-2020"
                             },
                             "source": "OIDtoURI"
@@ -3931,7 +3931,7 @@ conceptMap_as_7dimension_dict["OIDtoURI"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://cda.oid",
+                                "system": "http://fhir.system",
                                 "code": "https://termgit.elga.gv.at/CodeSystem/eimpf-historischeimpfstoffe"
                             },
                             "source": "OIDtoURI"
@@ -3941,7 +3941,7 @@ conceptMap_as_7dimension_dict["OIDtoURI"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://cda.oid",
+                                "system": "http://fhir.system",
                                 "code": "https://termgit.elga.gv.at/CodeSystem/ems-ergaenzungmeldepflichtigekrankheiten"
                             },
                             "source": "OIDtoURI"
@@ -3951,7 +3951,7 @@ conceptMap_as_7dimension_dict["OIDtoURI"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://cda.oid",
+                                "system": "http://fhir.system",
                                 "code": "https://termgit.elga.gv.at/CodeSystem/elga-pflegestufen"
                             },
                             "source": "OIDtoURI"
@@ -3961,7 +3961,7 @@ conceptMap_as_7dimension_dict["OIDtoURI"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://cda.oid",
+                                "system": "http://fhir.system",
                                 "code": "https://termgit.elga.gv.at/CodeSystem/eimpf-zuordnungsmatrix"
                             },
                             "source": "OIDtoURI"
@@ -3971,7 +3971,7 @@ conceptMap_as_7dimension_dict["OIDtoURI"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://cda.oid",
+                                "system": "http://fhir.system",
                                 "code": "https://termgit.elga.gv.at/CodeSystem/exnds-sections"
                             },
                             "source": "OIDtoURI"
@@ -3981,7 +3981,7 @@ conceptMap_as_7dimension_dict["OIDtoURI"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://cda.oid",
+                                "system": "http://fhir.system",
                                 "code": "https://termgit.elga.gv.at/CodeSystem/exnds-concepts"
                             },
                             "source": "OIDtoURI"
@@ -3991,7 +3991,7 @@ conceptMap_as_7dimension_dict["OIDtoURI"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://cda.oid",
+                                "system": "http://fhir.system",
                                 "code": "https://termgit.elga.gv.at/CodeSystem/ems-betreuung"
                             },
                             "source": "OIDtoURI"
@@ -4001,7 +4001,7 @@ conceptMap_as_7dimension_dict["OIDtoURI"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://cda.oid",
+                                "system": "http://fhir.system",
                                 "code": "https://termgit.elga.gv.at/CodeSystem/ems-listeschulen"
                             },
                             "source": "OIDtoURI"
@@ -4011,7 +4011,7 @@ conceptMap_as_7dimension_dict["OIDtoURI"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://cda.oid",
+                                "system": "http://fhir.system",
                                 "code": "https://termgit.elga.gv.at/CodeSystem/exnds-metadaten"
                             },
                             "source": "OIDtoURI"
@@ -4021,7 +4021,7 @@ conceptMap_as_7dimension_dict["OIDtoURI"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://cda.oid",
+                                "system": "http://fhir.system",
                                 "code": "https://termgit.elga.gv.at/CodeSystem/exnds-formatcodes"
                             },
                             "source": "OIDtoURI"
@@ -4031,7 +4031,7 @@ conceptMap_as_7dimension_dict["OIDtoURI"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://cda.oid",
+                                "system": "http://fhir.system",
                                 "code": "https://termgit.elga.gv.at/CodeSystem/elga-gtelvogdarollen"
                             },
                             "source": "OIDtoURI"
@@ -4041,7 +4041,7 @@ conceptMap_as_7dimension_dict["OIDtoURI"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://cda.oid",
+                                "system": "http://fhir.system",
                                 "code": "https://termgit.elga.gv.at/CodeSystem/eimpf-schemamatrix"
                             },
                             "source": "OIDtoURI"
@@ -4051,7 +4051,7 @@ conceptMap_as_7dimension_dict["OIDtoURI"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://cda.oid",
+                                "system": "http://fhir.system",
                                 "code": "https://termgit.elga.gv.at/CodeSystem/dgc-qr"
                             },
                             "source": "OIDtoURI"
@@ -4061,7 +4061,7 @@ conceptMap_as_7dimension_dict["OIDtoURI"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://cda.oid",
+                                "system": "http://fhir.system",
                                 "code": "https://termgit.elga.gv.at/CodeSystem/dgc-antibody-test"
                             },
                             "source": "OIDtoURI"
@@ -4071,7 +4071,7 @@ conceptMap_as_7dimension_dict["OIDtoURI"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://cda.oid",
+                                "system": "http://fhir.system",
                                 "code": "https://termgit.elga.gv.at/CodeSystem/dgc-ratnamemanufacturer"
                             },
                             "source": "OIDtoURI"
@@ -4081,7 +4081,7 @@ conceptMap_as_7dimension_dict["OIDtoURI"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://cda.oid",
+                                "system": "http://fhir.system",
                                 "code": "https://termgit.elga.gv.at/CodeSystem/lkf-diagnose-typ"
                             },
                             "source": "OIDtoURI"
@@ -4091,7 +4091,7 @@ conceptMap_as_7dimension_dict["OIDtoURI"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://cda.oid",
+                                "system": "http://fhir.system",
                                 "code": "https://termgit.elga.gv.at/CodeSystem/lkf-diagnose-art"
                             },
                             "source": "OIDtoURI"
@@ -4101,7 +4101,7 @@ conceptMap_as_7dimension_dict["OIDtoURI"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://cda.oid",
+                                "system": "http://fhir.system",
                                 "code": "https://termgit.elga.gv.at/CodeSystem/lkf-diagnose-statauf"
                             },
                             "source": "OIDtoURI"
@@ -4111,7 +4111,7 @@ conceptMap_as_7dimension_dict["OIDtoURI"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://cda.oid",
+                                "system": "http://fhir.system",
                                 "code": "https://termgit.elga.gv.at/CodeSystem/bmg-icd-10-2022"
                             },
                             "source": "OIDtoURI"
@@ -4121,7 +4121,7 @@ conceptMap_as_7dimension_dict["OIDtoURI"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://cda.oid",
+                                "system": "http://fhir.system",
                                 "code": "https://termgit.elga.gv.at/CodeSystem/elga-serviceeventsentlassbrief"
                             },
                             "source": "OIDtoURI"
@@ -4131,7 +4131,7 @@ conceptMap_as_7dimension_dict["OIDtoURI"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://cda.oid",
+                                "system": "http://fhir.system",
                                 "code": "https://termgit.elga.gv.at/CodeSystem/lkf-ergaenzung"
                             },
                             "source": "OIDtoURI"
@@ -4141,7 +4141,7 @@ conceptMap_as_7dimension_dict["OIDtoURI"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://cda.oid",
+                                "system": "http://fhir.system",
                                 "code": "https://termgit.elga.gv.at/CodeSystem/elga-lebensmittelallergene"
                             },
                             "source": "OIDtoURI"
@@ -4151,7 +4151,7 @@ conceptMap_as_7dimension_dict["OIDtoURI"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://cda.oid",
+                                "system": "http://fhir.system",
                                 "code": "https://termgit.elga.gv.at/CodeSystem/bmg-lkf-2023"
                             },
                             "source": "OIDtoURI"
@@ -4161,7 +4161,7 @@ conceptMap_as_7dimension_dict["OIDtoURI"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://cda.oid",
+                                "system": "http://fhir.system",
                                 "code": "https://termgit.elga.gv.at/CodeSystem/austrian-designation-use"
                             },
                             "source": "OIDtoURI"
@@ -4171,7 +4171,7 @@ conceptMap_as_7dimension_dict["OIDtoURI"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://cda.oid",
+                                "system": "http://fhir.system",
                                 "code": "https://termgit.elga.gv.at/CodeSystem/medikationpackaging"
                             },
                             "source": "OIDtoURI"
@@ -4181,7 +4181,7 @@ conceptMap_as_7dimension_dict["OIDtoURI"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://cda.oid",
+                                "system": "http://fhir.system",
                                 "code": "https://termgit.elga.gv.at/CodeSystem/medikationactiveingredient"
                             },
                             "source": "OIDtoURI"
@@ -4191,7 +4191,7 @@ conceptMap_as_7dimension_dict["OIDtoURI"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://cda.oid",
+                                "system": "http://fhir.system",
                                 "code": "https://termgit.elga.gv.at/CodeSystem/bmg-icd-10-2024"
                             },
                             "source": "OIDtoURI"
@@ -4201,7 +4201,7 @@ conceptMap_as_7dimension_dict["OIDtoURI"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://cda.oid",
+                                "system": "http://fhir.system",
                                 "code": "https://termgit.elga.gv.at/CodeSystem/bmg-lkf-2024"
                             },
                             "source": "OIDtoURI"
@@ -4211,7 +4211,7 @@ conceptMap_as_7dimension_dict["OIDtoURI"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://cda.oid",
+                                "system": "http://fhir.system",
                                 "code": "https://termgit.elga.gv.at/CodeSystem/hl7-at-administrativegender-ergaenzung"
                             },
                             "source": "OIDtoURI"
@@ -4221,7 +4221,7 @@ conceptMap_as_7dimension_dict["OIDtoURI"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://cda.oid",
+                                "system": "http://fhir.system",
                                 "code": "https://termgit.elga.gv.at/CodeSystem/elga-entlassungsmanagementart"
                             },
                             "source": "OIDtoURI"
@@ -4231,7 +4231,7 @@ conceptMap_as_7dimension_dict["OIDtoURI"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://cda.oid",
+                                "system": "http://fhir.system",
                                 "code": "https://termgit.elga.gv.at/CodeSystem/elga-gda-aggregatrollen"
                             },
                             "source": "OIDtoURI"
@@ -4241,7 +4241,7 @@ conceptMap_as_7dimension_dict["OIDtoURI"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://cda.oid",
+                                "system": "http://fhir.system",
                                 "code": "https://termgit.elga.gv.at/CodeSystem/elga-formatcode"
                             },
                             "source": "OIDtoURI"
@@ -4251,7 +4251,7 @@ conceptMap_as_7dimension_dict["OIDtoURI"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://cda.oid",
+                                "system": "http://fhir.system",
                                 "code": "https://termgit.elga.gv.at/CodeSystem/appc-modalitaet"
                             },
                             "source": "OIDtoURI"
@@ -4261,7 +4261,7 @@ conceptMap_as_7dimension_dict["OIDtoURI"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://cda.oid",
+                                "system": "http://fhir.system",
                                 "code": "https://termgit.elga.gv.at/CodeSystem/appc-lateralitaet"
                             },
                             "source": "OIDtoURI"
@@ -4271,7 +4271,7 @@ conceptMap_as_7dimension_dict["OIDtoURI"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://cda.oid",
+                                "system": "http://fhir.system",
                                 "code": "https://termgit.elga.gv.at/CodeSystem/appc-prozeduren"
                             },
                             "source": "OIDtoURI"
@@ -4281,7 +4281,7 @@ conceptMap_as_7dimension_dict["OIDtoURI"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://cda.oid",
+                                "system": "http://fhir.system",
                                 "code": "https://termgit.elga.gv.at/CodeSystem/appc-anatomie"
                             },
                             "source": "OIDtoURI"
@@ -4291,7 +4291,7 @@ conceptMap_as_7dimension_dict["OIDtoURI"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://cda.oid",
+                                "system": "http://fhir.system",
                                 "code": "https://termgit.elga.gv.at/CodeSystem/gda-attribute"
                             },
                             "source": "OIDtoURI"
@@ -4301,7 +4301,7 @@ conceptMap_as_7dimension_dict["OIDtoURI"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://cda.oid",
+                                "system": "http://fhir.system",
                                 "code": "https://termgit.elga.gv.at/CodeSystem/elga-sections"
                             },
                             "source": "OIDtoURI"
@@ -4311,7 +4311,7 @@ conceptMap_as_7dimension_dict["OIDtoURI"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://cda.oid",
+                                "system": "http://fhir.system",
                                 "code": "https://termgit.elga.gv.at/CodeSystem/elga-formatcodezusatz"
                             },
                             "source": "OIDtoURI"
@@ -4321,7 +4321,7 @@ conceptMap_as_7dimension_dict["OIDtoURI"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://cda.oid",
+                                "system": "http://fhir.system",
                                 "code": "https://termgit.elga.gv.at/CodeSystem/elga-significantpathogens"
                             },
                             "source": "OIDtoURI"
@@ -4331,7 +4331,7 @@ conceptMap_as_7dimension_dict["OIDtoURI"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://cda.oid",
+                                "system": "http://fhir.system",
                                 "code": "https://termgit.elga.gv.at/CodeSystem/elga-mammogramassessment"
                             },
                             "source": "OIDtoURI"
@@ -4341,7 +4341,7 @@ conceptMap_as_7dimension_dict["OIDtoURI"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://cda.oid",
+                                "system": "http://fhir.system",
                                 "code": "https://termgit.elga.gv.at/CodeSystem/gda-org"
                             },
                             "source": "OIDtoURI"
@@ -4351,7 +4351,7 @@ conceptMap_as_7dimension_dict["OIDtoURI"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://cda.oid",
+                                "system": "http://fhir.system",
                                 "code": "https://termgit.elga.gv.at/CodeSystem/elga-urlschemeergaenzung"
                             },
                             "source": "OIDtoURI"
@@ -4361,7 +4361,7 @@ conceptMap_as_7dimension_dict["OIDtoURI"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://cda.oid",
+                                "system": "http://fhir.system",
                                 "code": "https://termgit.elga.gv.at/CodeSystem/icd-10-bmg-2014"
                             },
                             "source": "OIDtoURI"
@@ -4371,7 +4371,7 @@ conceptMap_as_7dimension_dict["OIDtoURI"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://cda.oid",
+                                "system": "http://fhir.system",
                                 "code": "https://termgit.elga.gv.at/CodeSystem/ems-material"
                             },
                             "source": "OIDtoURI"
@@ -4381,7 +4381,7 @@ conceptMap_as_7dimension_dict["OIDtoURI"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://cda.oid",
+                                "system": "http://fhir.system",
                                 "code": "https://termgit.elga.gv.at/CodeSystem/ems-janein"
                             },
                             "source": "OIDtoURI"
@@ -4391,7 +4391,7 @@ conceptMap_as_7dimension_dict["OIDtoURI"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://cda.oid",
+                                "system": "http://fhir.system",
                                 "code": "https://termgit.elga.gv.at/CodeSystem/ems-analysedetails"
                             },
                             "source": "OIDtoURI"
@@ -4401,7 +4401,7 @@ conceptMap_as_7dimension_dict["OIDtoURI"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://cda.oid",
+                                "system": "http://fhir.system",
                                 "code": "https://termgit.elga.gv.at/CodeSystem/ems-antigenh"
                             },
                             "source": "OIDtoURI"
@@ -4411,7 +4411,7 @@ conceptMap_as_7dimension_dict["OIDtoURI"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://cda.oid",
+                                "system": "http://fhir.system",
                                 "code": "https://termgit.elga.gv.at/CodeSystem/ems-artmalaria"
                             },
                             "source": "OIDtoURI"
@@ -4421,7 +4421,7 @@ conceptMap_as_7dimension_dict["OIDtoURI"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://cda.oid",
+                                "system": "http://fhir.system",
                                 "code": "https://termgit.elga.gv.at/CodeSystem/ems-artquartier"
                             },
                             "source": "OIDtoURI"
@@ -4431,7 +4431,7 @@ conceptMap_as_7dimension_dict["OIDtoURI"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://cda.oid",
+                                "system": "http://fhir.system",
                                 "code": "https://termgit.elga.gv.at/CodeSystem/ems-befundart"
                             },
                             "source": "OIDtoURI"
@@ -4441,7 +4441,7 @@ conceptMap_as_7dimension_dict["OIDtoURI"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://cda.oid",
+                                "system": "http://fhir.system",
                                 "code": "https://termgit.elga.gv.at/CodeSystem/ems-biotyp-biovar"
                             },
                             "source": "OIDtoURI"
@@ -4451,7 +4451,7 @@ conceptMap_as_7dimension_dict["OIDtoURI"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://cda.oid",
+                                "system": "http://fhir.system",
                                 "code": "https://termgit.elga.gv.at/CodeSystem/ems-antigeno"
                             },
                             "source": "OIDtoURI"
@@ -4461,7 +4461,7 @@ conceptMap_as_7dimension_dict["OIDtoURI"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://cda.oid",
+                                "system": "http://fhir.system",
                                 "code": "https://termgit.elga.gv.at/CodeSystem/ems-tbc-resistenzergaenzung"
                             },
                             "source": "OIDtoURI"
@@ -4471,7 +4471,7 @@ conceptMap_as_7dimension_dict["OIDtoURI"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://cda.oid",
+                                "system": "http://fhir.system",
                                 "code": "https://termgit.elga.gv.at/CodeSystem/ems-quartiercode"
                             },
                             "source": "OIDtoURI"
@@ -4481,7 +4481,7 @@ conceptMap_as_7dimension_dict["OIDtoURI"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://cda.oid",
+                                "system": "http://fhir.system",
                                 "code": "https://termgit.elga.gv.at/CodeSystem/ems-aviditaet"
                             },
                             "source": "OIDtoURI"
@@ -4491,7 +4491,7 @@ conceptMap_as_7dimension_dict["OIDtoURI"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://cda.oid",
+                                "system": "http://fhir.system",
                                 "code": "https://termgit.elga.gv.at/CodeSystem/ems-genogruppe"
                             },
                             "source": "OIDtoURI"
@@ -4501,7 +4501,7 @@ conceptMap_as_7dimension_dict["OIDtoURI"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://cda.oid",
+                                "system": "http://fhir.system",
                                 "code": "https://termgit.elga.gv.at/CodeSystem/ems-genotyp"
                             },
                             "source": "OIDtoURI"
@@ -4511,7 +4511,7 @@ conceptMap_as_7dimension_dict["OIDtoURI"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://cda.oid",
+                                "system": "http://fhir.system",
                                 "code": "https://termgit.elga.gv.at/CodeSystem/ems-genotyppora-r1"
                             },
                             "source": "OIDtoURI"
@@ -4521,7 +4521,7 @@ conceptMap_as_7dimension_dict["OIDtoURI"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://cda.oid",
+                                "system": "http://fhir.system",
                                 "code": "https://termgit.elga.gv.at/CodeSystem/ems-genotyppora-r2"
                             },
                             "source": "OIDtoURI"
@@ -4531,7 +4531,7 @@ conceptMap_as_7dimension_dict["OIDtoURI"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://cda.oid",
+                                "system": "http://fhir.system",
                                 "code": "https://termgit.elga.gv.at/CodeSystem/ems-durchgefuehrt"
                             },
                             "source": "OIDtoURI"
@@ -4541,7 +4541,7 @@ conceptMap_as_7dimension_dict["OIDtoURI"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://cda.oid",
+                                "system": "http://fhir.system",
                                 "code": "https://termgit.elga.gv.at/CodeSystem/ems-tbc-resultat"
                             },
                             "source": "OIDtoURI"
@@ -4551,7 +4551,7 @@ conceptMap_as_7dimension_dict["OIDtoURI"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://cda.oid",
+                                "system": "http://fhir.system",
                                 "code": "https://termgit.elga.gv.at/CodeSystem/ems-ergebnis"
                             },
                             "source": "OIDtoURI"
@@ -4561,7 +4561,7 @@ conceptMap_as_7dimension_dict["OIDtoURI"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://cda.oid",
+                                "system": "http://fhir.system",
                                 "code": "https://termgit.elga.gv.at/CodeSystem/ems-wowurdekrankheiterworben"
                             },
                             "source": "OIDtoURI"
@@ -4571,7 +4571,7 @@ conceptMap_as_7dimension_dict["OIDtoURI"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://cda.oid",
+                                "system": "http://fhir.system",
                                 "code": "https://termgit.elga.gv.at/CodeSystem/ems-nachweisbar"
                             },
                             "source": "OIDtoURI"
@@ -4581,7 +4581,7 @@ conceptMap_as_7dimension_dict["OIDtoURI"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://cda.oid",
+                                "system": "http://fhir.system",
                                 "code": "https://termgit.elga.gv.at/CodeSystem/ems-testmethodemic-ipd"
                             },
                             "source": "OIDtoURI"
@@ -4591,7 +4591,7 @@ conceptMap_as_7dimension_dict["OIDtoURI"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://cda.oid",
+                                "system": "http://fhir.system",
                                 "code": "https://termgit.elga.gv.at/CodeSystem/ems-testmethodetypingipd"
                             },
                             "source": "OIDtoURI"
@@ -4601,7 +4601,7 @@ conceptMap_as_7dimension_dict["OIDtoURI"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://cda.oid",
+                                "system": "http://fhir.system",
                                 "code": "https://termgit.elga.gv.at/CodeSystem/ems-nachweis"
                             },
                             "source": "OIDtoURI"
@@ -4611,7 +4611,7 @@ conceptMap_as_7dimension_dict["OIDtoURI"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://cda.oid",
+                                "system": "http://fhir.system",
                                 "code": "https://termgit.elga.gv.at/CodeSystem/ems-multilocsequ"
                             },
                             "source": "OIDtoURI"
@@ -4621,7 +4621,7 @@ conceptMap_as_7dimension_dict["OIDtoURI"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://cda.oid",
+                                "system": "http://fhir.system",
                                 "code": "https://termgit.elga.gv.at/CodeSystem/ems-monoclonalsub"
                             },
                             "source": "OIDtoURI"
@@ -4631,7 +4631,7 @@ conceptMap_as_7dimension_dict["OIDtoURI"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://cda.oid",
+                                "system": "http://fhir.system",
                                 "code": "https://termgit.elga.gv.at/CodeSystem/ems-organ"
                             },
                             "source": "OIDtoURI"
@@ -4641,7 +4641,7 @@ conceptMap_as_7dimension_dict["OIDtoURI"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://cda.oid",
+                                "system": "http://fhir.system",
                                 "code": "https://termgit.elga.gv.at/CodeSystem/ems-yersinapathogen"
                             },
                             "source": "OIDtoURI"
@@ -4651,7 +4651,7 @@ conceptMap_as_7dimension_dict["OIDtoURI"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://cda.oid",
+                                "system": "http://fhir.system",
                                 "code": "https://termgit.elga.gv.at/CodeSystem/ems-phagentyp-vtec"
                             },
                             "source": "OIDtoURI"
@@ -4661,7 +4661,7 @@ conceptMap_as_7dimension_dict["OIDtoURI"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://cda.oid",
+                                "system": "http://fhir.system",
                                 "code": "https://termgit.elga.gv.at/CodeSystem/ems-phagentyp"
                             },
                             "source": "OIDtoURI"
@@ -4671,7 +4671,7 @@ conceptMap_as_7dimension_dict["OIDtoURI"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://cda.oid",
+                                "system": "http://fhir.system",
                                 "code": "https://termgit.elga.gv.at/CodeSystem/ems-posneg"
                             },
                             "source": "OIDtoURI"
@@ -4681,7 +4681,7 @@ conceptMap_as_7dimension_dict["OIDtoURI"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://cda.oid",
+                                "system": "http://fhir.system",
                                 "code": "https://termgit.elga.gv.at/CodeSystem/ems-ribotype"
                             },
                             "source": "OIDtoURI"
@@ -4691,7 +4691,7 @@ conceptMap_as_7dimension_dict["OIDtoURI"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://cda.oid",
+                                "system": "http://fhir.system",
                                 "code": "https://termgit.elga.gv.at/CodeSystem/ems-serogruppe"
                             },
                             "source": "OIDtoURI"
@@ -4701,7 +4701,7 @@ conceptMap_as_7dimension_dict["OIDtoURI"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://cda.oid",
+                                "system": "http://fhir.system",
                                 "code": "https://termgit.elga.gv.at/CodeSystem/ems-serotyp-gene-feta"
                             },
                             "source": "OIDtoURI"
@@ -4711,7 +4711,7 @@ conceptMap_as_7dimension_dict["OIDtoURI"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://cda.oid",
+                                "system": "http://fhir.system",
                                 "code": "https://termgit.elga.gv.at/CodeSystem/ems-serotyp"
                             },
                             "source": "OIDtoURI"
@@ -4721,7 +4721,7 @@ conceptMap_as_7dimension_dict["OIDtoURI"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://cda.oid",
+                                "system": "http://fhir.system",
                                 "code": "https://termgit.elga.gv.at/CodeSystem/ems-gewinnung"
                             },
                             "source": "OIDtoURI"
@@ -4731,7 +4731,7 @@ conceptMap_as_7dimension_dict["OIDtoURI"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://cda.oid",
+                                "system": "http://fhir.system",
                                 "code": "https://termgit.elga.gv.at/CodeSystem/ems-tbc-typ"
                             },
                             "source": "OIDtoURI"
@@ -4741,7 +4741,7 @@ conceptMap_as_7dimension_dict["OIDtoURI"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://cda.oid",
+                                "system": "http://fhir.system",
                                 "code": "https://termgit.elga.gv.at/CodeSystem/ems-orth20probe"
                             },
                             "source": "OIDtoURI"
@@ -4751,7 +4751,7 @@ conceptMap_as_7dimension_dict["OIDtoURI"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://cda.oid",
+                                "system": "http://fhir.system",
                                 "code": "https://termgit.elga.gv.at/CodeSystem/ems-reiseland"
                             },
                             "source": "OIDtoURI"
@@ -4761,7 +4761,7 @@ conceptMap_as_7dimension_dict["OIDtoURI"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://cda.oid",
+                                "system": "http://fhir.system",
                                 "code": "https://termgit.elga.gv.at/CodeSystem/ems-verotoxin-2-subtyp"
                             },
                             "source": "OIDtoURI"
@@ -4771,7 +4771,7 @@ conceptMap_as_7dimension_dict["OIDtoURI"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://cda.oid",
+                                "system": "http://fhir.system",
                                 "code": "https://termgit.elga.gv.at/CodeSystem/ems-verotoxin-1-subtyp"
                             },
                             "source": "OIDtoURI"
@@ -4781,7 +4781,7 @@ conceptMap_as_7dimension_dict["OIDtoURI"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://cda.oid",
+                                "system": "http://fhir.system",
                                 "code": "https://termgit.elga.gv.at/CodeSystem/ems-materialmethode"
                             },
                             "source": "OIDtoURI"
@@ -4791,7 +4791,7 @@ conceptMap_as_7dimension_dict["OIDtoURI"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://cda.oid",
+                                "system": "http://fhir.system",
                                 "code": "https://termgit.elga.gv.at/ValueSet/eimpf-historischeimpfstoffe"
                             },
                             "source": "OIDtoURI"
@@ -4801,7 +4801,7 @@ conceptMap_as_7dimension_dict["OIDtoURI"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://cda.oid",
+                                "system": "http://fhir.system",
                                 "code": "https://termgit.elga.gv.at/ValueSet/eimpf-impfrollen"
                             },
                             "source": "OIDtoURI"
@@ -4811,7 +4811,7 @@ conceptMap_as_7dimension_dict["OIDtoURI"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://cda.oid",
+                                "system": "http://fhir.system",
                                 "code": "https://termgit.elga.gv.at/ValueSet/eimpf-antikoerperbestimmung"
                             },
                             "source": "OIDtoURI"
@@ -4821,7 +4821,7 @@ conceptMap_as_7dimension_dict["OIDtoURI"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://cda.oid",
+                                "system": "http://fhir.system",
                                 "code": "https://termgit.elga.gv.at/ValueSet/eimpf-impfstoffe"
                             },
                             "source": "OIDtoURI"
@@ -4831,7 +4831,7 @@ conceptMap_as_7dimension_dict["OIDtoURI"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://cda.oid",
+                                "system": "http://fhir.system",
                                 "code": "https://termgit.elga.gv.at/ValueSet/eimpf-specialsituationindication"
                             },
                             "source": "OIDtoURI"
@@ -4841,7 +4841,7 @@ conceptMap_as_7dimension_dict["OIDtoURI"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://cda.oid",
+                                "system": "http://fhir.system",
                                 "code": "https://termgit.elga.gv.at/ValueSet/ems-materialmethode"
                             },
                             "source": "OIDtoURI"
@@ -4851,7 +4851,7 @@ conceptMap_as_7dimension_dict["OIDtoURI"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://cda.oid",
+                                "system": "http://fhir.system",
                                 "code": "https://termgit.elga.gv.at/ValueSet/ems-krankheitsmerkmale"
                             },
                             "source": "OIDtoURI"
@@ -4861,7 +4861,7 @@ conceptMap_as_7dimension_dict["OIDtoURI"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://cda.oid",
+                                "system": "http://fhir.system",
                                 "code": "https://termgit.elga.gv.at/ValueSet/ems-meldepflichtige-krankheiten"
                             },
                             "source": "OIDtoURI"
@@ -4871,7 +4871,7 @@ conceptMap_as_7dimension_dict["OIDtoURI"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://cda.oid",
+                                "system": "http://fhir.system",
                                 "code": "https://termgit.elga.gv.at/ValueSet/eimpf-impfrelevanteerkrankung"
                             },
                             "source": "OIDtoURI"
@@ -4881,7 +4881,7 @@ conceptMap_as_7dimension_dict["OIDtoURI"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://cda.oid",
+                                "system": "http://fhir.system",
                                 "code": "https://termgit.elga.gv.at/ValueSet/ems-taetigkeitsbereich"
                             },
                             "source": "OIDtoURI"
@@ -4891,7 +4891,7 @@ conceptMap_as_7dimension_dict["OIDtoURI"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://cda.oid",
+                                "system": "http://fhir.system",
                                 "code": "https://termgit.elga.gv.at/ValueSet/elga-artderdiagnose"
                             },
                             "source": "OIDtoURI"
@@ -4901,7 +4901,7 @@ conceptMap_as_7dimension_dict["OIDtoURI"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://cda.oid",
+                                "system": "http://fhir.system",
                                 "code": "https://termgit.elga.gv.at/ValueSet/ems-impfstatus"
                             },
                             "source": "OIDtoURI"
@@ -4911,7 +4911,7 @@ conceptMap_as_7dimension_dict["OIDtoURI"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://cda.oid",
+                                "system": "http://fhir.system",
                                 "code": "https://termgit.elga.gv.at/ValueSet/ems-klinischemanifestation"
                             },
                             "source": "OIDtoURI"
@@ -4921,7 +4921,7 @@ conceptMap_as_7dimension_dict["OIDtoURI"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://cda.oid",
+                                "system": "http://fhir.system",
                                 "code": "https://termgit.elga.gv.at/ValueSet/elga-serviceeventstelemonepi"
                             },
                             "source": "OIDtoURI"
@@ -4931,7 +4931,7 @@ conceptMap_as_7dimension_dict["OIDtoURI"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://cda.oid",
+                                "system": "http://fhir.system",
                                 "code": "https://termgit.elga.gv.at/ValueSet/hl7-at-actconsenttype"
                             },
                             "source": "OIDtoURI"
@@ -4941,7 +4941,7 @@ conceptMap_as_7dimension_dict["OIDtoURI"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://cda.oid",
+                                "system": "http://fhir.system",
                                 "code": "https://termgit.elga.gv.at/ValueSet/ems-lebensmittelbedingteintoxikationen"
                             },
                             "source": "OIDtoURI"
@@ -4951,7 +4951,7 @@ conceptMap_as_7dimension_dict["OIDtoURI"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://cda.oid",
+                                "system": "http://fhir.system",
                                 "code": "https://termgit.elga.gv.at/ValueSet/eimpf-specialcasevaccination"
                             },
                             "source": "OIDtoURI"
@@ -4961,7 +4961,7 @@ conceptMap_as_7dimension_dict["OIDtoURI"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://cda.oid",
+                                "system": "http://fhir.system",
                                 "code": "https://termgit.elga.gv.at/ValueSet/elga-alcoholconsumption"
                             },
                             "source": "OIDtoURI"
@@ -4971,7 +4971,7 @@ conceptMap_as_7dimension_dict["OIDtoURI"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://cda.oid",
+                                "system": "http://fhir.system",
                                 "code": "https://termgit.elga.gv.at/ValueSet/ems-betreuung"
                             },
                             "source": "OIDtoURI"
@@ -4981,7 +4981,7 @@ conceptMap_as_7dimension_dict["OIDtoURI"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://cda.oid",
+                                "system": "http://fhir.system",
                                 "code": "https://termgit.elga.gv.at/ValueSet/eimpf-immunizationtarget"
                             },
                             "source": "OIDtoURI"
@@ -4991,7 +4991,7 @@ conceptMap_as_7dimension_dict["OIDtoURI"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://cda.oid",
+                                "system": "http://fhir.system",
                                 "code": "https://termgit.elga.gv.at/ValueSet/ems-hospitalisierung"
                             },
                             "source": "OIDtoURI"
@@ -5001,7 +5001,7 @@ conceptMap_as_7dimension_dict["OIDtoURI"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://cda.oid",
+                                "system": "http://fhir.system",
                                 "code": "https://termgit.elga.gv.at/ValueSet/eimpf-impfschema"
                             },
                             "source": "OIDtoURI"
@@ -5011,7 +5011,7 @@ conceptMap_as_7dimension_dict["OIDtoURI"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://cda.oid",
+                                "system": "http://fhir.system",
                                 "code": "https://termgit.elga.gv.at/ValueSet/ems-reiseland"
                             },
                             "source": "OIDtoURI"
@@ -5021,7 +5021,7 @@ conceptMap_as_7dimension_dict["OIDtoURI"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://cda.oid",
+                                "system": "http://fhir.system",
                                 "code": "https://termgit.elga.gv.at/ValueSet/elga-pregnancystatus"
                             },
                             "source": "OIDtoURI"
@@ -5031,7 +5031,7 @@ conceptMap_as_7dimension_dict["OIDtoURI"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://cda.oid",
+                                "system": "http://fhir.system",
                                 "code": "https://termgit.elga.gv.at/ValueSet/elga-antibiogramm"
                             },
                             "source": "OIDtoURI"
@@ -5041,7 +5041,7 @@ conceptMap_as_7dimension_dict["OIDtoURI"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://cda.oid",
+                                "system": "http://fhir.system",
                                 "code": "https://termgit.elga.gv.at/ValueSet/dgc-typeoftest"
                             },
                             "source": "OIDtoURI"
@@ -5051,7 +5051,7 @@ conceptMap_as_7dimension_dict["OIDtoURI"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://cda.oid",
+                                "system": "http://fhir.system",
                                 "code": "https://termgit.elga.gv.at/ValueSet/dgc-diseaseoragent"
                             },
                             "source": "OIDtoURI"
@@ -5061,7 +5061,7 @@ conceptMap_as_7dimension_dict["OIDtoURI"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://cda.oid",
+                                "system": "http://fhir.system",
                                 "code": "https://termgit.elga.gv.at/ValueSet/dgc-vaccine"
                             },
                             "source": "OIDtoURI"
@@ -5071,7 +5071,7 @@ conceptMap_as_7dimension_dict["OIDtoURI"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://cda.oid",
+                                "system": "http://fhir.system",
                                 "code": "https://termgit.elga.gv.at/ValueSet/dgc-medicinalproduct"
                             },
                             "source": "OIDtoURI"
@@ -5081,7 +5081,7 @@ conceptMap_as_7dimension_dict["OIDtoURI"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://cda.oid",
+                                "system": "http://fhir.system",
                                 "code": "https://termgit.elga.gv.at/ValueSet/dgc-vaccinemarketingauthorizationholder"
                             },
                             "source": "OIDtoURI"
@@ -5091,7 +5091,7 @@ conceptMap_as_7dimension_dict["OIDtoURI"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://cda.oid",
+                                "system": "http://fhir.system",
                                 "code": "https://termgit.elga.gv.at/ValueSet/dgc-doses"
                             },
                             "source": "OIDtoURI"
@@ -5101,7 +5101,7 @@ conceptMap_as_7dimension_dict["OIDtoURI"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://cda.oid",
+                                "system": "http://fhir.system",
                                 "code": "https://termgit.elga.gv.at/ValueSet/eimpf-impfdosis"
                             },
                             "source": "OIDtoURI"
@@ -5111,7 +5111,7 @@ conceptMap_as_7dimension_dict["OIDtoURI"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://cda.oid",
+                                "system": "http://fhir.system",
                                 "code": "https://termgit.elga.gv.at/ValueSet/dgc-resultofthetest"
                             },
                             "source": "OIDtoURI"
@@ -5121,7 +5121,7 @@ conceptMap_as_7dimension_dict["OIDtoURI"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://cda.oid",
+                                "system": "http://fhir.system",
                                 "code": "https://termgit.elga.gv.at/ValueSet/eimpf-zusatzklassifikation"
                             },
                             "source": "OIDtoURI"
@@ -5131,7 +5131,7 @@ conceptMap_as_7dimension_dict["OIDtoURI"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://cda.oid",
+                                "system": "http://fhir.system",
                                 "code": "https://termgit.elga.gv.at/ValueSet/dgc-country"
                             },
                             "source": "OIDtoURI"
@@ -5141,7 +5141,7 @@ conceptMap_as_7dimension_dict["OIDtoURI"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://cda.oid",
+                                "system": "http://fhir.system",
                                 "code": "https://termgit.elga.gv.at/ValueSet/dgc-ratnamemanufacturer"
                             },
                             "source": "OIDtoURI"
@@ -5151,7 +5151,7 @@ conceptMap_as_7dimension_dict["OIDtoURI"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://cda.oid",
+                                "system": "http://fhir.system",
                                 "code": "https://termgit.elga.gv.at/ValueSet/elga-anamneselabormikrobiologie"
                             },
                             "source": "OIDtoURI"
@@ -5161,7 +5161,7 @@ conceptMap_as_7dimension_dict["OIDtoURI"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://cda.oid",
+                                "system": "http://fhir.system",
                                 "code": "https://termgit.elga.gv.at/ValueSet/lkf-diagnose-art"
                             },
                             "source": "OIDtoURI"
@@ -5171,7 +5171,7 @@ conceptMap_as_7dimension_dict["OIDtoURI"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://cda.oid",
+                                "system": "http://fhir.system",
                                 "code": "https://termgit.elga.gv.at/ValueSet/lkf-diagnose-statauf"
                             },
                             "source": "OIDtoURI"
@@ -5181,7 +5181,7 @@ conceptMap_as_7dimension_dict["OIDtoURI"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://cda.oid",
+                                "system": "http://fhir.system",
                                 "code": "https://termgit.elga.gv.at/ValueSet/lkf-diagnose-typ"
                             },
                             "source": "OIDtoURI"
@@ -5191,7 +5191,7 @@ conceptMap_as_7dimension_dict["OIDtoURI"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://cda.oid",
+                                "system": "http://fhir.system",
                                 "code": "https://termgit.elga.gv.at/ValueSet/eimpf-impfgrund"
                             },
                             "source": "OIDtoURI"
@@ -5201,7 +5201,7 @@ conceptMap_as_7dimension_dict["OIDtoURI"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://cda.oid",
+                                "system": "http://fhir.system",
                                 "code": "https://termgit.elga.gv.at/ValueSet/eimpf-mengenart"
                             },
                             "source": "OIDtoURI"
@@ -5211,7 +5211,7 @@ conceptMap_as_7dimension_dict["OIDtoURI"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://cda.oid",
+                                "system": "http://fhir.system",
                                 "code": "https://termgit.elga.gv.at/ValueSet/elga-lebensmittelallergene"
                             },
                             "source": "OIDtoURI"
@@ -5221,7 +5221,7 @@ conceptMap_as_7dimension_dict["OIDtoURI"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://cda.oid",
+                                "system": "http://fhir.system",
                                 "code": "https://termgit.elga.gv.at/ValueSet/austrian-designation-use"
                             },
                             "source": "OIDtoURI"
@@ -5231,7 +5231,7 @@ conceptMap_as_7dimension_dict["OIDtoURI"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://cda.oid",
+                                "system": "http://fhir.system",
                                 "code": "https://termgit.elga.gv.at/ValueSet/hl7-at-patientidentifier"
                             },
                             "source": "OIDtoURI"
@@ -5241,7 +5241,7 @@ conceptMap_as_7dimension_dict["OIDtoURI"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://cda.oid",
+                                "system": "http://fhir.system",
                                 "code": "https://termgit.elga.gv.at/ValueSet/eimpf-zusatzklassifikation-impfprogramm"
                             },
                             "source": "OIDtoURI"
@@ -5251,7 +5251,7 @@ conceptMap_as_7dimension_dict["OIDtoURI"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://cda.oid",
+                                "system": "http://fhir.system",
                                 "code": "https://termgit.elga.gv.at/ValueSet/eimpf-zusatzklassifikation-impfsetting"
                             },
                             "source": "OIDtoURI"
@@ -5261,7 +5261,7 @@ conceptMap_as_7dimension_dict["OIDtoURI"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://cda.oid",
+                                "system": "http://fhir.system",
                                 "code": "https://termgit.elga.gv.at/ValueSet/elga-entitynamepartqualifier"
                             },
                             "source": "OIDtoURI"
@@ -5271,7 +5271,7 @@ conceptMap_as_7dimension_dict["OIDtoURI"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://cda.oid",
+                                "system": "http://fhir.system",
                                 "code": "https://termgit.elga.gv.at/ValueSet/hl7-at-administrativegender-v2"
                             },
                             "source": "OIDtoURI"
@@ -5281,7 +5281,7 @@ conceptMap_as_7dimension_dict["OIDtoURI"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://cda.oid",
+                                "system": "http://fhir.system",
                                 "code": "https://termgit.elga.gv.at/ValueSet/hl7-at-administrativegender-fhir-extension"
                             },
                             "source": "OIDtoURI"
@@ -5291,7 +5291,7 @@ conceptMap_as_7dimension_dict["OIDtoURI"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://cda.oid",
+                                "system": "http://fhir.system",
                                 "code": "https://termgit.elga.gv.at/ValueSet/orphanet-rare-diseases"
                             },
                             "source": "OIDtoURI"
@@ -5301,7 +5301,7 @@ conceptMap_as_7dimension_dict["OIDtoURI"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://cda.oid",
+                                "system": "http://fhir.system",
                                 "code": "https://termgit.elga.gv.at/ValueSet/snomed-rare-diseases"
                             },
                             "source": "OIDtoURI"
@@ -5311,7 +5311,7 @@ conceptMap_as_7dimension_dict["OIDtoURI"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://cda.oid",
+                                "system": "http://fhir.system",
                                 "code": "https://termgit.elga.gv.at/ValueSet/hl7-at-organizationtype"
                             },
                             "source": "OIDtoURI"
@@ -5321,7 +5321,7 @@ conceptMap_as_7dimension_dict["OIDtoURI"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://cda.oid",
+                                "system": "http://fhir.system",
                                 "code": "https://termgit.elga.gv.at/ValueSet/hl7-at-practitionerrole"
                             },
                             "source": "OIDtoURI"
@@ -5331,7 +5331,7 @@ conceptMap_as_7dimension_dict["OIDtoURI"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://cda.oid",
+                                "system": "http://fhir.system",
                                 "code": "https://termgit.elga.gv.at/CodeSystem/iana-mime-type"
                             },
                             "source": "OIDtoURI"
@@ -5341,7 +5341,7 @@ conceptMap_as_7dimension_dict["OIDtoURI"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://cda.oid",
+                                "system": "http://fhir.system",
                                 "code": "https://termgit.elga.gv.at/CodeSystem/dcm"
                             },
                             "source": "OIDtoURI"
@@ -5351,7 +5351,7 @@ conceptMap_as_7dimension_dict["OIDtoURI"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://cda.oid",
+                                "system": "http://fhir.system",
                                 "code": "https://termgit.elga.gv.at/CodeSystem/dicom-sopclasses"
                             },
                             "source": "OIDtoURI"
@@ -5361,7 +5361,7 @@ conceptMap_as_7dimension_dict["OIDtoURI"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://cda.oid",
+                                "system": "http://fhir.system",
                                 "code": "https://termgit.elga.gv.at/ValueSet/ehdsi-healthcare-professional-role"
                             },
                             "source": "OIDtoURI"
@@ -5371,7 +5371,7 @@ conceptMap_as_7dimension_dict["OIDtoURI"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://cda.oid",
+                                "system": "http://fhir.system",
                                 "code": "https://termgit.elga.gv.at/ValueSet/ehdsi-route-of-administration"
                             },
                             "source": "OIDtoURI"
@@ -5381,7 +5381,7 @@ conceptMap_as_7dimension_dict["OIDtoURI"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://cda.oid",
+                                "system": "http://fhir.system",
                                 "code": "https://termgit.elga.gv.at/ValueSet/ehdsi-unit"
                             },
                             "source": "OIDtoURI"
@@ -5391,7 +5391,7 @@ conceptMap_as_7dimension_dict["OIDtoURI"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://cda.oid",
+                                "system": "http://fhir.system",
                                 "code": "https://termgit.elga.gv.at/ValueSet/ehdsi-doseform"
                             },
                             "source": "OIDtoURI"
@@ -5401,7 +5401,7 @@ conceptMap_as_7dimension_dict["OIDtoURI"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://cda.oid",
+                                "system": "http://fhir.system",
                                 "code": "https://termgit.elga.gv.at/ValueSet/ehdsi-activeingredient"
                             },
                             "source": "OIDtoURI"
@@ -5411,7 +5411,7 @@ conceptMap_as_7dimension_dict["OIDtoURI"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://cda.oid",
+                                "system": "http://fhir.system",
                                 "code": "https://termgit.elga.gv.at/ValueSet/ehdsi-package"
                             },
                             "source": "OIDtoURI"
@@ -5421,7 +5421,7 @@ conceptMap_as_7dimension_dict["OIDtoURI"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://cda.oid",
+                                "system": "http://fhir.system",
                                 "code": "https://termgit.elga.gv.at/ValueSet/ehdsi-confidentiality"
                             },
                             "source": "OIDtoURI"
@@ -5431,7 +5431,7 @@ conceptMap_as_7dimension_dict["OIDtoURI"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://cda.oid",
+                                "system": "http://fhir.system",
                                 "code": "https://termgit.elga.gv.at/ValueSet/ehdsi-administrative-gender"
                             },
                             "source": "OIDtoURI"
@@ -5441,7 +5441,7 @@ conceptMap_as_7dimension_dict["OIDtoURI"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://cda.oid",
+                                "system": "http://fhir.system",
                                 "code": "https://termgit.elga.gv.at/ValueSet/ehdsi-country"
                             },
                             "source": "OIDtoURI"
@@ -5451,7 +5451,7 @@ conceptMap_as_7dimension_dict["OIDtoURI"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://cda.oid",
+                                "system": "http://fhir.system",
                                 "code": "https://termgit.elga.gv.at/ValueSet/ehdsi-telecom-address"
                             },
                             "source": "OIDtoURI"
@@ -5461,7 +5461,7 @@ conceptMap_as_7dimension_dict["OIDtoURI"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://cda.oid",
+                                "system": "http://fhir.system",
                                 "code": "https://termgit.elga.gv.at/ValueSet/ehdsi-timing-event"
                             },
                             "source": "OIDtoURI"
@@ -5471,7 +5471,7 @@ conceptMap_as_7dimension_dict["OIDtoURI"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://cda.oid",
+                                "system": "http://fhir.system",
                                 "code": "https://termgit.elga.gv.at/ValueSet/ehdsi-quantity-unit"
                             },
                             "source": "OIDtoURI"
@@ -5481,7 +5481,7 @@ conceptMap_as_7dimension_dict["OIDtoURI"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://cda.oid",
+                                "system": "http://fhir.system",
                                 "code": "https://termgit.elga.gv.at/ValueSet/ehdsi-language"
                             },
                             "source": "OIDtoURI"
@@ -5491,7 +5491,7 @@ conceptMap_as_7dimension_dict["OIDtoURI"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://cda.oid",
+                                "system": "http://fhir.system",
                                 "code": "https://termgit.elga.gv.at/ValueSet/ehdsi-substance"
                             },
                             "source": "OIDtoURI"
@@ -5501,7 +5501,7 @@ conceptMap_as_7dimension_dict["OIDtoURI"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://cda.oid",
+                                "system": "http://fhir.system",
                                 "code": "https://termgit.elga.gv.at/CodeSystem/ihe-pharmaceutical-advice-status-list"
                             },
                             "source": "OIDtoURI"
@@ -5511,7 +5511,7 @@ conceptMap_as_7dimension_dict["OIDtoURI"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://cda.oid",
+                                "system": "http://fhir.system",
                                 "code": "https://termgit.elga.gv.at/CodeSystem/ehdsi-language"
                             },
                             "source": "OIDtoURI"
@@ -5521,7 +5521,7 @@ conceptMap_as_7dimension_dict["OIDtoURI"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://cda.oid",
+                                "system": "http://fhir.system",
                                 "code": "https://termgit.elga.gv.at/ValueSet/ehdsi-actsubstanceadministrationcode"
                             },
                             "source": "OIDtoURI"
@@ -5531,7 +5531,7 @@ conceptMap_as_7dimension_dict["OIDtoURI"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://cda.oid",
+                                "system": "http://fhir.system",
                                 "code": "https://termgit.elga.gv.at/CodeSystem/hl7-administrative-sex"
                             },
                             "source": "OIDtoURI"
@@ -5541,7 +5541,7 @@ conceptMap_as_7dimension_dict["OIDtoURI"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://cda.oid",
+                                "system": "http://fhir.system",
                                 "code": "https://termgit.elga.gv.at/CodeSystem/hl7-consent-type"
                             },
                             "source": "OIDtoURI"
@@ -5551,7 +5551,7 @@ conceptMap_as_7dimension_dict["OIDtoURI"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://cda.oid",
+                                "system": "http://fhir.system",
                                 "code": "https://termgit.elga.gv.at/CodeSystem/hl7-consent-mode"
                             },
                             "source": "OIDtoURI"
@@ -5561,7 +5561,7 @@ conceptMap_as_7dimension_dict["OIDtoURI"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://cda.oid",
+                                "system": "http://fhir.system",
                                 "code": "https://termgit.elga.gv.at/CodeSystem/hl7-consent-status"
                             },
                             "source": "OIDtoURI"
@@ -5571,7 +5571,7 @@ conceptMap_as_7dimension_dict["OIDtoURI"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://cda.oid",
+                                "system": "http://fhir.system",
                                 "code": "https://termgit.elga.gv.at/CodeSystem/hl7-signatorys-relationship-to-subject"
                             },
                             "source": "OIDtoURI"
@@ -5581,7 +5581,7 @@ conceptMap_as_7dimension_dict["OIDtoURI"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://cda.oid",
+                                "system": "http://fhir.system",
                                 "code": "http://terminology.hl7.org/CodeSystem/v2-0203"
                             },
                             "source": "OIDtoURI"
@@ -5591,7 +5591,7 @@ conceptMap_as_7dimension_dict["OIDtoURI"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://cda.oid",
+                                "system": "http://fhir.system",
                                 "code": "http://terminology.hl7.org/CodeSystem/v2-0001"
                             },
                             "source": "OIDtoURI"
@@ -5601,7 +5601,7 @@ conceptMap_as_7dimension_dict["OIDtoURI"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://cda.oid",
+                                "system": "http://fhir.system",
                                 "code": "http://terminology.hl7.org/CodeSystem/v2-0496"
                             },
                             "source": "OIDtoURI"
@@ -5611,7 +5611,7 @@ conceptMap_as_7dimension_dict["OIDtoURI"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://cda.oid",
+                                "system": "http://fhir.system",
                                 "code": "http://terminology.hl7.org/CodeSystem/v2-0497"
                             },
                             "source": "OIDtoURI"
@@ -5621,7 +5621,7 @@ conceptMap_as_7dimension_dict["OIDtoURI"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://cda.oid",
+                                "system": "http://fhir.system",
                                 "code": "http://terminology.hl7.org/CodeSystem/v2-0498"
                             },
                             "source": "OIDtoURI"
@@ -5631,7 +5631,7 @@ conceptMap_as_7dimension_dict["OIDtoURI"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://cda.oid",
+                                "system": "http://fhir.system",
                                 "code": "http://terminology.hl7.org/CodeSystem/v2-0548"
                             },
                             "source": "OIDtoURI"
@@ -5641,7 +5641,7 @@ conceptMap_as_7dimension_dict["OIDtoURI"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://cda.oid",
+                                "system": "http://fhir.system",
                                 "code": "https://termgit.elga.gv.at/CodeSystem/hl7-at-religionaustria"
                             },
                             "source": "OIDtoURI"
@@ -5651,7 +5651,7 @@ conceptMap_as_7dimension_dict["OIDtoURI"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://cda.oid",
+                                "system": "http://fhir.system",
                                 "code": "https://termgit.elga.gv.at/CodeSystem/hl7-at-formatcodes"
                             },
                             "source": "OIDtoURI"
@@ -5661,7 +5661,7 @@ conceptMap_as_7dimension_dict["OIDtoURI"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://cda.oid",
+                                "system": "http://fhir.system",
                                 "code": "https://termgit.elga.gv.at/CodeSystem/isco"
                             },
                             "source": "OIDtoURI"
@@ -5671,7 +5671,7 @@ conceptMap_as_7dimension_dict["OIDtoURI"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://cda.oid",
+                                "system": "http://fhir.system",
                                 "code": "https://termgit.elga.gv.at/CodeSystem/ehdsi-substance"
                             },
                             "source": "OIDtoURI"
@@ -5681,7 +5681,7 @@ conceptMap_as_7dimension_dict["OIDtoURI"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://cda.oid",
+                                "system": "http://fhir.system",
                                 "code": "https://termgit.elga.gv.at/CodeSystem/sciphox-seitenlokalisation"
                             },
                             "source": "OIDtoURI"
@@ -5691,7 +5691,7 @@ conceptMap_as_7dimension_dict["OIDtoURI"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://cda.oid",
+                                "system": "http://fhir.system",
                                 "code": "https://termgit.elga.gv.at/CodeSystem/sciphox-diagnosenzusatz"
                             },
                             "source": "OIDtoURI"
@@ -5701,7 +5701,7 @@ conceptMap_as_7dimension_dict["OIDtoURI"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://cda.oid",
+                                "system": "http://fhir.system",
                                 "code": "http://hl7.org/fhir/event-timing"
                             },
                             "source": "OIDtoURI"
@@ -5711,7 +5711,7 @@ conceptMap_as_7dimension_dict["OIDtoURI"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://cda.oid",
+                                "system": "http://fhir.system",
                                 "code": "https://termgit.elga.gv.at/CodeSystem/ips-conditionverificationstatus"
                             },
                             "source": "OIDtoURI"
@@ -5721,7 +5721,7 @@ conceptMap_as_7dimension_dict["OIDtoURI"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://cda.oid",
+                                "system": "http://fhir.system",
                                 "code": "https://termgit.elga.gv.at/CodeSystem/ips-conditionclinicalstatuscodes"
                             },
                             "source": "OIDtoURI"
@@ -5731,7 +5731,7 @@ conceptMap_as_7dimension_dict["OIDtoURI"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://cda.oid",
+                                "system": "http://fhir.system",
                                 "code": "http://terminology.hl7.org/CodeSystem/v3-AdministrativeGender"
                             },
                             "source": "OIDtoURI"
@@ -5741,7 +5741,7 @@ conceptMap_as_7dimension_dict["OIDtoURI"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://cda.oid",
+                                "system": "http://fhir.system",
                                 "code": "http://terminology.hl7.org/CodeSystem/v3-NullFlavor"
                             },
                             "source": "OIDtoURI"
@@ -5751,7 +5751,7 @@ conceptMap_as_7dimension_dict["OIDtoURI"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://cda.oid",
+                                "system": "http://fhir.system",
                                 "code": "http://terminology.hl7.org/CodeSystem/v3-ActSite"
                             },
                             "source": "OIDtoURI"
@@ -5761,7 +5761,7 @@ conceptMap_as_7dimension_dict["OIDtoURI"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://cda.oid",
+                                "system": "http://fhir.system",
                                 "code": "http://terminology.hl7.org/CodeSystem/v3-RoleClass"
                             },
                             "source": "OIDtoURI"
@@ -5771,7 +5771,7 @@ conceptMap_as_7dimension_dict["OIDtoURI"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://cda.oid",
+                                "system": "http://fhir.system",
                                 "code": "http://terminology.hl7.org/CodeSystem/v3-RoleCode"
                             },
                             "source": "OIDtoURI"
@@ -5781,7 +5781,7 @@ conceptMap_as_7dimension_dict["OIDtoURI"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://cda.oid",
+                                "system": "http://fhir.system",
                                 "code": "http://terminology.hl7.org/CodeSystem/v3-AddressUse"
                             },
                             "source": "OIDtoURI"
@@ -5791,7 +5791,7 @@ conceptMap_as_7dimension_dict["OIDtoURI"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://cda.oid",
+                                "system": "http://fhir.system",
                                 "code": "https://termgit.elga.gv.at/CodeSystem/ips-absentorunknowndata"
                             },
                             "source": "OIDtoURI"
@@ -5801,7 +5801,7 @@ conceptMap_as_7dimension_dict["OIDtoURI"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://cda.oid",
+                                "system": "http://fhir.system",
                                 "code": "http://terminology.hl7.org/CodeSystem/v3-SpecimenType"
                             },
                             "source": "OIDtoURI"
@@ -5811,7 +5811,7 @@ conceptMap_as_7dimension_dict["OIDtoURI"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://cda.oid",
+                                "system": "http://fhir.system",
                                 "code": "http://terminology.hl7.org/CodeSystem/v3-TimingEvent"
                             },
                             "source": "OIDtoURI"
@@ -5821,7 +5821,7 @@ conceptMap_as_7dimension_dict["OIDtoURI"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://cda.oid",
+                                "system": "http://fhir.system",
                                 "code": "http://terminology.hl7.org/CodeSystem/v3-ActStatus"
                             },
                             "source": "OIDtoURI"
@@ -5831,7 +5831,7 @@ conceptMap_as_7dimension_dict["OIDtoURI"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://cda.oid",
+                                "system": "http://fhir.system",
                                 "code": "http://terminology.hl7.org/CodeSystem/v3-URLScheme"
                             },
                             "source": "OIDtoURI"
@@ -5841,7 +5841,7 @@ conceptMap_as_7dimension_dict["OIDtoURI"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://cda.oid",
+                                "system": "http://fhir.system",
                                 "code": "http://terminology.hl7.org/CodeSystem/v3-MaritalStatus"
                             },
                             "source": "OIDtoURI"
@@ -5851,7 +5851,7 @@ conceptMap_as_7dimension_dict["OIDtoURI"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://cda.oid",
+                                "system": "http://fhir.system",
                                 "code": "http://terminology.hl7.org/CodeSystem/v3-Confidentiality"
                             },
                             "source": "OIDtoURI"
@@ -5861,7 +5861,7 @@ conceptMap_as_7dimension_dict["OIDtoURI"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://cda.oid",
+                                "system": "http://fhir.system",
                                 "code": "http://terminology.hl7.org/CodeSystem/v3-ActCode"
                             },
                             "source": "OIDtoURI"
@@ -5871,7 +5871,7 @@ conceptMap_as_7dimension_dict["OIDtoURI"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://cda.oid",
+                                "system": "http://fhir.system",
                                 "code": "http://terminology.hl7.org/CodeSystem/v3-EntityNamePartQualifier"
                             },
                             "source": "OIDtoURI"
@@ -5881,7 +5881,7 @@ conceptMap_as_7dimension_dict["OIDtoURI"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://cda.oid",
+                                "system": "http://fhir.system",
                                 "code": "http://terminology.hl7.org/CodeSystem/v3-EntityNameUse"
                             },
                             "source": "OIDtoURI"
@@ -5891,7 +5891,7 @@ conceptMap_as_7dimension_dict["OIDtoURI"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://cda.oid",
+                                "system": "http://fhir.system",
                                 "code": "http://terminology.hl7.org/CodeSystem/v3-LanguageAbilityMode"
                             },
                             "source": "OIDtoURI"
@@ -5901,7 +5901,7 @@ conceptMap_as_7dimension_dict["OIDtoURI"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://cda.oid",
+                                "system": "http://fhir.system",
                                 "code": "http://terminology.hl7.org/CodeSystem/v3-LanguageAbilityProficiency"
                             },
                             "source": "OIDtoURI"
@@ -5911,7 +5911,7 @@ conceptMap_as_7dimension_dict["OIDtoURI"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://cda.oid",
+                                "system": "http://fhir.system",
                                 "code": "http://terminology.hl7.org/CodeSystem/v3-ParticipationFunction"
                             },
                             "source": "OIDtoURI"
@@ -5921,7 +5921,7 @@ conceptMap_as_7dimension_dict["OIDtoURI"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://cda.oid",
+                                "system": "http://fhir.system",
                                 "code": "http://terminology.hl7.org/CodeSystem/v3-ParticipationType"
                             },
                             "source": "OIDtoURI"
@@ -5931,7 +5931,7 @@ conceptMap_as_7dimension_dict["OIDtoURI"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://cda.oid",
+                                "system": "http://fhir.system",
                                 "code": "https://termgit.elga.gv.at/CodeSystem/hl7-language-identification"
                             },
                             "source": "OIDtoURI"
@@ -5939,7 +5939,7 @@ conceptMap_as_7dimension_dict["OIDtoURI"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://cda.oid",
+                                "system": "http://fhir.system",
                                 "code": "urn:ietf:bcp:47"
                             },
                             "source": "OIDtoURI"
@@ -5949,7 +5949,7 @@ conceptMap_as_7dimension_dict["OIDtoURI"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://cda.oid",
+                                "system": "http://fhir.system",
                                 "code": "https://termgit.elga.gv.at/CodeSystem/mdc-medicaldevicecommunications"
                             },
                             "source": "OIDtoURI"
@@ -5959,7 +5959,7 @@ conceptMap_as_7dimension_dict["OIDtoURI"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://cda.oid",
+                                "system": "http://fhir.system",
                                 "code": "https://termgit.elga.gv.at/CodeSystem/icf"
                             },
                             "source": "OIDtoURI"
@@ -5969,7 +5969,7 @@ conceptMap_as_7dimension_dict["OIDtoURI"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://cda.oid",
+                                "system": "http://fhir.system",
                                 "code": "https://termgit.elga.gv.at/CodeSystem/icd-o-3"
                             },
                             "source": "OIDtoURI"
@@ -5979,7 +5979,7 @@ conceptMap_as_7dimension_dict["OIDtoURI"] = {
                         {
                             "relationship": "equivalent",
                             "concept": {
-                                "system": "http://cda.oid",
+                                "system": "http://fhir.system",
                                 "code": "https://termgit.elga.gv.at/CodeSystem/hl7-at-maritalstatus-ergaenzung"
                             },
                             "source": "OIDtoURI"
