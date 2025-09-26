@@ -25,7 +25,9 @@ jobs:
       - name: Install MaLaC-HD
         run: |
           python -m pip install --upgrade pip
-          pip install malac-hd
+          git clone -b cda2fhir_myhealtheu https://gitlab.com/cdehealth/malac-hd.git
+          cd malac-hd
+          pip install -e .
 
       - name: Run MaLaC-HD
         run: |
