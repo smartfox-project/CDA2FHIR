@@ -365,6 +365,17 @@ group CdaHeaderToFhirComposition(source cda : ClinicalDocument, target fhir_comp
   // Participant Hausarzt
   // ClinicalDocument.participant[hl7:templateId [@root='1.2.40.0.34.6.0.11.1.23']]
   // TODO based on analysis of sample reports currently not required
+  cda.participant as cda_generalPractitioner where $this.templateId.where(root='1.2.40.0.34.6.0.11.1.23') ->
+    // Create a PractitionerRole
+    fhir_bundle.entry as fhir_bundle_entry,
+    fhir_bundle_entry.resource = create('PractitionerRole') as fhir_practitionerRole,
+    fhir_practitionerRole.id = uuid() as fhir_practitionerRole_id,
+    fhir_bundle_entry.fullUrl = append('urn:uuid:', fhir_practitionerRole_id),
+    fhir_patient.generalPractitioner = create('Reference') as fhir_patient_generalPractitioner_reference,
+    fhir_patient_generalPractitioner_reference.reference = append('urn:uuid:', fhir_practitionerRole_id),
+    fhir_patient_generalPractitioner_reference.type = 'PractitionerRole'then {
+    cda_generalPractitioner.associatedEntity as cda_generalPractitioner_associatedEntity then CdaAssociatedEntityToFhirPractitionerRole(cda_generalPractitioner_associatedEntity, fhir_practitionerRole, fhir_bundle)
+    }"CdaGeneralPractitionerToFhirPractitionerRole";
 
   // Participant Auskunftsberechtigte Person (Notfallkontakt)
   // ClinicalDocument.participant[hl7:templateId [@root='1.2.40.0.34.6.0.11.1.27']]
