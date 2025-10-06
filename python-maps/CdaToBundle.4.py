@@ -309,6 +309,22 @@ def CdaHeaderToFhirComposition(cda, fhir_composition, fhir_patient, fhir_diagnos
             cda_associatedEntity = cda_orderingProvider.associatedEntity
             if cda_associatedEntity:
                 CdaAssociatedEntityToFhirPractitionerRole(cda_associatedEntity, fhir_practitionerRole, fhir_bundle)
+    for cda_generalPractitioner in cda.participant or []:
+        if fhirpath.single([v1 for v1 in fhirpath_utils.get(cda_generalPractitioner,'templateId') if v1.root == '1.2.40.0.34.6.0.11.1.23']):
+            fhir_bundle_entry = malac.models.fhir.r4.Bundle_Entry()
+            fhir_bundle.entry.append(fhir_bundle_entry)
+            fhir_practitionerRole = malac.models.fhir.r4.PractitionerRole()
+            fhir_bundle_entry.resource = malac.models.fhir.r4.ResourceContainer(PractitionerRole=fhir_practitionerRole)
+            fhir_practitionerRole_id = string(value=str(uuid.uuid4()))
+            fhir_practitionerRole.id = fhir_practitionerRole_id
+            fhir_bundle_entry.fullUrl = uri(value=('urn:uuid:' + fhir_practitionerRole_id.value))
+            fhir_patient_generalPractitioner_reference = malac.models.fhir.r4.Reference()
+            fhir_patient.generalPractitioner.append(fhir_patient_generalPractitioner_reference)
+            fhir_patient_generalPractitioner_reference.reference = string(value=('urn:uuid:' + fhir_practitionerRole_id.value))
+            fhir_patient_generalPractitioner_reference.type_ = uri(value='PractitionerRole')
+            cda_generalPractitioner_associatedEntity = cda_generalPractitioner.associatedEntity
+            if cda_generalPractitioner_associatedEntity:
+                CdaAssociatedEntityToFhirPractitionerRole(cda_generalPractitioner_associatedEntity, fhir_practitionerRole, fhir_bundle)
     for cda_inFulFillmentOf in cda.inFulfillmentOf or []:
         cda_inFulFillmentOf_order = cda_inFulFillmentOf.order
         if cda_inFulFillmentOf_order:
