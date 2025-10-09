@@ -643,6 +643,7 @@ group CECoding(source src : CE, target tgt : Coding) extends Any <<types>> {
   // https://github.com/hapifhir/org.hl7.fhir.core/blob/b590cb3fedbb0791702c637e76fefdae2cba2f78/org.hl7.fhir.utilities/src/main/java/org/hl7/fhir/utilities/OIDUtils.java#L43
   // src.codeSystem as system -> tgt.system = translate(system, 'http://hl7.org/fhir/ConceptMap/special-oid2uri', 'uri');
   src.codeSystem as system -> tgt.system = translate(system, '#OIDtoURI', 'code');
+  
   // TODO for testing purposes (validation with java validator), no displayNames will be mapped
     //      later the NCPeH will have to translate them
     // AIT HVi: Mapping will not only be used for NCPeH.. 
@@ -658,6 +659,7 @@ group CECodeableConcept(source src : CE, target tgt : CodeableConcept) extends A
   src -> tgt.coding as coding then CECoding(src, coding) "code";
   src.translation as translation -> tgt.coding as coding then {
     translation.code as code -> coding.code = cast(code, 'string');
+    
     // translation.codeSystem as system -> coding.system = translate(system, 'http://hl7.org/fhir/ConceptMap/special-oid2uri', 'uri');
     src.codeSystem as system -> tgt.system = translate(system, '#OIDtoURI', 'code');
 
