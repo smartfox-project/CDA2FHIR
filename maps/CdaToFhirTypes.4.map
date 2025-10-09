@@ -6,30 +6,11 @@ map "http://hl7.at/fhir/HL7ATCoreProfiles/4.0.1/StructureMap/at-cda-to-fhir-type
 // FHIR: http://hl7.org/fhir/r4/
 
 
-conceptmap "addressUse" {
-  // http://hl7.org/fhir/cm-address-use-v3.html
-  prefix s = "http://terminology.hl7.org/ValueSet/v3-AddressUse"
-  prefix t = "http://hl7.org/fhir/valueset-address-use.html"
-
-  s:"H" == t:"home" // home address -> home
-  s:"HP" == t: "home" // primary home -> home, http://hl7.org/fhir/v3/AddressUse/cs.html
-  s:"HV" == t: "home" // vacation home	 -> home, http://hl7.org/fhir/v3/AddressUse/cs.html
-
-  s:"WP" == t:"work" // work place -> work
-  s:"DIR" == t:"work" // direct -> work, http://hl7.org/fhir/v3/AddressUse/cs.html
-  s:"PUB" == t:"work" // public -> work, http://hl7.org/fhir/v3/AddressUse/cs.html
-
-  s:"TMP" == t:"temp" // temporary address -> Temporary
-
-  s:"OLD" == t:"old" // no longer in use -> Old / Incorrect
-  s:"BAD" == t:"old" // bad address -> Old / Incorrect
-}
-
 // TODO review mapping
 // based on BlackTusk
 conceptmap "ELGA2FHIRAddressUse" {
-  prefix s = "https://termgit.elga.gv.at/ValueSet/elga-addressuse"
-  prefix t = "http://hl7.org/fhir/ValueSet/address-use"
+  prefix s = "http://terminology.hl7.org/CodeSystem/v3-AddressUse"
+  prefix t = "http://hl7.org/fhir/address-use"
 
   s:"H" == t:"home" // home address -> use = home; type = both
   s:"HP" == t: "home" // primary home -> use = home; type = both
@@ -48,8 +29,8 @@ conceptmap "ELGA2FHIRAddressUse" {
 // TODO review mapping
 // based on BlackTusk
 conceptmap "ELGATelecomAddressUseFHIRContactPointUse" {
-  prefix s = "https://termgit.elga.gv.at/ValueSet-elga-telecomaddressuse"
-  prefix t = "http://hl7.org/fhir/ValueSet/contact-point-use"
+  prefix s = "http://terminology.hl7.org/CodeSystem/v3-AddressUse"
+  prefix t = "http://hl7.org/fhir/contact-point-use"
 
   s:"H" == t:"home"  // telephone home -> home
   s:"HP" == t:"home" // telephone primary home -> home
@@ -69,8 +50,8 @@ conceptmap "ELGATelecomAddressUseFHIRContactPointUse" {
 // TODO review mapping
 // based on BlackTusk
 conceptmap "ELGAEntityNameUseFHIRNameUse" {
-  prefix s = "https://termgit.elga.gv.at/ValueSet-elga-entitynameuse"
-  prefix t = "http://hl7.org/fhir/ValueSet/name-use"
+  prefix s = "http://terminology.hl7.org/CodeSystem/v3-EntityNameUse"
+  prefix t = "http://hl7.org/fhir/name-use"
 
   s:"ASGN" == t:"usual" // assigned -> usual
   s:"C" == t:"usual" // License -> usual
@@ -92,8 +73,8 @@ conceptmap "ELGAEntityNameUseFHIRNameUse" {
 // TODO add TITLE to name-part-qualifier
 // As soon as 'TITLE' is part of FHIR name-part-qualifier this conceptmap is obsolete.
 conceptmap "ELGAEntityNamePartQualifierFHIRNamePartQualifier" {
-  prefix s = "https://termgit.elga.gv.at/ValueSet-elga-entitynamepartqualifier"
-  prefix t = "http://hl7.org/fhir/ValueSet/name-part-qualifier"
+  prefix s = "http://terminology.hl7.org/CodeSystem/v3-EntityNamePartQualifier"
+  prefix t = "http://terminology.hl7.org/CodeSystem/v3-EntityNamePartQualifierR2"
 
   s:"AC" == t:"AC"
   s:"AD" == t:"AD"
@@ -112,8 +93,8 @@ conceptmap "OIDtoURI" {
   prefix s = "http://cda.oid"
   prefix t = "http://fhir.system"
 
-  // following line breaks malac
-  //unmapped for s = provided
+  // TODO see how Matchbox AND MaLaC can be supported
+  // unmapped for s = provided
   // entries based on https://github.com/hapifhir/org.hl7.fhir.core/blob/b590cb3fedbb0791702c637e76fefdae2cba2f78/org.hl7.fhir.utilities/src/main/java/org/hl7/fhir/utilities/OIDUtils.java#L43
   // lines have been commented out where they're not supposed to be relevant for AT
   s:"2.16.840.1.113883.6.96" == t:"http://snomed.info/sct"
@@ -465,11 +446,7 @@ conceptmap "OIDtoURI" {
   s:"2.16.840.1.113883.18.321" == t:"http://terminology.hl7.org/CodeSystem/v2-0497"
   s:"2.16.840.1.113883.18.322" == t:"http://terminology.hl7.org/CodeSystem/v2-0498"
   s:"2.16.840.1.113883.18.355" == t:"http://terminology.hl7.org/CodeSystem/v2-0548"
-
-  // as long as HL7AT Core has not resolved https://github.com/HL7Austria/HL7-AT-FHIR-Core-R4/issues/83 the "wrong" code system will be used in order to have passing validation
-  s:"2.16.840.1.113883.2.16.1.4.1" == t:"http://hl7.at/fhir/HL7ATCoreProfiles/4.0.1/CodeSystem/at-core-cs-religion"
-  // s:"2.16.840.1.113883.2.16.1.4.1" == t:"https://termgit.elga.gv.at/CodeSystem/hl7-at-religionaustria"
-
+  s:"2.16.840.1.113883.2.16.1.4.1" == t:"https://termgit.elga.gv.at/CodeSystem/hl7-at-religionaustria"
   s:"2.16.840.1.113883.2.16.1.4.10" == t:"https://termgit.elga.gv.at/CodeSystem/hl7-at-formatcodes"
   s:"2.16.840.1.113883.2.9.6.2.7" == t:"https://termgit.elga.gv.at/CodeSystem/isco"
   s:"2.16.840.1.113883.3.6905.2" == t:"https://termgit.elga.gv.at/CodeSystem/ehdsi-substance"
@@ -503,6 +480,7 @@ conceptmap "OIDtoURI" {
   s:"2.16.840.1.113883.6.254-2005" == t:"https://termgit.elga.gv.at/CodeSystem/icf"
   s:"2.16.840.1.113883.6.43.1" == t:"https://termgit.elga.gv.at/CodeSystem/icd-o-3"
   s:"2.16.840.1.113883.6.121" == t:"urn:ietf:bcp:47"
+  s:"1.2.40.0.34.5.227" == t:"https://termgit.elga.gv.at/CodeSystem/hl7-at-maritalstatus-ergaenzung"
 }
 
 uses "http://hl7.org/cda/stds/core/StructureDefinition/ED" alias ED as source
@@ -534,19 +512,27 @@ uses "http://hl7.org/cda/stds/core/StructureDefinition/BL" alias BL as source
 uses "http://hl7.org/fhir/4.3/StructureDefinition/boolean" alias boolean as target
 uses "http://hl7.org/cda/stds/core/StructureDefinition/IVL-TS" alias IVL_TS as source
 uses "http://hl7.org/cda/stds/core/StructureDefinition/IVXB-TS" alias IVXB_TS as source
+uses "http://hl7.org/cda/stds/core/StructureDefinition/ANY" alias ANY as source
 
 uses "http://hl7.org/fhir/4.3/StructureDefinition/Quantity" alias Quantity as target
 uses "http://hl7.org/fhir/4.3/StructureDefinition/SimpleQuantity" alias SimpleQuantity as target
 uses "http://hl7.org/fhir/4.3/StructureDefinition/Period" alias Period as target
+uses "http://hl7.org/fhir/4.3/StructureDefinition/date" alias date as target
+uses "http://hl7.org/fhir/4.3/StructureDefinition/Extension" alias Extension as target
 
 group Any(source src, target tgt) {
 }
 
 group II(source src : II, target tgt : Identifier) extends Any <<types>> {
-  //src.root as r where src.extension.exists()
-  //   -> tgt.system = translate(r, 'http://hl7.org/fhir/ConceptMap/special-oid2uri', 'uri') "root1";
+  // TODO deal with OIDs which are not part of the map (e.g. certain identifiers, GDA-IDs, etc.)
+  // src.root as r where src.extension.exists()
+  //    -> tgt.system = translate(r, 'http://hl7.org/fhir/ConceptMap/special-oid2uri', 'uri') "root1";
   src.root as r where src.extension.exists()
      -> tgt.system = translate(r, '#OIDtoURI', 'code') "root1";
+
+  // testing if it is possible to use translate in where
+  // src.root as r where (translate('#OIDtoURI', r)) ->
+  //   tgt.system = translate(r, 'http://hl7.org/fhir/ConceptMap/special-oid2uri', 'uri') "root1";
 
   src.root as r where src.extension.empty()
         and src.root.matches('[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}')
@@ -591,15 +577,17 @@ group TSInstant(source src : TS, target tgt : instant) extends Any <<types>> {
 group IVL_TSDateTime(source src : IVL_TS, target tgt : instant) extends TSInstant <<types>> {
 }
 
-group TSDateTime(source src : TS, target tgt : dateTime) extends TSInstant <<types>> {
+group TSDateTime(source src : TS, target tgt : dateTime) extends Any <<types>> {
+  src.value as v -> tgt.value = cast(v, 'string');
 }
 
 group IVXB_TSDateTime(source src : IVXB_TS, target tgt : dateTime) extends TSDateTime <<types>> {
 }
 
-group TSDate(source src : TS, target tgt : date) extends TSInstant <<types>> {
+group TSDate(source src : TS, target tgt : date) extends Any <<types>> {
   // guaranteeing that only date will be transformed
-  src.value as v -> tgt.value = truncate(v,10) "TSdate";
+  // src.value as v -> tgt.value = truncate(v,8) "TSdate";
+  src.value as v -> tgt.value = cast(v, 'string');
 }
 
 group IVLTSPeriod(source src : IVL_TS, target tgt : Period) extends Any <<types>> {
@@ -655,16 +643,14 @@ group CDCoding(source src : CD, target tgt : Coding) extends CECoding <<types>> 
 
 group CECodeableConcept(source src : CE, target tgt : CodeableConcept) extends Any <<types>> {
   src.originalText -> tgt.text;
-  src -> tgt.coding as coding then CECoding(src, coding) "code";
-  src.translation as translation -> tgt.coding as coding then {
-    translation.code as code -> coding.code = cast(code, 'string');
-    // translation.codeSystem as system -> coding.system = translate(system, 'http://hl7.org/fhir/ConceptMap/special-oid2uri', 'uri');
-    src.codeSystem as system -> tgt.system = translate(system, '#OIDtoURI', 'code');
-
-    // TODO for testing purposes (validation with java validator), no displayNames will be mapped
-    //      later the NCPeH will have to translate them
-    // translation.displayName as display -> coding.display = cast(display, 'string');
-  } "translation";
+  src where ($this.nullFlavor.exists().not()) ->
+    tgt.coding as coding
+    // in order to be able to capture the primary code in case there are translations
+    // 2025-07-28 CDA2FHIR AG decided to not use "userSelected" - in FHIR all codes are equal
+    // coding.userSelected = true
+    then CECoding(src, coding) "code";
+  src where ($this.nullFlavor.exists()) -> tgt.extension as tgt_extension then CdaNullFlavorToFhirNullFlavor(src, tgt_extension) "nullFlavor";
+  src.translation as translation -> tgt.coding as coding then CDCoding(translation, coding);
 }
 
 group CSCodeableConcept(source src : CS, target tgt : CodeableConcept) extends CECodeableConcept <<types>> {
@@ -697,46 +683,67 @@ group CdaPersonNameCompilationToFhirHumanName(source cda_name : PN, target fhir_
   // name.prefix
   cda_name.prefix as cda_name_prefix ->
     // name.prefix
-    fhir_humanName.prefix = (cda_name_prefix.dataString) as fhir_humanName_prefix,
-    // name.prefix.qualifier
-    fhir_humanName_prefix.extension as extension then {
-      cda_name_prefix where cda_name_prefix.qualifier.exists() ->
-        extension.url = 'http://hl7.org/fhir/StructureDefinition/iso21090-EN-qualifier' "extensionUrl";
-        cda_name_prefix.qualifier as qualifier -> extension.value = translate(qualifier, '#ELGAEntityNamePartQualifierFHIRNamePartQualifier', 'code') "qualifierValue";
-    } "CdaNamePrefixToFhirNamePrefix";
+    cda_name_item.prefix as cda_name_item_prefix ->
+      // name.prefix
+      fhir_humanName.prefix = (cda_name_item_prefix.xmlText) as fhir_humanName_prefix then {
+        // name.prefix.qualifier
+        cda_name_item_prefix where cda_name_item_prefix.qualifier.exists() then {
+          cda_name_item_prefix.qualifier as qualifier ->
+            fhir_humanName_prefix.extension as extension,
+            extension.url = 'http://hl7.org/fhir/StructureDefinition/iso21090-EN-qualifier',
+            extension.value = translate(qualifier, '#ELGAEntityNamePartQualifierFHIRNamePartQualifier', 'code')
+            "qualifierValue";
+        } "CdaNamePrefixQualifierToFhirNameExtension";
+      } "CdaNamePrefixToFhirNameGiven";
 
   // name.given
   cda_name.given as cda_name_given ->
     // name.given
-    fhir_humanName.given = (cda_name_given.dataString) as fhir_humanName_given,
-    // name.given.qualifier
-    fhir_humanName_given.extension as extension then {
-      cda_name_given where cda_name_given.qualifier.exists() ->
-        extension.url = 'http://hl7.org/fhir/StructureDefinition/iso21090-EN-qualifier' "extensionUrl";
-        cda_name_given.qualifier as qualifier -> extension.value = translate(qualifier, '#ELGAEntityNamePartQualifierFHIRNamePartQualifier', 'code') "qualifierValue";
-    } "CdaNameGivenToFhirNameGiven";
+    cda_name_item.given as cda_name_item_given ->
+      // name.given
+      fhir_humanName.given = (cda_name_item_given.xmlText) as fhir_humanName_given then {
+        // name.given.qualifier
+        cda_name_item_given where cda_name_item_given.qualifier.exists() then {
+          cda_name_item_given.qualifier as qualifier ->
+            fhir_humanName_given.extension as extension,
+            extension.url = 'http://hl7.org/fhir/StructureDefinition/iso21090-EN-qualifier',
+            extension.value = translate(qualifier, '#ELGAEntityNamePartQualifierFHIRNamePartQualifier', 'code')
+            "qualifierValue";
+        } "CdaNameGivenQualifierToFhirNameExtension";
+      } "CdaNameGivenToFhirNameGiven";
 
   // name.family
   cda_name.family as cda_name_family ->
     // name.family
-    fhir_humanName.family = (cda_name_family.dataString) as fhir_humanName_family,
-    // name.family.qualifier
-    fhir_humanName_family.extension as extension then {
-      cda_name_family where cda_name_family.qualifier.exists() ->
-        extension.url = 'http://hl7.org/fhir/StructureDefinition/iso21090-EN-qualifier' "extensionUrl";
-        cda_name_family.qualifier as qualifier -> extension.value = translate(qualifier, '#ELGAEntityNamePartQualifierFHIRNamePartQualifier', 'code') "qualifierValue";
-    } "CdaNameFamilyToFhirNameFamily";
+    cda_name_item.family as cda_name_item_family ->
+      // name.family
+      fhir_humanName.family = (cda_name_item_family.xmlText) as fhir_humanName_family then {
+        // name.family.qualifier
+        cda_name_item_family where cda_name_item_family.qualifier.exists() then {
+          cda_name_item_family.qualifier as qualifier ->
+            fhir_humanName_family.extension as extension,
+            extension.url = 'http://hl7.org/fhir/StructureDefinition/iso21090-EN-qualifier',
+            extension.value = translate(qualifier, '#ELGAEntityNamePartQualifierFHIRNamePartQualifier', 'code')
+            "qualifierValue";
+        } "CdaNameFamilyQualifierToFhirNameExtension";
+      } "CdaNameFamilyToFhirNameGiven";
 
   // name.suffix
   cda_name.suffix as cda_name_suffix ->
     // name.suffix
-    fhir_humanName.suffix = (cda_name_suffix.dataString) as fhir_humanName_suffix,
-    // name.suffix.qualifier
-    fhir_humanName_suffix.extension as extension then {
-      cda_name_suffix where cda_name_suffix.qualifier.exists() ->
-        extension.url = 'http://hl7.org/fhir/StructureDefinition/iso21090-EN-qualifier' "extensionUrl";
-        cda_name_suffix.qualifier as qualifier -> extension.value = translate(qualifier, '#ELGAEntityNamePartQualifierFHIRNamePartQualifier', 'code') "qualifierValue";
-    } "CdaNameSuffixToFhirNameSuffix";
+    cda_name_item.suffix as cda_name_item_suffix ->
+      // name.suffix
+      fhir_humanName.suffix = (cda_name_item_suffix.xmlText) as fhir_humanName_suffix then {
+        // name.suffix.qualifier
+        cda_name_item_suffix where cda_name_item_suffix.qualifier.exists() then {
+          cda_name_item_suffix.qualifier as qualifier ->
+            fhir_humanName_suffix.extension as extension,
+            extension.url = 'http://hl7.org/fhir/StructureDefinition/iso21090-EN-qualifier',
+            extension.value = translate(qualifier, '#ELGAEntityNamePartQualifierFHIRNamePartQualifier', 'code')
+            "qualifierValue";
+        } "CdaNameSuffixQualifierToFhirNameExtension";
+      } "CdaNameSuffixToFhirNameGiven";
+  } "CdaNameItem";
 }
 
 // Source: https://art-decor.org/art-decor/decor-templates--at-lab-?section=templates&id=1.2.40.0.34.6.0.11.9.5&effectiveDate=2021-06-28T13:57:53&language=de-DE
@@ -873,8 +880,10 @@ group TELContactPoint(source src : TEL, target tgt : ContactPoint) extends Any <
 }
 
 group PQQuantity(source src : PQ, target tgt : Quantity) extends Any <<types>> {
-  src -> tgt.system = 'http://unitsofmeasure.org' "FhirQuantityIPSSystem";
-  src.unit as unit -> tgt.code = unit;
+  src -> tgt.system = 'http://unitsofmeasure.org' "FhirQuantitySystem";
+  src.unit as unit ->
+    tgt.code = unit,
+    tgt.unit = unit;
   src.value as value -> tgt.value = value;
 }
 
@@ -900,4 +909,14 @@ group IVXB_PQQuantity(source src : IVXB_PQ, target tgt : Quantity) extends PQQua
 group RTOPQPQRatio(source src : RTO_PQ_PQ, target tgt : Ratio) extends Any <<types>> {
   src.numerator as numerator -> tgt.numerator as targetNumerator then PQQuantity(numerator, targetNumerator) "numerator";
   src.denominator as denominator -> tgt.denominator as targetDenominator then PQQuantity(denominator, targetDenominator) "denominator";
+}
+
+group CdaNullFlavorToFhirNullFlavor(source src : ANY, target tgt : Extension) extends Any <<types>> {
+  src.nullFlavor as cda_nullFlavor then {
+    cda_nullFlavor -> tgt.url = 'http://hl7.org/fhir/StructureDefinition/iso21090-nullFlavor' "url";
+
+    cda_nullFlavor -> tgt.value = create('code') as fhir_extension_code,
+      fhir_extension_code.value = (cda_nullFlavor)
+      "code";
+  } "CdaNullFlavorToFhirNullFlavor";
 }

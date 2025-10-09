@@ -1,0 +1,52 @@
+# Workflow to convert the given FML to Python using MaLaC-HD
+
+name: Convert FML to Python (MaLaC-HD)
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  convert-and-commit:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out repo
+        uses: actions/checkout@v5
+        with:
+          fetch-depth: 0  # ensures full history for committing
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
+
+      - name: Update pip
+        run: |
+          python -m pip install --upgrade pip
+
+      - name: Install MaLaC-HD
+        run: |
+          git clone -b cda2fhir_myhealtheu https://gitlab.com/cdehealth/malac-hd.git
+          cd malac-hd
+          pip install -e .
+
+      - name: Run MaLaC-HD
+        run: |
+          malac-hd -m maps/CdaToBundle.4.map -co python-maps/CdaToBundle.4.py
+
+      - name: Commit any converted outputs
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add python-maps/
+          if git diff --cached --quiet; then
+            echo "No changes to commit."
+          else
+            echo "Changes will be committed automatically"
+            git commit -m "Automated: convert FML to Python using MaLaC-HD"
+            git push origin HEAD:${{ github.ref }}
+            echo "Invoke automatic transformation of test files"
+            curl -X POST https://gitlab.com/api/v4/projects/53941928/ref/malac_myhealtheu/trigger/pipeline?token=${{ secrets.GITLAB_PIPELINE_TRIGGER }}
+          fi
