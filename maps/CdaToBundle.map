@@ -74,6 +74,7 @@ uses "http://hl7.org/fhir/4.3/StructureDefinition/ServiceRequest" alias ServiceR
 uses "http://hl7.org/fhir/4.3/StructureDefinition/Observation" alias Observation as target
 
 imports "http://hl7.at/fhir/HL7ATCoreProfiles/4.0.1/StructureMap/at-cda-to-fhir-types"
+imports "http://hl7.at/fhir/HL7ATCoreProfiles/4.0.1/StructureMap/at-cda-to-fhir-med"
 
 
 // _________________________ Document Level Template  _________________________
@@ -1697,10 +1698,42 @@ group CdaMessergebnisseToFhirSection(cda_section_component_section, fhir_section
     // Here the entries are needed to be defined
 }
 group CdaMedikationslisteToFhirSection(cda_section_component_section, fhir_section_section, fhir_bundle) extends CdaSectionToFhirSection {
-    // Here the entries are needed to be defined
+  //   src.entry as cdaEntry where (substanceAdministration.templateId.where(root='2.16.756.5.30.1.1.10.4.34')) ->  bundle.entry as e,  e.resource = create('MedicationStatement') as medicationstatement,  
+  //   medicationstatement.id = uuid() as uuid,
+  //   e.fullUrl = append('urn:uuid:',uuid), 
+  //   tgt.entry = create('Reference') as reference, reference.reference = append('urn:uuid:',uuid) then {
+  //   cdaEntry.substanceAdministration as substanceAdministration then MedicationTreatmentPlanItemEntryContentModule(src, substanceAdministration, patient, medicationstatement);
+  // } "MedicationTreatmentPlanItemEntryContentModule";
+
+  cda_section_component_section.entry as cdaEntry where (substanceAdministration.templateId.where(root='1.2.40.0.34.11.8.1.3.1')) ->  fhir_bundle.entry as e,  e.resource = create('MedicationRequest') as medicationrequest,  
+    medicationrequest.id = uuid() as fhir_medreq_uuid,
+    e.fullUrl = append('urn:uuid:',fhir_medreq_uuid), 
+    fhir_section_section.entry = create('Reference') as reference, reference.reference = append('urn:uuid:',fhir_medreq_uuid) then {
+    cdaEntry.substanceAdministration as substanceAdministration then PrescriptionItemEntryContentModule(cda_section_component_section, substanceAdministration, medicationrequest); //fhir_patient,
+  } "PrescriptionItemEntryContentModule";
+
+  cda_section_component_section.entry as cdaEntry where (supply.templateId.where(root='1.2.40.0.34.11.8.2.3.1')) ->  fhir_bundle.entry as e,  e.resource = create('MedicationDispense') as medicationdispense,  
+    medicationdispense.id = uuid() as fhir_meddisp_uuid,
+    e.fullUrl = append('urn:uuid:',fhir_meddisp_uuid), 
+    fhir_section_section.entry = create('Reference') as reference, reference.reference = append('urn:uuid:',fhir_meddisp_uuid) then {
+    cdaEntry.supply as supply then DispenseItemEntryContentModule(cda_section_component_section, supply, medicationdispense); //fhir_patient,
+  } "DispenseItemEntryContentModule";
+  
+  // cda_section_component_section.entry as cdaEntry where (observation.templateId.where(root='2.16.756.5.30.1.1.10.4.44')) ->  fhir_bundle.entry as e,  e.resource = create('Observation') as fhirobservation,  
+  //   fhirobservation.id = uuid() as uuid,
+  //   e.fullUrl = append('urn:uuid:',uuid), 
+  //   fhir_section_section.entry = create('Reference') as reference, reference.reference = append('urn:uuid:',uuid) then {
+  //   cdaEntry.observation as cdaobservation then PharmaceuticalAdviceItemEntryContentModule(cda_section_component_section, cdaobservation, patient, fhirobservation, fhir_bundle);
+  // } "PharmaceuticalAdviceItemEntryContentModule";
 }
 group CdaDokumentierteEinnahmeToFhirSection(cda_section_component_section, fhir_section_section, fhir_bundle) extends CdaSectionToFhirSection {
-    // Here the entries are needed to be defined
+  // @nikx: wrong, this should be a MedicationAdministration resource  
+  cda_section_component_section.entry as cdaEntry where (substanceAdministration.templateId.where(root='1.2.40.0.34.6.0.11.3.72')) ->  fhir_bundle.entry as e,  e.resource = create('MedicationRequest') as medicationrequest,  
+    medicationrequest.id = uuid() as fhir_medreq_uuid,
+    e.fullUrl = append('urn:uuid:',fhir_medreq_uuid), 
+    fhir_section_section.entry = create('Reference') as reference, reference.reference = append('urn:uuid:',fhir_medreq_uuid) then {
+    cdaEntry.substanceAdministration as substanceAdministration then PrescriptionItemEntryContentModule(cda_section_component_section, substanceAdministration, medicationrequest); //fhir_patient,
+  } "PrescriptionItemEntryContentModule";
 }
 
 // _________________________ Entry Level Templates   ________________________
