@@ -1803,7 +1803,7 @@ group MessergebnisObservationMapping(
     // Meta und Profile (Clinical Result spezifisch)
     cda_organizer_component_observation -> fhir_observation.meta as fhir_observation_meta,
         fhir_observation_meta.profile = 'https://build.fhir.org/ig/HL7/US-Core/en/StructureDefinition-us-core-observation-clinical-result.html'
-        "MessergebnislObservationMETAtoFHIRIMETA";
+        "MessergebnisObservationMETAtoFHIRIMETA";
     
     // Category (Clinical Result spezifisch)
     cda_organizer_component_observation -> fhir_observation.category as fhir_observation_category,
