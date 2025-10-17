@@ -641,8 +641,6 @@ group CECoding(source src : CE, target tgt : Coding) extends Any <<types>> {
 group CDCoding(source src : CD, target tgt : Coding) extends CECoding <<types>> {
 
 }
-
-
 group CECodeableConcept(source src : CE, target tgt : CodeableConcept) extends Any <<types>> {
   src.originalText -> tgt.text;
   src where ($this.nullFlavor.exists().not()) ->
