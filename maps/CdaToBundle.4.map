@@ -1833,6 +1833,10 @@ group MessergebnisObservationMapping(
         fhir_observation.value = create('Quantity') as fhir_observation_value 
         then PQQuantity(observation_value, fhir_observation_value) 
         "MessergebnisObservationVALUEtoFHIRVALUE";
+    
+    // Performer/Author
+    cda_organizer_component_observation then 
+        ObservationPerformerAuthorMappings(cda_organizer_component_observation, fhir_observation, fhir_bundle);
 }
 
 // Hauptgruppe für Vitalparameter
