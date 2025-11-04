@@ -1502,7 +1502,7 @@ group CdaUsedDeviceToFhirSection(source cda: ClinicalDocument, source cda_sectio
               // meta data
               cda_device_observation ->
                 fhir_device.meta as fhir_device_meta,
-                fhir_device_meta.profile = 'https://fhir.hl7.at/r4-ELGA-AustrianPatientSummary-main/StructureDefinition-at-aps-device.html'//offizielle APS Struktur, auf EU wechseln?
+                fhir_device_meta.profile = 'https://fhir.hl7.at/r4-ELGA-AustrianPatientSummary-main/StructureDefinition-at-aps-device.html'//
                 "FhirDeviceProfile";
             };
             
@@ -1511,17 +1511,55 @@ group CdaUsedDeviceToFhirSection(source cda: ClinicalDocument, source cda_sectio
             fhir_device.serialNumber;
         };
       };
-      cda_organizer.participant as cda_participant then {
-        cda_participant.participantRole as cda_participantRole where $this.templateId.where(root='1.2.40.0.34.6.0.11.9.43') then {
-          // adding Manufacturere and Name of this
-          cda_participantRole.playingDevice as cda_playingDevice then {
-            cda_playingDevice.manufacturerModelName as cda_device_name -> fhir_device.manufacturer
+
+      
+      cda_organizer.component as cda_component then {
+        cda_component.observation as cda_observation where $this.templateId.where(root='1.2.40.0.34.6.0.11.3.77') then {
+          cda_observation.value: ST as observation_value then {
+            observation_value -> fhir_device.manufacturer;
+            } "setManufacturereName";
           };
         };
       };
+
+      //adding Device Name since it is requiered for APS
+      cda_organizer.component as cda_component then {
+        cda_component.observation as cda_observation where $this.templateId.where(root='1.2.40.0.34.6.0.11.3.78') then {
+          cda_observation.value: ST as observation_value then {
+            observation_value -> fhir_device.deviceName as deviceName then {
+              observation_value -> deviceName.name as fhir_observation_value 
+                then STstring(observation_value, fhir_observation_value);
+              observation_value -> deviceName.type = 'model-name';
+            } "setDeviceName";
+          };
+        };
+      };
+
+      //adding version in text Format since it is requiered for APS (Version Name und Modellname the same? need to discuss)
+      cda_organizer.component as cda_component then {
+        cda_component.observation as cda_observation where $this.templateId.where(root='1.2.40.0.34.6.0.11.3.78') then {
+          cda_observation.value: ST as observation_value then {
+            observation_value -> fhir_device.version as deviceVersion then {
+              observation_value -> deviceVersion.value as fhir_observation_value 
+                then STstring(observation_value, fhir_observation_value);
+            } "setDeviceVersion";
+          };
+        };
+      };
+
+
+      //type of device -> here a concept Map is needed since in the CDA we have a binding Code System in CDA and here in the APS!
+      
+      cda_organizer.participant as cda_participant then {
+        cda_participant.participantRole as cda_participantRole then {
+        cda_participantRole.playingDevice as cda_playingDevice then {
+          cda_playingDevice.code -> fhir_device.type;
+            } "setDeviceVersion";
+          };
+        };
     };
   };
-}
+
 
 
 
